@@ -34,7 +34,7 @@ rm -rf ./out
 
 caName=CandidateTrackerCA
 serverName=api.candidatetracker.co
-# for local use the below line
+# for local uncomment the below line
 # serverName=candidatetracker
 clientName=candidatetracker
 
@@ -62,7 +62,7 @@ else
   rm -rf ./tmp
   mkdir ./tmp
 
-  saveFile $caName "crt" "./tmp/CandidateTrackerCA.crt"
+  saveFile $caName "crt" "./tmp/CA.crt"
   saveFile $clientName "crt" "./tmp/client.crt"
   saveFile $clientName "key" "./tmp/client.key"
   echo "---server-env---"

@@ -17,13 +17,13 @@ build:
 	docker build -t candidatetrackergo:latest .
 
 local-test:
-	grpcurl -import-path ./protos -proto server.proto -H 'requesting_user_email: $(TEST_USER_EMAIL)' -cert certs/local/client.crt -key certs/local/client.key -cacert certs/local/CandidateTrackerCA.crt -servername candidatetracker 0.0.0.0:9000 protos.CandidateTrackerGo/CheckConnection
+	grpcurl -import-path ./protos -proto server.proto -H 'requesting_user_email: $(TEST_USER_EMAIL)' -cert certs/local/client.crt -key certs/local/client.key -cacert certs/local/CA.crt -servername candidatetracker 0.0.0.0:9000 protos.CandidateTrackerGo/CheckConnection
 
 local-test-no-tls:
 	grpcurl -import-path ./protos -proto server.proto -plaintext -H 'requesting_user_email: $(TEST_USER_EMAIL)' 0.0.0.0:9000 protos.CandidateTrackerGo/CheckConnection
 
 remote-test:
-	grpcurl -import-path ./protos -proto server.proto -H 'requesting_user_email: $(TEST_USER_EMAIL)' -cert certs/remote/client.crt -key certs/remote/client.key -cacert certs/remote/CandidateTrackerCA.crt api.candidatetracker.co:9000 protos.CandidateTrackerGo/CheckConnection
+	grpcurl -import-path ./protos -proto server.proto -H 'requesting_user_email: $(TEST_USER_EMAIL)' -cert certs/remote/client.crt -key certs/remote/client.key -cacert certs/remote/CA.crt api.candidatetracker.co:9000 protos.CandidateTrackerGo/CheckConnection
 
 remote-test-no-tls:
 	grpcurl -import-path ./protos -proto server.proto -plaintext -H 'requesting_user_email: $(TEST_USER_EMAIL)' 137.184.177.206:9000 protos.CandidateTrackerGo/CheckConnection
