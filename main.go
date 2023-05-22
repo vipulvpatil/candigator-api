@@ -49,7 +49,6 @@ func main() {
 			Environment: cfg.Environment,
 		},
 	})
-
 	if err != nil {
 		log.Fatalf("sentry.Init: %s", err)
 	}
