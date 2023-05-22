@@ -1,0 +1,9 @@
+bin/*
+certs/*
+scripts/*
+tmp/*
+**/out/*
+.envrc
+.env
+.env.downloaded
+.env.docker

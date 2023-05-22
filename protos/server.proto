@@ -1,0 +1,15 @@
+syntax = "proto3";
+package protos;
+
+option go_package = "github.com/vipulvpatil/candidate-tracker-go/protos";
+
+message CheckConnectionRequest {
+}
+
+message CheckConnectionResponse {
+  string ConnectionStatus = 1;
+}
+
+service CandidateTrackerGo {
+  rpc CheckConnection(CheckConnectionRequest) returns (CheckConnectionResponse) {}
+}
