@@ -4,6 +4,7 @@ package protos;
 option go_package = "github.com/vipulvpatil/candidate-tracker-go/protos";
 
 message CheckConnectionRequest {
+  string UserEmail = 1;
 }
 
 message CheckConnectionResponse {

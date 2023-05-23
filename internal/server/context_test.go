@@ -10,21 +10,42 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+type mockRequestWithUserEmail struct{}
+
+func (m *mockRequestWithUserEmail) GetUserEmail() string {
+	return "test@example.com"
+}
+
+type mockRequestWithEmptyUserEmail struct{}
+
+func (m *mockRequestWithEmptyUserEmail) GetUserEmail() string {
+	return ""
+}
+
 func Test_contextWithUserData(t *testing.T) {
 	tests := []struct {
-		name              string
-		input             context.Context
+		name  string
+		input struct {
+			ctx context.Context
+			req RequestWithUserEmail
+		}
 		expectedOutput    metadata.MD
 		userRetrieverMock storage.UserRetriever
 		errorExpected     bool
 		errorString       string
 	}{
 		{
-			name: "populates the context with retrieved user data",
-			input: metadata.NewIncomingContext(
-				context.Background(),
-				metadata.Pairs(requestingUserEmailCtxKey, "test@example.com"),
-			),
+			name: "populates the context with retrieved user data based on email in context",
+			input: struct {
+				ctx context.Context
+				req RequestWithUserEmail
+			}{
+				ctx: metadata.NewIncomingContext(
+					context.Background(),
+					metadata.Pairs(requestingUserEmailCtxKey, "test@example.com"),
+				),
+				req: &mockRequestWithUserEmail{},
+			},
 			expectedOutput: metadata.Pairs(
 				requestingUserIdCtxKey, "1",
 				requestingUserEmailCtxKey, "test@example.com",
@@ -37,27 +58,65 @@ func Test_contextWithUserData(t *testing.T) {
 			errorString:   "",
 		},
 		{
-			name:              "errors when metadata is not present in incoming context",
-			input:             context.Background(),
+			name: "populates the context with retrieved user data based on email in request",
+			input: struct {
+				ctx context.Context
+				req RequestWithUserEmail
+			}{
+				ctx: metadata.NewIncomingContext(context.Background(), metadata.Pairs()),
+				req: &mockRequestWithUserEmail{},
+			},
+			expectedOutput: metadata.Pairs(
+				requestingUserIdCtxKey, "1",
+				requestingUserEmailCtxKey, "test@example.com",
+			),
+			userRetrieverMock: &storage.UserRetrieverMockSuccess{
+				Id:    "1",
+				Email: "test@example.com",
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+		{
+			name: "errors when metadata is not present in incoming context",
+			input: struct {
+				ctx context.Context
+				req RequestWithUserEmail
+			}{
+				ctx: context.Background(),
+				req: nil,
+			},
 			expectedOutput:    nil,
-			userRetrieverMock: nil, //&storage.UserRetrieverMockEmpty{},
+			userRetrieverMock: nil,
 			errorExpected:     true,
 			errorString:       "retrieving metadata has failed",
 		},
 		{
-			name:              "errors when requesting_user_email is not present in incoming context metadata",
-			input:             metadata.NewIncomingContext(context.Background(), metadata.Pairs()),
+			name: "errors when requesting_user_email is not present in incoming context metadata or request",
+			input: struct {
+				ctx context.Context
+				req RequestWithUserEmail
+			}{
+				ctx: metadata.NewIncomingContext(context.Background(), metadata.Pairs()),
+				req: &mockRequestWithEmptyUserEmail{},
+			},
 			expectedOutput:    nil,
-			userRetrieverMock: nil, //&storage.UserRetrieverMockEmpty{},
+			userRetrieverMock: nil,
 			errorExpected:     true,
-			errorString:       "requesting_user_email is not supplied",
+			errorString:       "unable to determine requesting user",
 		},
 		{
 			name: "errors when requesting user email is not retrieved from storage",
-			input: metadata.NewIncomingContext(
-				context.Background(),
-				metadata.Pairs(requestingUserEmailCtxKey, "test@example.com"),
-			),
+			input: struct {
+				ctx context.Context
+				req RequestWithUserEmail
+			}{
+				ctx: metadata.NewIncomingContext(
+					context.Background(),
+					metadata.Pairs(requestingUserEmailCtxKey, "test@example.com"),
+				),
+				req: &mockRequestWithUserEmail{},
+			},
 			expectedOutput:    nil,
 			userRetrieverMock: &storage.UserRetrieverMockFailure{},
 			errorExpected:     true,
@@ -67,7 +126,7 @@ func Test_contextWithUserData(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			updatedCtx, err := contextWithUserData(tt.input, tt.userRetrieverMock)
+			updatedCtx, err := contextWithUserData(tt.input.ctx, tt.input.req, tt.userRetrieverMock)
 			if !tt.errorExpected {
 				assert.NoError(t, err)
 				md, ok := metadata.FromIncomingContext(updatedCtx)
