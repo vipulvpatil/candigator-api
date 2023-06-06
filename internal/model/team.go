@@ -8,13 +8,11 @@ import (
 type Team struct {
 	id   string
 	name string
-	user *User
 }
 
 type TeamOptions struct {
 	Id   string
 	Name string
-	User *User
 }
 
 func NewTeam(opts TeamOptions) (*Team, error) {
@@ -26,13 +24,8 @@ func NewTeam(opts TeamOptions) (*Team, error) {
 		return nil, errors.New("cannot create team with an empty name")
 	}
 
-	if opts.User == nil {
-		return nil, errors.New("cannot create team with a nil user")
-	}
-
 	return &Team{
 		id:   opts.Id,
 		name: opts.Name,
-		user: opts.User,
 	}, nil
 }

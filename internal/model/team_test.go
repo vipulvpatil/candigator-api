@@ -31,32 +31,14 @@ func Test_NewTeam(t *testing.T) {
 			errorString:    "cannot create team with an empty name",
 		},
 		{
-			name: "user is nil",
-			input: TeamOptions{
-				Id:   "123",
-				Name: "test",
-			},
-			expectedOutput: nil,
-			errorExpected:  true,
-			errorString:    "cannot create team with a nil user",
-		},
-		{
 			name: "Team gets created successfully",
 			input: TeamOptions{
 				Id:   "123",
 				Name: "test",
-				User: &User{
-					id:    "user_id1",
-					email: "test@example.com",
-				},
 			},
 			expectedOutput: &Team{
 				id:   "123",
 				name: "test",
-				user: &User{
-					id:    "user_id1",
-					email: "test@example.com",
-				},
 			},
 			errorExpected: false,
 			errorString:   "",

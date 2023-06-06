@@ -9,11 +9,13 @@ import (
 type User struct {
 	id    string
 	email string
+	team  *Team
 }
 
 type UserOptions struct {
 	Id    string
 	Email string
+	Team  *Team
 }
 
 func NewUser(opts UserOptions) (*User, error) {
@@ -28,6 +30,7 @@ func NewUser(opts UserOptions) (*User, error) {
 	return &User{
 		id:    opts.Id,
 		email: opts.Email,
+		team:  opts.Team,
 	}, nil
 }
 
