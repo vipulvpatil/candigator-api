@@ -81,12 +81,38 @@ func Test_NewUser(t *testing.T) {
 	}
 }
 
-func Test_UserGetId(t *testing.T) {
+func Test_User_GetId(t *testing.T) {
 	t.Run("GetId returns user's id", func(t *testing.T) {
 		user := &User{
 			id:    "123",
 			email: "test@example.com",
 		}
 		assert.Equal(t, "123", user.GetId())
+	})
+}
+
+func Test_User_Team(t *testing.T) {
+	t.Run("Team returns user's team", func(t *testing.T) {
+		user := &User{
+			id:    "123",
+			email: "test@example.com",
+			team: &Team{
+				id:   "team_id1",
+				name: "team_name1",
+			},
+		}
+		team := user.Team()
+		assert.NotNil(t, team)
+		assert.Equal(t, "team_id1", team.id)
+		assert.Equal(t, "team_name1", team.name)
+	})
+
+	t.Run("Team returns nil if user has no team", func(t *testing.T) {
+		user := &User{
+			id:    "123",
+			email: "test@example.com",
+		}
+		team := user.Team()
+		assert.Nil(t, team)
 	})
 }

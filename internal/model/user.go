@@ -37,3 +37,7 @@ func NewUser(opts UserOptions) (*User, error) {
 func (u *User) GetId() string {
 	return u.id
 }
+
+func (u *User) Team() *Team {
+	return u.team
+}
