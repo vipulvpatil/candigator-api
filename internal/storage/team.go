@@ -9,11 +9,6 @@ import (
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
 )
 
-type TeamAccessor interface {
-	TeamForUserId(userId string) (*model.Team, error)
-	CreateTeamForUserId(userId string) (*model.Team, error)
-}
-
 type TeamHydrator interface {
 	HydrateTeam(user *model.User) (*model.User, error)
 }

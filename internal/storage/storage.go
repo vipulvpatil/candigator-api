@@ -10,6 +10,7 @@ import (
 type StorageAccessor interface {
 	UserRetriever
 	DatabaseTransactionProvider
+	TeamHydrator
 }
 
 type Storage struct {
