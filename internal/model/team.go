@@ -29,3 +29,7 @@ func NewTeam(opts TeamOptions) (*Team, error) {
 		name: opts.Name,
 	}, nil
 }
+
+func (t *Team) Id() string {
+	return t.id
+}

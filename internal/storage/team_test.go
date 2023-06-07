@@ -29,7 +29,6 @@ func Test_HydrateTeam(t *testing.T) {
 		output          *model.User
 		setupSqlStmts   []TestSqlStmts
 		cleanupSqlStmts []TestSqlStmts
-		idGenerator     utilities.CuidGenerator
 		dbUpdateCheck   func(*sql.DB) bool
 		errorExpected   bool
 		errorString     string
@@ -40,6 +39,7 @@ func Test_HydrateTeam(t *testing.T) {
 			output:          nil,
 			setupSqlStmts:   nil,
 			cleanupSqlStmts: nil,
+			dbUpdateCheck:   nil,
 			errorExpected:   true,
 			errorString:     "cannot hydrate a nil user",
 		},
@@ -49,6 +49,7 @@ func Test_HydrateTeam(t *testing.T) {
 			output:          inputUserWithTeam,
 			setupSqlStmts:   nil,
 			cleanupSqlStmts: nil,
+			dbUpdateCheck:   nil,
 			errorExpected:   false,
 			errorString:     "",
 		},
@@ -77,6 +78,7 @@ func Test_HydrateTeam(t *testing.T) {
 			cleanupSqlStmts: []TestSqlStmts{
 				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
 			},
+			dbUpdateCheck: nil,
 			errorExpected: false,
 			errorString:   "",
 		},
@@ -97,6 +99,7 @@ func Test_HydrateTeam(t *testing.T) {
 			cleanupSqlStmts: []TestSqlStmts{
 				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
 			},
+			dbUpdateCheck: nil,
 			errorExpected: true,
 			errorString:   "HydrateTeam user_id1: no such user",
 		},
@@ -116,6 +119,28 @@ func Test_HydrateTeam(t *testing.T) {
 			},
 			cleanupSqlStmts: []TestSqlStmts{
 				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+			},
+			dbUpdateCheck: func(db *sql.DB) bool {
+				var id string
+				row := db.QueryRow(
+					`SELECT id FROM public."teams" WHERE id = 'team_id1'`,
+				)
+				assert.NoError(t, row.Err())
+				err := row.Scan(&id)
+				assert.NoError(t, err)
+				assert.Equal(t, "team_id1", id)
+
+				var teamId sql.NullString
+				row = db.QueryRow(
+					`SELECT team_id FROM public."users" WHERE id = 'user_id1'`,
+				)
+				assert.NoError(t, row.Err())
+				err = row.Scan(&teamId)
+				assert.NoError(t, err)
+				assert.True(t, teamId.Valid)
+				assert.Equal(t, "team_id1", teamId.String)
+
+				return true
 			},
 			errorExpected: false,
 			errorString:   "",
@@ -146,6 +171,7 @@ func Test_HydrateTeam(t *testing.T) {
 				{Query: `DELETE FROM public."users" WHERE id = 'user_id1'`},
 				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
 			},
+			dbUpdateCheck: nil,
 			errorExpected: true,
 			errorString:   "THIS IS BAD: dbError while inserting team: team_id1 test@example.com: pq: duplicate key value violates unique constraint \"teams_pkey\"",
 		},
@@ -169,6 +195,9 @@ func Test_HydrateTeam(t *testing.T) {
 			} else {
 				assert.NotEmpty(t, tt.errorString)
 				assert.EqualError(t, err, tt.errorString)
+			}
+			if tt.dbUpdateCheck != nil {
+				assert.True(t, tt.dbUpdateCheck(s.db))
 			}
 		})
 	}
