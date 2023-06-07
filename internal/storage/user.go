@@ -2,6 +2,7 @@ package storage
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/pkg/errors"
 
@@ -19,13 +20,30 @@ func (s *Storage) UserByEmail(email string) (*model.User, error) {
 	}
 
 	userOptions := model.UserOptions{}
-	row := s.db.QueryRow(`SELECT id, email FROM public."users" WHERE email = $1`, email)
-	err := row.Scan(&userOptions.Id, &userOptions.Email)
+	var teamId, teamName sql.NullString
+	row := s.db.QueryRow(`
+		SELECT users.id, users.email, teams.id, teams.name
+		FROM public."users"
+		LEFT JOIN public."teams" ON teams.id = users.team_id
+		WHERE users.email = $1
+	`, email)
+	err := row.Scan(&userOptions.Id, &userOptions.Email, &teamId, &teamName)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.Errorf("UserByEmail %s: no such user", email)
 		}
 		return nil, errors.Errorf("UserByEmail %s: %v", email, err)
+	}
+
+	if teamId.Valid && teamName.Valid {
+		team, err := model.NewTeam(model.TeamOptions{
+			Id:   teamId.String,
+			Name: teamName.String,
+		})
+		if err != nil {
+			return nil, utilities.WrapBadError(err, fmt.Sprintf("UserByEmail %s: invalid team options", email))
+		}
+		userOptions.Team = team
 	}
 	return model.NewUser(userOptions)
 }

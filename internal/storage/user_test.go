@@ -9,8 +9,17 @@ import (
 
 func Test_UserByEmail(t *testing.T) {
 	user, _ := model.NewUser(model.UserOptions{
-		Id:    "test",
+		Id:    "user_id1",
 		Email: "test@example.com",
+	})
+	team, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id1",
+		Name: "test@example.com",
+	})
+	userWithTeam, _ := model.NewUser(model.UserOptions{
+		Id:    "user_id1",
+		Email: "test@example.com",
+		Team:  team,
 	})
 	tests := []struct {
 		name            string
@@ -40,7 +49,7 @@ func Test_UserByEmail(t *testing.T) {
 			errorString:     "UserByEmail absent@user.com: no such user",
 		},
 		{
-			name:   "returns user",
+			name:   "returns user without team if not associated",
 			input:  "test@example.com",
 			output: user,
 			setupSqlStmts: []TestSqlStmts{
@@ -49,12 +58,40 @@ func Test_UserByEmail(t *testing.T) {
 						"id", "email"
 					)
 					VALUES (
-						'test', 'test@example.com'
+						'user_id1', 'test@example.com'
 					)`,
 				},
 			},
 			cleanupSqlStmts: []TestSqlStmts{
-				{Query: `DELETE FROM public."users" WHERE id = 'test'`},
+				{Query: `DELETE FROM public."users" WHERE id = 'user_id1'`},
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+		{
+			name:   "returns user with team if associated",
+			input:  "test@example.com",
+			output: userWithTeam,
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+						"id", "name"
+					)
+					VALUES (
+						'team_id1', 'test@example.com'
+					)`,
+				},
+				{
+					Query: `INSERT INTO public."users" (
+						"id", "email", "team_id"
+					)
+					VALUES (
+						'user_id1', 'test@example.com', 'team_id1'
+					)`,
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
 			},
 			errorExpected: false,
 			errorString:   "",

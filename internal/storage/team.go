@@ -95,7 +95,7 @@ func (s *Storage) HydrateTeam(user *model.User) (*model.User, error) {
 
 	team, err := model.NewTeam(teamOpts)
 	if err != nil {
-		return nil, utilities.WrapBadError(err, "invalid team options")
+		return nil, utilities.WrapBadError(err, fmt.Sprintf("invalid team options error while hydrating user: %s", userOpts.Id))
 	}
 
 	err = tx.Commit()
