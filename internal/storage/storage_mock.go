@@ -3,6 +3,8 @@ package storage
 type StorageAccessorMock struct {
 	UserRetriever
 	DatabaseTransactionProvider
+	TeamHydrator
+	FileUploadAccessor
 }
 
 type StorageAccessorMockOption func(*StorageAccessorMock)
@@ -19,5 +21,17 @@ func NewStorageAccessorMock(opts ...StorageAccessorMockOption) *StorageAccessorM
 func WithDatabaseTransactionProviderMock(mock DatabaseTransactionProvider) StorageAccessorMockOption {
 	return func(s *StorageAccessorMock) {
 		s.DatabaseTransactionProvider = mock
+	}
+}
+
+func WithTeamHydratorMock(mock TeamHydrator) StorageAccessorMockOption {
+	return func(s *StorageAccessorMock) {
+		s.TeamHydrator = mock
+	}
+}
+
+func WithFileUploadAccessorMock(mock FileUploadAccessor) StorageAccessorMockOption {
+	return func(s *StorageAccessorMock) {
+		s.FileUploadAccessor = mock
 	}
 }
