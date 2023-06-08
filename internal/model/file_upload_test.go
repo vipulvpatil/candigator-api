@@ -104,3 +104,36 @@ func Test_NewFileUpload(t *testing.T) {
 		})
 	}
 }
+
+func Test_FileUpload_Id(t *testing.T) {
+	t.Run("Id returns fileUpload's id", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:           "fp_id1",
+			name:         "file1.pdf",
+			presignedUrl: "http://presignedUrl1",
+			status:       waitingForFile,
+		}
+		assert.Equal(t, "fp_id1", fileUpload.Id())
+	})
+}
+
+func Test_FileUpload_Status(t *testing.T) {
+	t.Run("Status returns fileUpload's status if valid", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:           "fp_id1",
+			name:         "file1.pdf",
+			presignedUrl: "http://presignedUrl1",
+			status:       waitingForFile,
+		}
+		assert.Equal(t, "WAITING_FOR_FILE", fileUpload.Status())
+	})
+
+	t.Run("Status returns undefined if status is invalid", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:           "fp_id1",
+			name:         "file1.pdf",
+			presignedUrl: "http://presignedUrl1",
+		}
+		assert.Equal(t, "UNDEFINED", fileUpload.Status())
+	})
+}

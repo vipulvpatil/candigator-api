@@ -47,3 +47,11 @@ func NewFileUpload(opts FileUploadOptions) (*FileUpload, error) {
 		team:         opts.Team,
 	}, nil
 }
+
+func (f *FileUpload) Id() string {
+	return f.id
+}
+
+func (f *FileUpload) Status() string {
+	return f.status.String()
+}
