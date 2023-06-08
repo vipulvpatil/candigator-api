@@ -31,16 +31,6 @@ func Test_NewFileUpload(t *testing.T) {
 			errorString:    "cannot create FileUpload with an empty name",
 		},
 		{
-			name: "presigned Url is empty",
-			input: FileUploadOptions{
-				Id:   "123",
-				Name: "test",
-			},
-			expectedOutput: nil,
-			errorExpected:  true,
-			errorString:    "cannot create FileUpload with an empty presignedUrl",
-		},
-		{
 			name: "user is nil",
 			input: FileUploadOptions{
 				Id:           "123",

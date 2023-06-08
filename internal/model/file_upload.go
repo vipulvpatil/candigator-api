@@ -30,10 +30,6 @@ func NewFileUpload(opts FileUploadOptions) (*FileUpload, error) {
 		return nil, errors.New("cannot create FileUpload with an empty name")
 	}
 
-	if utilities.IsBlank(opts.PresignedUrl) {
-		return nil, errors.New("cannot create FileUpload with an empty presignedUrl")
-	}
-
 	status := FileUploadStatus(opts.Status)
 	if !status.Valid() {
 		status = waitingForFile
