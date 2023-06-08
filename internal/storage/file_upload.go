@@ -10,7 +10,7 @@ import (
 
 type FileUploadAccessor interface {
 	CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error)
-	UpdateFileUploadWithPresignedUrl(id, presignedUrl string) (*model.FileUpload, error)
+	UpdateFileUploadWithPresignedUrl(id, presignedUrl string) error
 }
 
 func (s *Storage) CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error) {
