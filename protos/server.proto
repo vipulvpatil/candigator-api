@@ -4,11 +4,11 @@ package protos;
 option go_package = "github.com/vipulvpatil/candidate-tracker-go/protos";
 
 message CheckConnectionRequest {
-  string UserEmail = 1;
+  string userEmail = 1;
 }
 
 message CheckConnectionResponse {
-  string ConnectionStatus = 1;
+  string connectionStatus = 1;
 }
 
 message UploadFile {
@@ -24,7 +24,7 @@ message FileUpload {
 }
 
 message UploadFilesRequest {
-  string UserEmail = 1;
+  string userEmail = 1;
   repeated UploadFile files = 2;
 }
 
