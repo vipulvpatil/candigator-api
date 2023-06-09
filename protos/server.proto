@@ -11,6 +11,27 @@ message CheckConnectionResponse {
   string ConnectionStatus = 1;
 }
 
+message UploadFile {
+  string name = 1;
+}
+
+message FileUpload {
+  string id = 1;
+  string name = 2;
+  string presignedUrl = 3;
+  string status = 4;
+  string error = 5;
+}
+
+message UploadFilesRequest {
+  repeated UploadFile files = 1;
+}
+
+message UploadFilesResponse {
+  repeated FileUpload fileUploads = 1;
+}
+
 service CandidateTrackerGo {
   rpc CheckConnection(CheckConnectionRequest) returns (CheckConnectionResponse) {}
+  rpc UploadFiles(UploadFilesRequest) returns (UploadFilesResponse) {}
 }

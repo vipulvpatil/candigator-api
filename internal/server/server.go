@@ -5,6 +5,7 @@ import (
 
 	"github.com/vipulvpatil/candidate-tracker-go/internal/clients/openai"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/config"
+	"github.com/vipulvpatil/candidate-tracker-go/internal/services/filestorage"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/storage"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
 	pb "github.com/vipulvpatil/candidate-tracker-go/protos"
@@ -16,6 +17,7 @@ type CandidateTrackerGoService struct {
 	openAiClient openai.Client
 	config       *config.Config
 	logger       utilities.Logger
+	fileStorer   filestorage.FileStorer
 }
 
 type ServerDependencies struct {
@@ -23,6 +25,7 @@ type ServerDependencies struct {
 	OpenAiClient openai.Client
 	Config       *config.Config
 	Logger       utilities.Logger
+	FileStorer   filestorage.FileStorer
 }
 
 func NewServer(deps ServerDependencies) (*CandidateTrackerGoService, error) {
@@ -31,6 +34,7 @@ func NewServer(deps ServerDependencies) (*CandidateTrackerGoService, error) {
 		openAiClient: deps.OpenAiClient,
 		config:       deps.Config,
 		logger:       deps.Logger,
+		fileStorer:   deps.FileStorer,
 	}, nil
 }
 

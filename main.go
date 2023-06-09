@@ -18,6 +18,7 @@ import (
 	"github.com/vipulvpatil/candidate-tracker-go/internal/config"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/health"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/server"
+	"github.com/vipulvpatil/candidate-tracker-go/internal/services/filestorage"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/storage"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/tls"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
@@ -70,6 +71,11 @@ func main() {
 		log.Fatalf("Unable to initialize storage: %v", err)
 	}
 
+	fileStorer, err := filestorage.NewFileStorage()
+	if err != nil {
+		log.Fatalf("Unable to initialize fileStorage: %v", err)
+	}
+
 	redisPool := &redis.Pool{
 		MaxActive: 5,
 		MaxIdle:   5,
@@ -85,6 +91,7 @@ func main() {
 		OpenAiClient: openai.NewClient(openai.OpenAiClientOptions{ApiKey: cfg.OpenAiApiKey}, logger),
 		Config:       cfg,
 		Logger:       logger,
+		FileStorer:   fileStorer,
 	}
 
 	s, err := server.NewServer(serverDeps)

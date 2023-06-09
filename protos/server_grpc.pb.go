@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CandidateTrackerGoClient interface {
 	CheckConnection(ctx context.Context, in *CheckConnectionRequest, opts ...grpc.CallOption) (*CheckConnectionResponse, error)
+	UploadFiles(ctx context.Context, in *UploadFilesRequest, opts ...grpc.CallOption) (*UploadFilesResponse, error)
 }
 
 type candidateTrackerGoClient struct {
@@ -42,11 +43,21 @@ func (c *candidateTrackerGoClient) CheckConnection(ctx context.Context, in *Chec
 	return out, nil
 }
 
+func (c *candidateTrackerGoClient) UploadFiles(ctx context.Context, in *UploadFilesRequest, opts ...grpc.CallOption) (*UploadFilesResponse, error) {
+	out := new(UploadFilesResponse)
+	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/UploadFiles", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CandidateTrackerGoServer is the server API for CandidateTrackerGo service.
 // All implementations must embed UnimplementedCandidateTrackerGoServer
 // for forward compatibility
 type CandidateTrackerGoServer interface {
 	CheckConnection(context.Context, *CheckConnectionRequest) (*CheckConnectionResponse, error)
+	UploadFiles(context.Context, *UploadFilesRequest) (*UploadFilesResponse, error)
 	mustEmbedUnimplementedCandidateTrackerGoServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedCandidateTrackerGoServer struct {
 
 func (UnimplementedCandidateTrackerGoServer) CheckConnection(context.Context, *CheckConnectionRequest) (*CheckConnectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckConnection not implemented")
+}
+func (UnimplementedCandidateTrackerGoServer) UploadFiles(context.Context, *UploadFilesRequest) (*UploadFilesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadFiles not implemented")
 }
 func (UnimplementedCandidateTrackerGoServer) mustEmbedUnimplementedCandidateTrackerGoServer() {}
 
@@ -88,6 +102,24 @@ func _CandidateTrackerGo_CheckConnection_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CandidateTrackerGo_UploadFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadFilesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CandidateTrackerGoServer).UploadFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protos.CandidateTrackerGo/UploadFiles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CandidateTrackerGoServer).UploadFiles(ctx, req.(*UploadFilesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CandidateTrackerGo_ServiceDesc is the grpc.ServiceDesc for CandidateTrackerGo service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var CandidateTrackerGo_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckConnection",
 			Handler:    _CandidateTrackerGo_CheckConnection_Handler,
+		},
+		{
+			MethodName: "UploadFiles",
+			Handler:    _CandidateTrackerGo_UploadFiles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
