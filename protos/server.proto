@@ -24,7 +24,8 @@ message FileUpload {
 }
 
 message UploadFilesRequest {
-  repeated UploadFile files = 1;
+  string UserEmail = 1;
+  repeated UploadFile files = 2;
 }
 
 message UploadFilesResponse {
