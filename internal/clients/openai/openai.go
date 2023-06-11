@@ -17,11 +17,11 @@ type Client interface {
 	CallCompletionApi(prompt string) (string, error)
 }
 
-type OpenAiClientOptions struct {
+type ClientOptions struct {
 	ApiKey string
 }
 
-func NewClient(opts OpenAiClientOptions, logger utilities.Logger) Client {
+func NewClient(opts ClientOptions, logger utilities.Logger) Client {
 	return &client{
 		apiKey: opts.ApiKey,
 		logger: logger,

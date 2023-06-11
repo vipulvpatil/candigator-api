@@ -3,6 +3,7 @@ module github.com/vipulvpatil/candidate-tracker-go
 go 1.19
 
 require (
+	github.com/aws/aws-sdk-go v1.44.280
 	github.com/getsentry/sentry-go v0.20.0
 	github.com/gocraft/work v0.5.1
 	github.com/gomodule/redigo v1.8.9
@@ -18,6 +19,7 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	golang.org/x/net v0.8.0 // indirect

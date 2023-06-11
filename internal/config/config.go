@@ -16,6 +16,8 @@ type Config struct {
 	ServerCertBase64 string
 	ServerKeyBase64  string
 	OpenAiApiKey     string
+	S3Key            string
+	S3Secret         string
 	SentryDsn        string
 	Environment      string
 	LoggerMode       string
@@ -57,6 +59,8 @@ func NewConfigFromEnvVars() (*Config, []error) {
 	c.ServerCertBase64 = envVarLoaderString("SERVER_CERT_BASE64", true, &errs)
 	c.ServerKeyBase64 = envVarLoaderString("SERVER_KEY_BASE64", true, &errs)
 	c.OpenAiApiKey = envVarLoaderString("OPENAI_API_KEY", true, &errs)
+	c.S3Key = envVarLoaderString("S3_KEY", true, &errs)
+	c.S3Secret = envVarLoaderString("S3_SECRET", true, &errs)
 	c.SentryDsn = envVarLoaderString("SENTRY_DSN", false, &errs)
 	c.Environment = envVarLoaderString("ENVIRONMENT", true, &errs)
 	c.LoggerMode = envVarLoaderString("LOGGER_MODE", true, &errs)

@@ -33,7 +33,7 @@ func NewPool(deps PoolDependencies) *work.WorkerPool {
 	// TODO: Not sure if this is the best way to do this. But using Package variables for all dependencies required inside any of the jobs.
 	workerStorage = deps.Storage
 	logger = deps.Logger
-	openAiClient = openai.NewClient(openai.OpenAiClientOptions{ApiKey: deps.OpenAiApiKey}, logger)
+	openAiClient = openai.NewClient(openai.ClientOptions{ApiKey: deps.OpenAiApiKey}, logger)
 	minDelayAfterAIResponse = 8
 	maxDelayAfterAIResponse = 15
 	return pool
