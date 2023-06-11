@@ -15,6 +15,7 @@ import (
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/clients/openai"
+	"github.com/vipulvpatil/candidate-tracker-go/internal/clients/s3"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/config"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/health"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/server"
@@ -71,7 +72,16 @@ func main() {
 		log.Fatalf("Unable to initialize storage: %v", err)
 	}
 
-	fileStorer, err := filestorage.NewFileStorage()
+	s3Client, err := s3.NewS3Client(s3.ClientOptions{
+		Key:    cfg.S3Key,
+		Secret: cfg.S3Secret,
+		Bucket: cfg.S3Bucket,
+	})
+	if err != nil {
+		log.Fatalf("Unable to initialize s3 client: %v", err)
+	}
+
+	fileStorer, err := filestorage.NewFileStorage(s3Client)
 	if err != nil {
 		log.Fatalf("Unable to initialize fileStorage: %v", err)
 	}

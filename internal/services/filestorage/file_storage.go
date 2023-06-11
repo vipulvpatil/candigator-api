@@ -1,18 +1,24 @@
 package filestorage
 
-import "fmt"
+import (
+	"github.com/vipulvpatil/candidate-tracker-go/internal/clients/s3"
+)
 
 type FileStorer interface {
-	GetPresignedUrl(fileId string, teamId string) (string, error)
+	GetPresignedUrl(teamId, fileId, fileName string) (string, error)
 }
 
-type fileStorage struct{}
-
-func NewFileStorage() (*fileStorage, error) {
-	return &fileStorage{}, nil
+type fileStorage struct {
+	s3Client s3.Client
 }
 
-// TODO: This is a placeholder implementation. Please use S3 client to actually get Presigned Url
-func (f *fileStorage) GetPresignedUrl(fileId string, teamId string) (string, error) {
-	return fmt.Sprintf("http://%s/%s", teamId, fileId), nil
+func NewFileStorage(s3client s3.Client) (*fileStorage, error) {
+	return &fileStorage{
+		s3Client: s3client,
+	}, nil
+}
+
+func (f *fileStorage) GetPresignedUrl(teamId, fileId, fileName string) (string, error) {
+	path := teamId + "/" + fileId
+	return f.s3Client.GetPresignedUploadUrl(path, fileName)
 }

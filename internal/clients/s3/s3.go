@@ -10,24 +10,27 @@ import (
 )
 
 type Client interface {
-	GetPresignedUploadUrl(bucket, key string) (string, error)
+	GetPresignedUploadUrl(path, fileName string) (string, error)
 }
 
 type client struct {
 	s3Client *s3go.S3
+	s3Bucket string
 }
 
 type ClientOptions struct {
-	Key    string
-	Secret string
+	Key      string
+	Secret   string
+	Endpoint string
+	Bucket   string
 }
 
 func NewS3Client(opts ClientOptions) (Client, error) {
 	s3Config := &aws.Config{
 		Credentials:      credentials.NewStaticCredentials(opts.Key, opts.Secret, ""),
-		Endpoint:         aws.String("https://candidate-tracker-dev.fra1.digitaloceanspaces.com"),
+		Endpoint:         aws.String(opts.Endpoint),
 		Region:           aws.String("us-east-1"),
-		S3ForcePathStyle: aws.Bool(false), // // Configures to use subdomain/virtual calling format. Depending on your version, alternatively use o.UsePathStyle = false
+		S3ForcePathStyle: aws.Bool(false),
 	}
 	newSession, err := session.NewSession(s3Config)
 	if err != nil {
@@ -35,15 +38,16 @@ func NewS3Client(opts ClientOptions) (Client, error) {
 	}
 	return &client{
 		s3Client: s3go.New(newSession),
+		s3Bucket: opts.Bucket,
 	}, nil
 }
 
-func (c *client) GetPresignedUploadUrl(bucket, key string) (string, error) {
+func (c *client) GetPresignedUploadUrl(path, fileName string) (string, error) {
 	req, _ := c.s3Client.PutObjectRequest(&s3go.PutObjectInput{
-		Bucket: aws.String(bucket),
-		Key:    aws.String(key),
+		Bucket: aws.String(c.s3Bucket),
+		Key:    aws.String(path + "/" + fileName),
 	})
-	urlStr, err := req.Presign(5 * time.Minute)
+	urlStr, err := req.Presign(15 * time.Minute)
 	if err != nil {
 		return "", err
 	}

@@ -45,7 +45,7 @@ func (s *CandidateTrackerGoService) newFileUploadForTeam(fileName string, team *
 	fileUploadResponse.Id = fileUploadId
 	fileUploadResponse.Status = fileUpload.Status()
 
-	presignedUrl, err := s.fileStorer.GetPresignedUrl(fileUploadId, team.Id())
+	presignedUrl, err := s.fileStorer.GetPresignedUrl(team.Id(), fileUploadId, fileName)
 	if err != nil {
 		return fileUploadResponseWithError(&fileUploadResponse, err)
 	}
