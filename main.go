@@ -73,9 +73,10 @@ func main() {
 	}
 
 	s3Client, err := s3.NewS3Client(s3.ClientOptions{
-		Key:    cfg.S3Key,
-		Secret: cfg.S3Secret,
-		Bucket: cfg.S3Bucket,
+		Key:      cfg.S3Key,
+		Secret:   cfg.S3Secret,
+		Endpoint: cfg.S3Endpoint,
+		Bucket:   cfg.S3Bucket,
 	})
 	if err != nil {
 		log.Fatalf("Unable to initialize s3 client: %v", err)
