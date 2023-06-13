@@ -17,7 +17,6 @@ type FileUploadAccessor interface {
 }
 
 func (s *Storage) GetFileUpload(id string) (*model.FileUpload, error) {
-
 	if utilities.IsBlank(id) {
 		return nil, errors.New("id cannot be blank")
 	}
@@ -33,7 +32,7 @@ func (s *Storage) GetFileUpload(id string) (*model.FileUpload, error) {
 	err := row.Scan(&name, &status, &presignedUrl, &teamId, &teamName)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.Errorf("no file upload with id %s", id)
+			return nil, nil
 		}
 		return nil, errors.Errorf("getting file upload for id %s: %v", id, err)
 	}

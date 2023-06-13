@@ -52,6 +52,22 @@ func (f *FileUpload) Id() string {
 	return f.id
 }
 
+func (f *FileUpload) Name() string {
+	return f.name
+}
+
+func (f *FileUpload) PresignedUrl() string {
+	return f.presignedUrl
+}
+
 func (f *FileUpload) Status() string {
 	return f.status.String()
+}
+
+func (f *FileUpload) Completed() bool {
+	return f.status == success || f.status == failure
+}
+
+func (f *FileUpload) BelongsToTeam(t *Team) bool {
+	return f.team.id == t.id
 }

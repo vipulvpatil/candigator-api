@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type CandidateTrackerGoClient interface {
 	CheckConnection(ctx context.Context, in *CheckConnectionRequest, opts ...grpc.CallOption) (*CheckConnectionResponse, error)
 	UploadFiles(ctx context.Context, in *UploadFilesRequest, opts ...grpc.CallOption) (*UploadFilesResponse, error)
-	CompleteFileUpload(ctx context.Context, in *CompleteFileUploadRequest, opts ...grpc.CallOption) (*CompleteFileUploadResponse, error)
+	CompleteFileUploads(ctx context.Context, in *CompleteFileUploadsRequest, opts ...grpc.CallOption) (*CompleteFileUploadsResponse, error)
 }
 
 type candidateTrackerGoClient struct {
@@ -53,9 +53,9 @@ func (c *candidateTrackerGoClient) UploadFiles(ctx context.Context, in *UploadFi
 	return out, nil
 }
 
-func (c *candidateTrackerGoClient) CompleteFileUpload(ctx context.Context, in *CompleteFileUploadRequest, opts ...grpc.CallOption) (*CompleteFileUploadResponse, error) {
-	out := new(CompleteFileUploadResponse)
-	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/CompleteFileUpload", in, out, opts...)
+func (c *candidateTrackerGoClient) CompleteFileUploads(ctx context.Context, in *CompleteFileUploadsRequest, opts ...grpc.CallOption) (*CompleteFileUploadsResponse, error) {
+	out := new(CompleteFileUploadsResponse)
+	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/CompleteFileUploads", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (c *candidateTrackerGoClient) CompleteFileUpload(ctx context.Context, in *C
 type CandidateTrackerGoServer interface {
 	CheckConnection(context.Context, *CheckConnectionRequest) (*CheckConnectionResponse, error)
 	UploadFiles(context.Context, *UploadFilesRequest) (*UploadFilesResponse, error)
-	CompleteFileUpload(context.Context, *CompleteFileUploadRequest) (*CompleteFileUploadResponse, error)
+	CompleteFileUploads(context.Context, *CompleteFileUploadsRequest) (*CompleteFileUploadsResponse, error)
 	mustEmbedUnimplementedCandidateTrackerGoServer()
 }
 
@@ -82,8 +82,8 @@ func (UnimplementedCandidateTrackerGoServer) CheckConnection(context.Context, *C
 func (UnimplementedCandidateTrackerGoServer) UploadFiles(context.Context, *UploadFilesRequest) (*UploadFilesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadFiles not implemented")
 }
-func (UnimplementedCandidateTrackerGoServer) CompleteFileUpload(context.Context, *CompleteFileUploadRequest) (*CompleteFileUploadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CompleteFileUpload not implemented")
+func (UnimplementedCandidateTrackerGoServer) CompleteFileUploads(context.Context, *CompleteFileUploadsRequest) (*CompleteFileUploadsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CompleteFileUploads not implemented")
 }
 func (UnimplementedCandidateTrackerGoServer) mustEmbedUnimplementedCandidateTrackerGoServer() {}
 
@@ -134,20 +134,20 @@ func _CandidateTrackerGo_UploadFiles_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CandidateTrackerGo_CompleteFileUpload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CompleteFileUploadRequest)
+func _CandidateTrackerGo_CompleteFileUploads_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompleteFileUploadsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CandidateTrackerGoServer).CompleteFileUpload(ctx, in)
+		return srv.(CandidateTrackerGoServer).CompleteFileUploads(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protos.CandidateTrackerGo/CompleteFileUpload",
+		FullMethod: "/protos.CandidateTrackerGo/CompleteFileUploads",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CandidateTrackerGoServer).CompleteFileUpload(ctx, req.(*CompleteFileUploadRequest))
+		return srv.(CandidateTrackerGoServer).CompleteFileUploads(ctx, req.(*CompleteFileUploadsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -168,8 +168,8 @@ var CandidateTrackerGo_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CandidateTrackerGo_UploadFiles_Handler,
 		},
 		{
-			MethodName: "CompleteFileUpload",
-			Handler:    _CandidateTrackerGo_CompleteFileUpload_Handler,
+			MethodName: "CompleteFileUploads",
+			Handler:    _CandidateTrackerGo_CompleteFileUploads_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

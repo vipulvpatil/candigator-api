@@ -117,6 +117,30 @@ func Test_FileUpload_Id(t *testing.T) {
 	})
 }
 
+func Test_FileUpload_Name(t *testing.T) {
+	t.Run("Id returns fileUpload's id", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:           "fp_id1",
+			name:         "file1.pdf",
+			presignedUrl: "http://presignedUrl1",
+			status:       initiated,
+		}
+		assert.Equal(t, "file1.pdf", fileUpload.Name())
+	})
+}
+
+func Test_FileUpload_PresignedUrl(t *testing.T) {
+	t.Run("Id returns fileUpload's id", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:           "fp_id1",
+			name:         "file1.pdf",
+			presignedUrl: "http://presignedUrl1",
+			status:       initiated,
+		}
+		assert.Equal(t, "http://presignedUrl1", fileUpload.PresignedUrl())
+	})
+}
+
 func Test_FileUpload_Status(t *testing.T) {
 	t.Run("Status returns fileUpload's status if valid", func(t *testing.T) {
 		fileUpload := &FileUpload{
@@ -135,5 +159,77 @@ func Test_FileUpload_Status(t *testing.T) {
 			presignedUrl: "http://presignedUrl1",
 		}
 		assert.Equal(t, "UNDEFINED", fileUpload.Status())
+	})
+}
+
+func Test_FileUpload_Completed(t *testing.T) {
+	t.Run("Completed returns true if status is success", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:           "fp_id1",
+			name:         "file1.pdf",
+			presignedUrl: "http://presignedUrl1",
+			status:       success,
+		}
+		assert.True(t, fileUpload.Completed())
+	})
+
+	t.Run("Completed returns true if status is failure", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:           "fp_id1",
+			name:         "file1.pdf",
+			presignedUrl: "http://presignedUrl1",
+			status:       failure,
+		}
+		assert.True(t, fileUpload.Completed())
+	})
+
+	t.Run("Completed returns false if status is initiated", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:           "fp_id1",
+			name:         "file1.pdf",
+			presignedUrl: "http://presignedUrl1",
+			status:       initiated,
+		}
+		assert.False(t, fileUpload.Completed())
+	})
+}
+
+func Test_FileUpload_BelongsToTeam(t *testing.T) {
+	t.Run("BelongsToTeam returns true", func(t *testing.T) {
+		team := &Team{
+			id:   "team_id1",
+			name: "team1",
+		}
+
+		fileUpload := &FileUpload{
+			id:           "fp_id1",
+			name:         "file1.pdf",
+			presignedUrl: "http://presignedUrl1",
+			status:       initiated,
+			team: &Team{
+				id:   "team_id1",
+				name: "team1",
+			},
+		}
+		assert.True(t, fileUpload.BelongsToTeam(team))
+	})
+
+	t.Run("BelongsToTeam returns false", func(t *testing.T) {
+		team := &Team{
+			id:   "team_id1",
+			name: "team1",
+		}
+
+		fileUpload := &FileUpload{
+			id:           "fp_id1",
+			name:         "file1.pdf",
+			presignedUrl: "http://presignedUrl1",
+			status:       initiated,
+			team: &Team{
+				id:   "team_id2",
+				name: "team2",
+			},
+		}
+		assert.False(t, fileUpload.BelongsToTeam(team))
 	})
 }
