@@ -47,10 +47,11 @@ func (s *Storage) GetFileUpload(id string) (*model.FileUpload, error) {
 	}
 
 	return model.NewFileUpload(model.FileUploadOptions{
-		Id:     id,
-		Name:   name,
-		Status: status,
-		Team:   team,
+		Id:           id,
+		Name:         name,
+		PresignedUrl: presignedUrl,
+		Status:       status,
+		Team:         team,
 	})
 }
 
