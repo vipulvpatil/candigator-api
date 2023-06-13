@@ -9,6 +9,98 @@ import (
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
 )
 
+func Test_GetFileUpload(t *testing.T) {
+	team, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id1",
+		Name: "Team1",
+	})
+	fileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
+		Id:           "fp_id1",
+		Name:         "file1.pdf",
+		PresignedUrl: "",
+		Status:       "INITIATED",
+		Team:         team,
+	})
+	tests := []struct {
+		name            string
+		input           string
+		output          *model.FileUpload
+		setupSqlStmts   []TestSqlStmts
+		cleanupSqlStmts []TestSqlStmts
+		errorExpected   bool
+		errorString     string
+	}{
+		{
+			name:            "errors when id is empty",
+			input:           "",
+			output:          nil,
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			errorExpected:   true,
+			errorString:     "id cannot be blank",
+		},
+		{
+			name:            "errors when fileUpload does not exist in Database",
+			input:           "fp_id1",
+			output:          nil,
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			errorExpected:   true,
+			errorString:     "no file upload with id fp_id1",
+		},
+		{
+			name:   "successfully gets file upload",
+			input:  "fp_id1",
+			output: fileUpload,
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+								"id", "name"
+							)
+							VALUES (
+								'team_id1', 'Team1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "team_id"
+							)
+							VALUES (
+								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'team_id1'
+							)`,
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+				{Query: `DELETE FROM public."file_uploads" WHERE id = 'fp_id1'`},
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s, _ := NewDbStorage(
+				StorageOptions{
+					Db: testDb,
+				},
+			)
+
+			runSqlOnDb(t, s.db, tt.setupSqlStmts)
+			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
+			fileUpload, err := s.GetFileUpload(tt.input)
+			assert.Equal(t, tt.output, fileUpload)
+			if !tt.errorExpected {
+				assert.NoError(t, err)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+		})
+	}
+}
+
 func Test_CreateFileUploadForTeam(t *testing.T) {
 	team, _ := model.NewTeam(model.TeamOptions{
 		Id:   "team_id1",
