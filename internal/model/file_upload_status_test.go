@@ -13,19 +13,19 @@ func Test_FileUploadStatus(t *testing.T) {
 		expectedOutput fileUploadStatus
 	}{
 		{
-			name:           "creates WAITING_FOR_FILE file upload status",
-			input:          "WAITING_FOR_FILE",
-			expectedOutput: waitingForFile,
+			name:           "creates INITIATED file upload status",
+			input:          "INITIATED",
+			expectedOutput: initiated,
 		},
 		{
-			name:           "creates UPLOADING_FILE file upload status",
-			input:          "UPLOADING_FILE",
-			expectedOutput: uploadingFile,
+			name:           "creates SUCCESS file upload status",
+			input:          "SUCCESS",
+			expectedOutput: success,
 		},
 		{
-			name:           "creates FILE_READY file upload status",
-			input:          "FILE_READY",
-			expectedOutput: fileReady,
+			name:           "creates FAILURE file upload status",
+			input:          "FAILURE",
+			expectedOutput: failure,
 		},
 		{
 			name:           "handles unknown file upload status",
@@ -49,19 +49,19 @@ func Test_FileUploadStatus_String(t *testing.T) {
 		expectedOutput string
 	}{
 		{
-			name:           "gets WAITING_FOR_FILE from ai game state",
-			input:          waitingForFile,
-			expectedOutput: "WAITING_FOR_FILE",
+			name:           "gets INITIATED from ai game state",
+			input:          initiated,
+			expectedOutput: "INITIATED",
 		},
 		{
-			name:           "gets UPLOADING_FILE from human game state",
-			input:          uploadingFile,
-			expectedOutput: "UPLOADING_FILE",
+			name:           "gets SUCCESS from human game state",
+			input:          success,
+			expectedOutput: "SUCCESS",
 		},
 		{
-			name:           "gets FILE_READY from human game state",
-			input:          fileReady,
-			expectedOutput: "FILE_READY",
+			name:           "gets FAILURE from human game state",
+			input:          failure,
+			expectedOutput: "FAILURE",
 		},
 		{
 			name:           "gets unknown from undefinedFileUploadStatus game state",
@@ -80,7 +80,7 @@ func Test_FileUploadStatus_String(t *testing.T) {
 
 func Test_BotType_Valid(t *testing.T) {
 	t.Run("returns true for a valid file upload status", func(t *testing.T) {
-		assert.True(t, fileReady.Valid())
+		assert.True(t, failure.Valid())
 	})
 
 	t.Run("returns false for a invalid file upload status", func(t *testing.T) {

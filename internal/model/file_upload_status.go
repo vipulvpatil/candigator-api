@@ -4,19 +4,19 @@ type fileUploadStatus int64
 
 const (
 	undefinedFileUploadStatus fileUploadStatus = iota
-	waitingForFile
-	uploadingFile
-	fileReady
+	initiated
+	success
+	failure
 )
 
 func FileUploadStatus(str string) fileUploadStatus {
 	switch str {
-	case "WAITING_FOR_FILE":
-		return waitingForFile
-	case "UPLOADING_FILE":
-		return uploadingFile
-	case "FILE_READY":
-		return fileReady
+	case "INITIATED":
+		return initiated
+	case "SUCCESS":
+		return success
+	case "FAILURE":
+		return failure
 	default:
 		return undefinedFileUploadStatus
 	}
@@ -24,12 +24,12 @@ func FileUploadStatus(str string) fileUploadStatus {
 
 func (b fileUploadStatus) String() string {
 	switch b {
-	case waitingForFile:
-		return "WAITING_FOR_FILE"
-	case uploadingFile:
-		return "UPLOADING_FILE"
-	case fileReady:
-		return "FILE_READY"
+	case initiated:
+		return "INITIATED"
+	case success:
+		return "SUCCESS"
+	case failure:
+		return "FAILURE"
 	default:
 		return "UNDEFINED"
 	}

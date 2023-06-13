@@ -125,7 +125,7 @@ func Test_UploadFiles(t *testing.T) {
 						Id:           "fp_id1",
 						Name:         "file1.pdf",
 						PresignedUrl: "",
-						Status:       "WAITING_FOR_FILE",
+						Status:       "INITIATED",
 						Error:        "unable to get presignedUrl",
 					},
 				},
@@ -136,7 +136,7 @@ func Test_UploadFiles(t *testing.T) {
 					return model.NewFileUpload(model.FileUploadOptions{
 						Id:     "fp_id1",
 						Name:   name,
-						Status: "WAITING_FOR_FILE",
+						Status: "INITIATED",
 						Team:   team,
 					})
 				},
@@ -168,7 +168,7 @@ func Test_UploadFiles(t *testing.T) {
 						Id:           "fp_id1",
 						Name:         "file1.pdf",
 						PresignedUrl: "http://presigned_url1",
-						Status:       "WAITING_FOR_FILE",
+						Status:       "INITIATED",
 						Error:        "unable to update fileUpload",
 					},
 				},
@@ -179,7 +179,7 @@ func Test_UploadFiles(t *testing.T) {
 					return model.NewFileUpload(model.FileUploadOptions{
 						Id:     "fp_id1",
 						Name:   name,
-						Status: "WAITING_FOR_FILE",
+						Status: "INITIATED",
 						Team:   team,
 					})
 				},
@@ -214,7 +214,7 @@ func Test_UploadFiles(t *testing.T) {
 						Id:           "fp_id1",
 						Name:         "file1.pdf",
 						PresignedUrl: "http://presigned_url1",
-						Status:       "WAITING_FOR_FILE",
+						Status:       "INITIATED",
 						Error:        "",
 					},
 				},
@@ -225,7 +225,7 @@ func Test_UploadFiles(t *testing.T) {
 					return model.NewFileUpload(model.FileUploadOptions{
 						Id:     "fp_id1",
 						Name:   name,
-						Status: "WAITING_FOR_FILE",
+						Status: "INITIATED",
 						Team:   team,
 					})
 				},
@@ -266,14 +266,14 @@ func Test_UploadFiles(t *testing.T) {
 						Id:           "fp_id1",
 						Name:         "file1.pdf",
 						PresignedUrl: "http://presigned_url1",
-						Status:       "WAITING_FOR_FILE",
+						Status:       "INITIATED",
 						Error:        "",
 					},
 					{
 						Id:           "fp_id2",
 						Name:         "file2.pdf",
 						PresignedUrl: "http://presigned_url1",
-						Status:       "WAITING_FOR_FILE",
+						Status:       "INITIATED",
 						Error:        "unable to upload fileUpload",
 					},
 					{
@@ -292,14 +292,14 @@ func Test_UploadFiles(t *testing.T) {
 						return model.NewFileUpload(model.FileUploadOptions{
 							Id:     "fp_id1",
 							Name:   name,
-							Status: "WAITING_FOR_FILE",
+							Status: "INITIATED",
 							Team:   team,
 						})
 					} else if name == "file2.pdf" {
 						return model.NewFileUpload(model.FileUploadOptions{
 							Id:     "fp_id2",
 							Name:   name,
-							Status: "WAITING_FOR_FILE",
+							Status: "INITIATED",
 							Team:   team,
 						})
 					} else {

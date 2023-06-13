@@ -5,6 +5,7 @@ import "github.com/vipulvpatil/candidate-tracker-go/internal/model"
 type FileUploadAccessorConfigurableMock struct {
 	CreateFileUploadForTeamInteral           func(name string, team *model.Team) (*model.FileUpload, error)
 	UpdateFileUploadWithPresignedUrlInternal func(id, presignedUrl string) error
+	UpdateFileUploadWithStatusInternal       func(id, status string) error
 }
 
 func (f *FileUploadAccessorConfigurableMock) CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error) {
@@ -13,4 +14,8 @@ func (f *FileUploadAccessorConfigurableMock) CreateFileUploadForTeam(name string
 
 func (f *FileUploadAccessorConfigurableMock) UpdateFileUploadWithPresignedUrl(id, presignedUrl string) error {
 	return f.UpdateFileUploadWithPresignedUrlInternal(id, presignedUrl)
+}
+
+func (f *FileUploadAccessorConfigurableMock) UpdateFileUploadWithStatus(id, status string) error {
+	return f.UpdateFileUploadWithStatusInternal(id, status)
 }

@@ -32,7 +32,19 @@ message UploadFilesResponse {
   repeated FileUpload fileUploads = 1;
 }
 
+message FileUploadUpdate {
+  string id = 1;
+  string status = 2;
+}
+
+message CompleteFileUploadRequest {
+  repeated FileUploadUpdate fileuploadUpdates = 1;
+}
+
+message CompleteFileUploadResponse {}
+
 service CandidateTrackerGo {
   rpc CheckConnection(CheckConnectionRequest) returns (CheckConnectionResponse) {}
   rpc UploadFiles(UploadFilesRequest) returns (UploadFilesResponse) {}
+  rpc CompleteFileUpload(CompleteFileUploadRequest) returns (CompleteFileUploadResponse) {}
 }

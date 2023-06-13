@@ -32,7 +32,7 @@ func NewFileUpload(opts FileUploadOptions) (*FileUpload, error) {
 
 	status := FileUploadStatus(opts.Status)
 	if !status.Valid() {
-		status = waitingForFile
+		status = initiated
 	}
 
 	if opts.Team == nil {

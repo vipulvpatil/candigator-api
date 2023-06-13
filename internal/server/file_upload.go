@@ -32,6 +32,10 @@ func (s *CandidateTrackerGoService) UploadFiles(ctx context.Context, req *pb.Upl
 	}, nil
 }
 
+func (s *CandidateTrackerGoService) CompleteFileUpload(ctx context.Context, req *pb.CompleteFileUploadRequest) (*pb.CompleteFileUploadResponse, error) {
+	return nil, nil
+}
+
 func (s *CandidateTrackerGoService) newFileUploadForTeam(fileName string, team *model.Team) *pb.FileUpload {
 	fileUploadResponse := pb.FileUpload{
 		Name: fileName,

@@ -11,11 +11,12 @@ import (
 type FileUploadAccessor interface {
 	CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error)
 	UpdateFileUploadWithPresignedUrl(id, presignedUrl string) error
+	UpdateFileUploadWithStatus(id, status string) error
 }
 
 func (s *Storage) CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error) {
 	id := s.IdGenerator.Generate()
-	initialFileUploadStatus := "WAITING_FOR_FILE"
+	initialFileUploadStatus := "INITIATED"
 
 	newFileUpload, err := model.NewFileUpload(model.FileUploadOptions{
 		Id:     id,
@@ -65,6 +66,31 @@ func (s *Storage) UpdateFileUploadWithPresignedUrl(id, presignedUrl string) erro
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return utilities.WrapBadError(err, fmt.Sprintf("dbError while checking affected row while updating fileUpload: %s %s", id, presignedUrl))
+	}
+
+	if rowsAffected != 1 {
+		return utilities.NewBadError(fmt.Sprintf("Very few or too many rows were affected when inserting file_upload in db. This is highly unexpected. rowsAffected: %d", rowsAffected))
+	}
+	return nil
+}
+
+func (s *Storage) UpdateFileUploadWithStatus(id, status string) error {
+	if utilities.IsBlank(id) {
+		return errors.New("id cannot be blank")
+	}
+
+	if !model.FileUploadStatus(status).Valid() {
+		return errors.New("status should be valid")
+	}
+
+	result, err := s.db.Exec(`UPDATE public."file_uploads" SET "status" = $2 WHERE id = $1`, id, status)
+	if err != nil {
+		return utilities.WrapBadError(err, fmt.Sprintf("dbError while updating fileUpload: %s %s", id, status))
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return utilities.WrapBadError(err, fmt.Sprintf("dbError while checking affected row while updating fileUpload: %s %s", id, status))
 	}
 
 	if rowsAffected != 1 {

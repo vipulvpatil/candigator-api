@@ -47,7 +47,7 @@ func Test_NewFileUpload(t *testing.T) {
 				Id:           "123",
 				Name:         "test",
 				PresignedUrl: "some_url",
-				Status:       "FILE_READY",
+				Status:       "FAILURE",
 				Team: &Team{
 					id:   "team_id1",
 					name: "test",
@@ -57,7 +57,7 @@ func Test_NewFileUpload(t *testing.T) {
 				id:           "123",
 				name:         "test",
 				presignedUrl: "some_url",
-				status:       fileReady,
+				status:       failure,
 				team: &Team{
 					id:   "team_id1",
 					name: "test",
@@ -81,7 +81,7 @@ func Test_NewFileUpload(t *testing.T) {
 				id:           "123",
 				name:         "test",
 				presignedUrl: "some_url",
-				status:       waitingForFile,
+				status:       initiated,
 				team: &Team{
 					id:   "team_id1",
 					name: "test",
@@ -111,7 +111,7 @@ func Test_FileUpload_Id(t *testing.T) {
 			id:           "fp_id1",
 			name:         "file1.pdf",
 			presignedUrl: "http://presignedUrl1",
-			status:       waitingForFile,
+			status:       initiated,
 		}
 		assert.Equal(t, "fp_id1", fileUpload.Id())
 	})
@@ -123,9 +123,9 @@ func Test_FileUpload_Status(t *testing.T) {
 			id:           "fp_id1",
 			name:         "file1.pdf",
 			presignedUrl: "http://presignedUrl1",
-			status:       waitingForFile,
+			status:       initiated,
 		}
-		assert.Equal(t, "WAITING_FOR_FILE", fileUpload.Status())
+		assert.Equal(t, "INITIATED", fileUpload.Status())
 	})
 
 	t.Run("Status returns undefined if status is invalid", func(t *testing.T) {

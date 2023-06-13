@@ -18,7 +18,7 @@ func Test_CreateFileUploadForTeam(t *testing.T) {
 		Id:           "fp_id1",
 		Name:         "file1.pdf",
 		PresignedUrl: "",
-		Status:       "WAITING_FOR_FILE",
+		Status:       "INITIATED",
 		Team:         team,
 	})
 	tests := []struct {
@@ -113,7 +113,7 @@ func Test_CreateFileUploadForTeam(t *testing.T) {
 				assert.Equal(t, "fp_id1", id)
 				assert.Equal(t, "file1.pdf", name)
 				assert.Equal(t, "", presignedUrl)
-				assert.Equal(t, model.FileUploadStatus("WAITING_FOR_FILE").String(), status)
+				assert.Equal(t, model.FileUploadStatus("INITIATED").String(), status)
 				return true
 			},
 			errorExpected: false,
@@ -224,7 +224,7 @@ func Test_UpdateFileUploadWithPresignedUrl(t *testing.T) {
 								"id", "name", "presigned_url", "status", "team_id"
 							)
 							VALUES (
-								'fp_id1', 'file1.pdf', '', 'WAITING_FOR_FILE', 'team_id1'
+								'fp_id1', 'file1.pdf', '', 'INITIATED', 'team_id1'
 							)`,
 				},
 			},
@@ -242,7 +242,7 @@ func Test_UpdateFileUploadWithPresignedUrl(t *testing.T) {
 				assert.Equal(t, "fp_id1", id)
 				assert.Equal(t, "file1.pdf", name)
 				assert.Equal(t, "http://presigned_url1", presignedUrl)
-				assert.Equal(t, model.FileUploadStatus("WAITING_FOR_FILE").String(), status)
+				assert.Equal(t, model.FileUploadStatus("INITIATED").String(), status)
 				return true
 			},
 			errorExpected: false,
@@ -262,6 +262,134 @@ func Test_UpdateFileUploadWithPresignedUrl(t *testing.T) {
 			runSqlOnDb(t, s.db, tt.setupSqlStmts)
 			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
 			err := s.UpdateFileUploadWithPresignedUrl(tt.input.id, tt.input.presignedUrl)
+			if !tt.errorExpected {
+				assert.NoError(t, err)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+			if tt.dbUpdateCheck != nil {
+				assert.True(t, tt.dbUpdateCheck(s.db))
+			}
+		})
+	}
+}
+
+func Test_UpdateFileUploadWithStatus(t *testing.T) {
+	tests := []struct {
+		name  string
+		input struct {
+			id     string
+			status string
+		}
+		setupSqlStmts   []TestSqlStmts
+		cleanupSqlStmts []TestSqlStmts
+		dbUpdateCheck   func(db *sql.DB) bool
+		errorExpected   bool
+		errorString     string
+	}{
+		{
+			name: "errors when id is empty",
+			input: struct {
+				id     string
+				status string
+			}{},
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			dbUpdateCheck:   nil,
+			errorExpected:   true,
+			errorString:     "id cannot be blank",
+		},
+		{
+			name: "errors when status is not valid",
+			input: struct {
+				id     string
+				status string
+			}{
+				id: "fp_id1",
+			},
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			dbUpdateCheck:   nil,
+			errorExpected:   true,
+			errorString:     "status should be valid",
+		},
+		{
+			name: "errors when fileUpload does not exist in database",
+			input: struct {
+				id     string
+				status string
+			}{
+				id:     "fp_id1",
+				status: "SUCCESS",
+			},
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			dbUpdateCheck:   nil,
+			errorExpected:   true,
+			errorString:     "THIS IS BAD: Very few or too many rows were affected when inserting file_upload in db. This is highly unexpected. rowsAffected: 0",
+		},
+		{
+			name: "successfully updates file upload",
+			input: struct {
+				id     string
+				status string
+			}{
+				id:     "fp_id1",
+				status: "FAILURE",
+			},
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+								"id", "name"
+							)
+							VALUES (
+								'team_id1', 'Team1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "team_id"
+							)
+							VALUES (
+								'fp_id1', 'file1.pdf', 'http://presigned_url1', 'INITIATED', 'team_id1'
+							)`,
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+			},
+			dbUpdateCheck: func(db *sql.DB) bool {
+				var id, name, presignedUrl, status, createdAt string
+				row := db.QueryRow(
+					`SELECT id, name, presigned_url, status, created_at FROM public."file_uploads" WHERE team_id = 'team_id1'`,
+				)
+				assert.NoError(t, row.Err())
+				err := row.Scan(&id, &name, &presignedUrl, &status, &createdAt)
+				assert.NoError(t, err)
+				assert.Equal(t, "fp_id1", id)
+				assert.Equal(t, "file1.pdf", name)
+				assert.Equal(t, "http://presigned_url1", presignedUrl)
+				assert.Equal(t, model.FileUploadStatus("FAILURE").String(), status)
+				return true
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s, _ := NewDbStorage(
+				StorageOptions{
+					Db:          testDb,
+					IdGenerator: &utilities.IdGeneratorMockConstant{Id: "fp_id1"},
+				},
+			)
+
+			runSqlOnDb(t, s.db, tt.setupSqlStmts)
+			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
+			err := s.UpdateFileUploadWithStatus(tt.input.id, tt.input.status)
 			if !tt.errorExpected {
 				assert.NoError(t, err)
 			} else {
