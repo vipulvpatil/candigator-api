@@ -345,3 +345,413 @@ func Test_UploadFiles(t *testing.T) {
 		})
 	}
 }
+
+func Test_CompleteFileUploads(t *testing.T) {
+	team, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id1",
+		Name: "test@example.com",
+	})
+	otherTeam, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id2",
+		Name: "test2@example.com",
+	})
+	userWithTeam, _ := model.NewUser(model.UserOptions{
+		Id:    "user_id1",
+		Email: "test@example.com",
+		Team:  team,
+	})
+	initiatedFileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
+		Id:           "fp_id1",
+		Name:         "file1.pdf",
+		PresignedUrl: "https://presigned_url1",
+		Status:       "INITIATED",
+		Team:         team,
+	})
+	initiatedFileUpload2, _ := model.NewFileUpload(model.FileUploadOptions{
+		Id:           "fp_id2",
+		Name:         "file2.pdf",
+		PresignedUrl: "https://presigned_url2",
+		Status:       "INITIATED",
+		Team:         team,
+	})
+	completedFileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
+		Id:           "fp_id1",
+		Name:         "file1.pdf",
+		PresignedUrl: "https://presigned_url1",
+		Status:       "SUCCESS",
+		Team:         team,
+	})
+	anotherFileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
+		Id:           "fp_id1",
+		Name:         "file1.pdf",
+		PresignedUrl: "https://presigned_url1",
+		Status:       "INITIATED",
+		Team:         otherTeam,
+	})
+
+	tests := []struct {
+		name                   string
+		ctx                    context.Context
+		input                  *pb.CompleteFileUploadsRequest
+		output                 *pb.CompleteFileUploadsResponse
+		teamHydratorMock       storage.TeamHydrator
+		fileUploadAccessorMock storage.FileUploadAccessor
+		fileStorerMock         filestorage.FileStorer
+		errorExpected          bool
+		errorString            string
+	}{
+		{
+			name:                   "errors if no user in context",
+			ctx:                    context.Background(),
+			input:                  &pb.CompleteFileUploadsRequest{},
+			output:                 &pb.CompleteFileUploadsResponse{},
+			teamHydratorMock:       nil,
+			fileUploadAccessorMock: nil,
+			fileStorerMock:         nil,
+			errorExpected:          true,
+			errorString:            "rpc error: code = Unauthenticated desc = retrieving user data failed",
+		},
+		{
+			name: "errors if unable to hydrate team",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input:                  &pb.CompleteFileUploadsRequest{},
+			output:                 &pb.CompleteFileUploadsResponse{},
+			teamHydratorMock:       &storage.TeamHydratorMockFailure{},
+			fileUploadAccessorMock: nil,
+			fileStorerMock:         nil,
+			errorExpected:          true,
+			errorString:            "unable to hydrate team",
+		},
+		{
+			name: "returns response with error if database errors when getting fileUpload",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.CompleteFileUploadsRequest{
+				FileUploadUpdates: []*pb.FileUploadUpdate{
+					{
+						Id:     "fp_id1",
+						Status: "SUCCESS",
+					},
+				},
+			},
+			output: &pb.CompleteFileUploadsResponse{
+				FileUploads: []*pb.FileUpload{
+					{
+						Id:           "fp_id1",
+						Name:         "",
+						PresignedUrl: "",
+						Status:       "",
+						Error:        "unable to get fileUpload: dbError when querying",
+					},
+				},
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetFileUploadInternal: func(id string) (*model.FileUpload, error) {
+					return nil, errors.New("dbError when querying")
+				},
+			},
+			fileStorerMock: nil,
+			errorExpected:  false,
+			errorString:    "",
+		},
+		{
+			name: "returns response with error if fileUpload not in database",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.CompleteFileUploadsRequest{
+				FileUploadUpdates: []*pb.FileUploadUpdate{
+					{
+						Id:     "fp_id1",
+						Status: "SUCCESS",
+					},
+				},
+			},
+			output: &pb.CompleteFileUploadsResponse{
+				FileUploads: []*pb.FileUpload{
+					{
+						Id:           "fp_id1",
+						Name:         "",
+						PresignedUrl: "",
+						Status:       "",
+						Error:        "unable to get fileUpload",
+					},
+				},
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetFileUploadInternal: func(id string) (*model.FileUpload, error) {
+					return nil, nil
+				},
+			},
+			fileStorerMock: nil,
+			errorExpected:  false,
+			errorString:    "",
+		},
+		{
+			name: "returns response with error if fileUpload in database is already completed",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.CompleteFileUploadsRequest{
+				FileUploadUpdates: []*pb.FileUploadUpdate{
+					{
+						Id:     "fp_id1",
+						Status: "SUCCESS",
+					},
+				},
+			},
+			output: &pb.CompleteFileUploadsResponse{
+				FileUploads: []*pb.FileUpload{
+					{
+						Id:           "fp_id1",
+						Name:         "file1.pdf",
+						PresignedUrl: "https://presigned_url1",
+						Status:       "",
+						Error:        "unable to update fileUpload",
+					},
+				},
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetFileUploadInternal: func(id string) (*model.FileUpload, error) {
+					return completedFileUpload, nil
+				},
+			},
+			fileStorerMock: nil,
+			errorExpected:  false,
+			errorString:    "",
+		},
+		{
+			name: "returns response with error if fileUpload belongs to different team",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.CompleteFileUploadsRequest{
+				FileUploadUpdates: []*pb.FileUploadUpdate{
+					{
+						Id:     "fp_id1",
+						Status: "SUCCESS",
+					},
+				},
+			},
+			output: &pb.CompleteFileUploadsResponse{
+				FileUploads: []*pb.FileUpload{
+					{
+						Id:           "fp_id1",
+						Name:         "file1.pdf",
+						PresignedUrl: "https://presigned_url1",
+						Status:       "",
+						Error:        "THIS IS BAD: unauthorized update of fileUpload attempted",
+					},
+				},
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetFileUploadInternal: func(id string) (*model.FileUpload, error) {
+					return anotherFileUpload, nil
+				},
+			},
+			fileStorerMock: nil,
+			errorExpected:  false,
+			errorString:    "",
+		},
+		{
+			name: "returns response with error if new status is invalid",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.CompleteFileUploadsRequest{
+				FileUploadUpdates: []*pb.FileUploadUpdate{
+					{
+						Id:     "fp_id1",
+						Status: "DONE",
+					},
+				},
+			},
+			output: &pb.CompleteFileUploadsResponse{
+				FileUploads: []*pb.FileUpload{
+					{
+						Id:           "fp_id1",
+						Name:         "file1.pdf",
+						PresignedUrl: "https://presigned_url1",
+						Status:       "",
+						Error:        "invalid update status",
+					},
+				},
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetFileUploadInternal: func(id string) (*model.FileUpload, error) {
+					return initiatedFileUpload, nil
+				},
+			},
+			fileStorerMock: nil,
+			errorExpected:  false,
+			errorString:    "",
+		},
+		{
+			name: "returns response with error if updating fails in database",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.CompleteFileUploadsRequest{
+				FileUploadUpdates: []*pb.FileUploadUpdate{
+					{
+						Id:     "fp_id1",
+						Status: "SUCCESS",
+					},
+				},
+			},
+			output: &pb.CompleteFileUploadsResponse{
+				FileUploads: []*pb.FileUpload{
+					{
+						Id:           "fp_id1",
+						Name:         "file1.pdf",
+						PresignedUrl: "https://presigned_url1",
+						Status:       "",
+						Error:        "THIS IS BAD: unable to update fileUpload: dbError while updating",
+					},
+				},
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetFileUploadInternal: func(id string) (*model.FileUpload, error) {
+					return initiatedFileUpload, nil
+				},
+				UpdateFileUploadWithStatusInternal: func(id, status string) error {
+					return errors.New("dbError while updating")
+				},
+			},
+			fileStorerMock: nil,
+			errorExpected:  false,
+			errorString:    "",
+		},
+		{
+			name: "runs succesffuly with  partial errors",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.CompleteFileUploadsRequest{
+				FileUploadUpdates: []*pb.FileUploadUpdate{
+					{
+						Id:     "fp_id1",
+						Status: "SUCCESS",
+					},
+					{
+						Id:     "fp_id2",
+						Status: "SUCCESS",
+					},
+				},
+			},
+			output: &pb.CompleteFileUploadsResponse{
+				FileUploads: []*pb.FileUpload{
+					{
+						Id:           "fp_id1",
+						Name:         "file1.pdf",
+						PresignedUrl: "https://presigned_url1",
+						Status:       "",
+						Error:        "THIS IS BAD: unable to update fileUpload: dbError while updating",
+					},
+					{
+						Id:           "fp_id2",
+						Name:         "file2.pdf",
+						PresignedUrl: "https://presigned_url2",
+						Status:       "SUCCESS",
+						Error:        "",
+					},
+				},
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetFileUploadInternal: func(id string) (*model.FileUpload, error) {
+					if id == "fp_id1" {
+						return initiatedFileUpload, nil
+					} else {
+						return initiatedFileUpload2, nil
+					}
+				},
+				UpdateFileUploadWithStatusInternal: func(id, status string) error {
+					if id == "fp_id1" {
+						return errors.New("dbError while updating")
+					} else {
+						return nil
+					}
+				},
+			},
+			fileStorerMock: nil,
+			errorExpected:  false,
+			errorString:    "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server, _ := NewServer(ServerDependencies{
+				Storage: storage.NewStorageAccessorMock(
+					storage.WithTeamHydratorMock(tt.teamHydratorMock),
+					storage.WithFileUploadAccessorMock(tt.fileUploadAccessorMock),
+				),
+				Logger:     &utilities.NullLogger{},
+				FileStorer: tt.fileStorerMock,
+			})
+
+			response, err := server.CompleteFileUploads(
+				tt.ctx,
+				tt.input,
+			)
+			if !tt.errorExpected {
+				assert.Empty(t, tt.errorString)
+				assert.NoError(t, err)
+				assert.EqualValues(t, tt.output, response)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+		})
+	}
+}

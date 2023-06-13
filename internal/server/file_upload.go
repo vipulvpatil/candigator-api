@@ -48,7 +48,6 @@ func (s *CandidateTrackerGoService) CompleteFileUploads(ctx context.Context, req
 	team := userWithTeam.Team()
 
 	responseData := []*pb.FileUpload{}
-
 	fileUploadUpdates := req.GetFileUploadUpdates()
 	for _, fileUploadUpdate := range fileUploadUpdates {
 		responseData = append(responseData, s.getUpdatedFileUploadForTeam(fileUploadUpdate, team))
@@ -81,11 +80,11 @@ func (s *CandidateTrackerGoService) getUpdatedFileUploadForTeam(fileUploadUpdate
 	}
 
 	if !fileUpload.BelongsToTeam(team) {
-		return fileUploadResponseWithError(&fileUploadResponse, utilities.NewBadError("unauthorized fileUpload attempted"))
+		return fileUploadResponseWithError(&fileUploadResponse, utilities.NewBadError("unauthorized update of fileUpload attempted"))
 	}
 
 	updateStatus := model.FileUploadStatus(fileUploadUpdate.GetStatus())
-	if updateStatus.Valid() {
+	if !updateStatus.Valid() {
 		return fileUploadResponseWithError(&fileUploadResponse, errors.New("invalid update status"))
 	}
 
