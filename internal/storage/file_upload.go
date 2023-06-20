@@ -11,6 +11,7 @@ import (
 
 type FileUploadAccessor interface {
 	GetFileUpload(id string) (*model.FileUpload, error)
+	GetFileUploadsForTeam(team *model.Team) ([]*model.FileUpload, error)
 	CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error)
 	UpdateFileUploadWithPresignedUrl(id, presignedUrl string) error
 	UpdateFileUploadWithStatus(id, status string) error
@@ -53,6 +54,55 @@ func (s *Storage) GetFileUpload(id string) (*model.FileUpload, error) {
 		Status:       status,
 		Team:         team,
 	})
+}
+
+func (s *Storage) GetFileUploadsForTeam(team *model.Team) ([]*model.FileUpload, error) {
+	if team == nil || utilities.IsBlank(team.Id()) {
+		return nil, errors.New("team cannot be blank")
+	}
+
+	rows, err := s.db.Query(
+		`SELECT f.id, f.name, f.status, f.presigned_url
+		FROM public."file_uploads" AS f
+		WHERE f.team_id = $1 ORDER BY f.created_at ASC, f.id ASC`,
+		team.Id(),
+	)
+	if err != nil {
+		return nil, utilities.WrapBadError(err, "failed to select file_uploads")
+	}
+	defer rows.Close()
+
+	fileUploads := []*model.FileUpload{}
+
+	for rows.Next() {
+		var id, name, status, presignedUrl string
+		err := rows.Scan(&id, &name, &status, &presignedUrl)
+
+		if err != nil {
+			return nil, utilities.WrapBadError(err, "failed while scanning rows")
+		}
+
+		fileUpload, err := model.NewFileUpload(model.FileUploadOptions{
+			Id:           id,
+			Name:         name,
+			PresignedUrl: presignedUrl,
+			Status:       status,
+			Team:         team,
+		})
+
+		if err != nil {
+			// TODO: Log this error?
+			continue
+		}
+
+		fileUploads = append(fileUploads, fileUpload)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return nil, utilities.WrapBadError(err, "failed to correctly go through file_upload rows")
+	}
+	return fileUploads, nil
 }
 
 func (s *Storage) CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error) {

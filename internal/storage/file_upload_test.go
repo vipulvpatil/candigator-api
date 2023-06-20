@@ -17,7 +17,7 @@ func Test_GetFileUpload(t *testing.T) {
 	fileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
 		Id:           "fp_id1",
 		Name:         "file1.pdf",
-		PresignedUrl: "",
+		PresignedUrl: "https://presigned_url1",
 		Status:       "INITIATED",
 		Team:         team,
 	})
@@ -90,6 +90,114 @@ func Test_GetFileUpload(t *testing.T) {
 			runSqlOnDb(t, s.db, tt.setupSqlStmts)
 			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
 			fileUpload, err := s.GetFileUpload(tt.input)
+			assert.Equal(t, tt.output, fileUpload)
+			if !tt.errorExpected {
+				assert.NoError(t, err)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+		})
+	}
+}
+
+func Test_GetFileUploadsForTeam(t *testing.T) {
+	team, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id1",
+		Name: "Team1",
+	})
+	fileUpload1, _ := model.NewFileUpload(model.FileUploadOptions{
+		Id:           "fp_id1",
+		Name:         "file1.pdf",
+		PresignedUrl: "https://presigned_url1",
+		Status:       "INITIATED",
+		Team:         team,
+	})
+	fileUpload2, _ := model.NewFileUpload(model.FileUploadOptions{
+		Id:           "fp_id2",
+		Name:         "file2.pdf",
+		PresignedUrl: "https://presigned_url2",
+		Status:       "INITIATED",
+		Team:         team,
+	})
+	tests := []struct {
+		name            string
+		input           *model.Team
+		output          []*model.FileUpload
+		setupSqlStmts   []TestSqlStmts
+		cleanupSqlStmts []TestSqlStmts
+		errorExpected   bool
+		errorString     string
+	}{
+		{
+			name:            "errors when team is empty",
+			input:           nil,
+			output:          nil,
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			errorExpected:   true,
+			errorString:     "team cannot be blank",
+		},
+		{
+			name:            "errors when team id is empty",
+			input:           &model.Team{},
+			output:          nil,
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			errorExpected:   true,
+			errorString:     "team cannot be blank",
+		},
+		{
+			name:   "successfully gets file uploads",
+			input:  team,
+			output: []*model.FileUpload{fileUpload1, fileUpload2},
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+								"id", "name"
+							)
+							VALUES (
+								'team_id1', 'Team1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "team_id"
+							)
+							VALUES (
+								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'team_id1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "team_id"
+							)
+							VALUES (
+								'fp_id2', 'file2.pdf', 'https://presigned_url2', 'INITIATED', 'team_id1'
+							)`,
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+				{Query: `DELETE FROM public."file_uploads" WHERE id = 'fp_id1'`},
+				{Query: `DELETE FROM public."file_uploads" WHERE id = 'fp_id2'`},
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s, _ := NewDbStorage(
+				StorageOptions{
+					Db: testDb,
+				},
+			)
+
+			runSqlOnDb(t, s.db, tt.setupSqlStmts)
+			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
+			fileUpload, err := s.GetFileUploadsForTeam(tt.input)
 			assert.Equal(t, tt.output, fileUpload)
 			if !tt.errorExpected {
 				assert.NoError(t, err)
