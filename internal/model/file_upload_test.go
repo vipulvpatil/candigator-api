@@ -97,8 +97,8 @@ func Test_NewFileUpload(t *testing.T) {
 				id:               "123",
 				name:             "test",
 				presignedUrl:     "some_url",
-				status:           initiated,
 				processingStatus: not_started,
+				status:           initiated,
 				team: &Team{
 					id:   "team_id1",
 					name: "test",
@@ -125,10 +125,11 @@ func Test_NewFileUpload(t *testing.T) {
 func Test_FileUpload_Id(t *testing.T) {
 	t.Run("Id returns fileUpload's id", func(t *testing.T) {
 		fileUpload := &FileUpload{
-			id:           "fp_id1",
-			name:         "file1.pdf",
-			presignedUrl: "http://presignedUrl1",
-			status:       initiated,
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           initiated,
 		}
 		assert.Equal(t, "fp_id1", fileUpload.Id())
 	})
@@ -137,10 +138,11 @@ func Test_FileUpload_Id(t *testing.T) {
 func Test_FileUpload_Name(t *testing.T) {
 	t.Run("Id returns fileUpload's id", func(t *testing.T) {
 		fileUpload := &FileUpload{
-			id:           "fp_id1",
-			name:         "file1.pdf",
-			presignedUrl: "http://presignedUrl1",
-			status:       initiated,
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           initiated,
 		}
 		assert.Equal(t, "file1.pdf", fileUpload.Name())
 	})
@@ -149,10 +151,11 @@ func Test_FileUpload_Name(t *testing.T) {
 func Test_FileUpload_PresignedUrl(t *testing.T) {
 	t.Run("Id returns fileUpload's id", func(t *testing.T) {
 		fileUpload := &FileUpload{
-			id:           "fp_id1",
-			name:         "file1.pdf",
-			presignedUrl: "http://presignedUrl1",
-			status:       initiated,
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           initiated,
 		}
 		assert.Equal(t, "http://presignedUrl1", fileUpload.PresignedUrl())
 	})
@@ -161,51 +164,78 @@ func Test_FileUpload_PresignedUrl(t *testing.T) {
 func Test_FileUpload_Status(t *testing.T) {
 	t.Run("Status returns fileUpload's status if valid", func(t *testing.T) {
 		fileUpload := &FileUpload{
-			id:           "fp_id1",
-			name:         "file1.pdf",
-			presignedUrl: "http://presignedUrl1",
-			status:       initiated,
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           initiated,
 		}
 		assert.Equal(t, "INITIATED", fileUpload.Status())
 	})
 
 	t.Run("Status returns undefined if status is invalid", func(t *testing.T) {
 		fileUpload := &FileUpload{
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+		}
+		assert.Equal(t, "UNDEFINED", fileUpload.Status())
+	})
+}
+
+func Test_FileUpload_ProcessingStatus(t *testing.T) {
+	t.Run("ProcessingStatus returns fileUpload's processing status if valid", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: ongoing,
+			status:           initiated,
+		}
+		assert.Equal(t, "ONGOING", fileUpload.ProcessingStatus())
+	})
+
+	t.Run("ProcessingStatus returns undefined if processing status is invalid", func(t *testing.T) {
+		fileUpload := &FileUpload{
 			id:           "fp_id1",
 			name:         "file1.pdf",
 			presignedUrl: "http://presignedUrl1",
 		}
-		assert.Equal(t, "UNDEFINED", fileUpload.Status())
+		assert.Equal(t, "UNDEFINED", fileUpload.ProcessingStatus())
 	})
 }
 
 func Test_FileUpload_Completed(t *testing.T) {
 	t.Run("Completed returns true if status is success", func(t *testing.T) {
 		fileUpload := &FileUpload{
-			id:           "fp_id1",
-			name:         "file1.pdf",
-			presignedUrl: "http://presignedUrl1",
-			status:       success,
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           success,
 		}
 		assert.True(t, fileUpload.Completed())
 	})
 
 	t.Run("Completed returns true if status is failure", func(t *testing.T) {
 		fileUpload := &FileUpload{
-			id:           "fp_id1",
-			name:         "file1.pdf",
-			presignedUrl: "http://presignedUrl1",
-			status:       failure,
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           failure,
 		}
 		assert.True(t, fileUpload.Completed())
 	})
 
 	t.Run("Completed returns false if status is initiated", func(t *testing.T) {
 		fileUpload := &FileUpload{
-			id:           "fp_id1",
-			name:         "file1.pdf",
-			presignedUrl: "http://presignedUrl1",
-			status:       initiated,
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           initiated,
 		}
 		assert.False(t, fileUpload.Completed())
 	})
@@ -219,10 +249,11 @@ func Test_FileUpload_BelongsToTeam(t *testing.T) {
 		}
 
 		fileUpload := &FileUpload{
-			id:           "fp_id1",
-			name:         "file1.pdf",
-			presignedUrl: "http://presignedUrl1",
-			status:       initiated,
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           initiated,
 			team: &Team{
 				id:   "team_id1",
 				name: "team1",
@@ -238,10 +269,11 @@ func Test_FileUpload_BelongsToTeam(t *testing.T) {
 		}
 
 		fileUpload := &FileUpload{
-			id:           "fp_id1",
-			name:         "file1.pdf",
-			presignedUrl: "http://presignedUrl1",
-			status:       initiated,
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           initiated,
 			team: &Team{
 				id:   "team_id2",
 				name: "team2",

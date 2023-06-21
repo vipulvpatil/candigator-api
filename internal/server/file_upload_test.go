@@ -122,11 +122,12 @@ func Test_UploadFiles(t *testing.T) {
 			output: &pb.UploadFilesResponse{
 				FileUploads: []*pb.FileUpload{
 					{
-						Id:           "fp_id1",
-						Name:         "file1.pdf",
-						PresignedUrl: "",
-						Status:       "INITIATED",
-						Error:        "unable to get presignedUrl",
+						Id:               "fp_id1",
+						Name:             "file1.pdf",
+						PresignedUrl:     "",
+						Status:           "INITIATED",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "unable to get presignedUrl",
 					},
 				},
 			},
@@ -166,11 +167,12 @@ func Test_UploadFiles(t *testing.T) {
 			output: &pb.UploadFilesResponse{
 				FileUploads: []*pb.FileUpload{
 					{
-						Id:           "fp_id1",
-						Name:         "file1.pdf",
-						PresignedUrl: "http://presigned_url1",
-						Status:       "INITIATED",
-						Error:        "unable to update fileUpload",
+						Id:               "fp_id1",
+						Name:             "file1.pdf",
+						PresignedUrl:     "http://presigned_url1",
+						Status:           "INITIATED",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "unable to update fileUpload",
 					},
 				},
 			},
@@ -213,11 +215,12 @@ func Test_UploadFiles(t *testing.T) {
 			output: &pb.UploadFilesResponse{
 				FileUploads: []*pb.FileUpload{
 					{
-						Id:           "fp_id1",
-						Name:         "file1.pdf",
-						PresignedUrl: "http://presigned_url1",
-						Status:       "INITIATED",
-						Error:        "",
+						Id:               "fp_id1",
+						Name:             "file1.pdf",
+						PresignedUrl:     "http://presigned_url1",
+						Status:           "INITIATED",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "",
 					},
 				},
 			},
@@ -266,25 +269,28 @@ func Test_UploadFiles(t *testing.T) {
 			output: &pb.UploadFilesResponse{
 				FileUploads: []*pb.FileUpload{
 					{
-						Id:           "fp_id1",
-						Name:         "file1.pdf",
-						PresignedUrl: "http://presigned_url1",
-						Status:       "INITIATED",
-						Error:        "",
+						Id:               "fp_id1",
+						Name:             "file1.pdf",
+						PresignedUrl:     "http://presigned_url1",
+						Status:           "INITIATED",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "",
 					},
 					{
-						Id:           "fp_id2",
-						Name:         "file2.pdf",
-						PresignedUrl: "http://presigned_url1",
-						Status:       "INITIATED",
-						Error:        "unable to upload fileUpload",
+						Id:               "fp_id2",
+						Name:             "file2.pdf",
+						PresignedUrl:     "http://presigned_url1",
+						Status:           "INITIATED",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "unable to upload fileUpload",
 					},
 					{
-						Id:           "",
-						Name:         "file3.pdf",
-						PresignedUrl: "",
-						Status:       "",
-						Error:        "unable to create fileUpload",
+						Id:               "",
+						Name:             "file3.pdf",
+						PresignedUrl:     "",
+						Status:           "",
+						ProcessingStatus: "",
+						Error:            "unable to create fileUpload",
 					},
 				},
 			},
@@ -459,11 +465,12 @@ func Test_CompleteFileUploads(t *testing.T) {
 			output: &pb.CompleteFileUploadsResponse{
 				FileUploads: []*pb.FileUpload{
 					{
-						Id:           "fp_id1",
-						Name:         "",
-						PresignedUrl: "",
-						Status:       "",
-						Error:        "unable to get fileUpload: dbError when querying",
+						Id:               "fp_id1",
+						Name:             "",
+						PresignedUrl:     "",
+						Status:           "",
+						ProcessingStatus: "",
+						Error:            "unable to get fileUpload: dbError when querying",
 					},
 				},
 			},
@@ -498,11 +505,12 @@ func Test_CompleteFileUploads(t *testing.T) {
 			output: &pb.CompleteFileUploadsResponse{
 				FileUploads: []*pb.FileUpload{
 					{
-						Id:           "fp_id1",
-						Name:         "",
-						PresignedUrl: "",
-						Status:       "",
-						Error:        "unable to get fileUpload",
+						Id:               "fp_id1",
+						Name:             "",
+						PresignedUrl:     "",
+						Status:           "",
+						ProcessingStatus: "",
+						Error:            "unable to get fileUpload",
 					},
 				},
 			},
@@ -537,11 +545,12 @@ func Test_CompleteFileUploads(t *testing.T) {
 			output: &pb.CompleteFileUploadsResponse{
 				FileUploads: []*pb.FileUpload{
 					{
-						Id:           "fp_id1",
-						Name:         "file1.pdf",
-						PresignedUrl: "https://presigned_url1",
-						Status:       "",
-						Error:        "unable to update fileUpload",
+						Id:               "fp_id1",
+						Name:             "file1.pdf",
+						PresignedUrl:     "https://presigned_url1",
+						Status:           "",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "unable to update fileUpload",
 					},
 				},
 			},
@@ -576,11 +585,12 @@ func Test_CompleteFileUploads(t *testing.T) {
 			output: &pb.CompleteFileUploadsResponse{
 				FileUploads: []*pb.FileUpload{
 					{
-						Id:           "fp_id1",
-						Name:         "file1.pdf",
-						PresignedUrl: "https://presigned_url1",
-						Status:       "",
-						Error:        "THIS IS BAD: unauthorized update of fileUpload attempted",
+						Id:               "fp_id1",
+						Name:             "file1.pdf",
+						PresignedUrl:     "https://presigned_url1",
+						Status:           "",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "THIS IS BAD: unauthorized update of fileUpload attempted",
 					},
 				},
 			},
@@ -615,11 +625,12 @@ func Test_CompleteFileUploads(t *testing.T) {
 			output: &pb.CompleteFileUploadsResponse{
 				FileUploads: []*pb.FileUpload{
 					{
-						Id:           "fp_id1",
-						Name:         "file1.pdf",
-						PresignedUrl: "https://presigned_url1",
-						Status:       "",
-						Error:        "invalid update status",
+						Id:               "fp_id1",
+						Name:             "file1.pdf",
+						PresignedUrl:     "https://presigned_url1",
+						Status:           "",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "invalid update status",
 					},
 				},
 			},
@@ -654,11 +665,12 @@ func Test_CompleteFileUploads(t *testing.T) {
 			output: &pb.CompleteFileUploadsResponse{
 				FileUploads: []*pb.FileUpload{
 					{
-						Id:           "fp_id1",
-						Name:         "file1.pdf",
-						PresignedUrl: "https://presigned_url1",
-						Status:       "",
-						Error:        "THIS IS BAD: unable to update fileUpload: dbError while updating",
+						Id:               "fp_id1",
+						Name:             "file1.pdf",
+						PresignedUrl:     "https://presigned_url1",
+						Status:           "",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "THIS IS BAD: unable to update fileUpload: dbError while updating",
 					},
 				},
 			},
@@ -676,7 +688,7 @@ func Test_CompleteFileUploads(t *testing.T) {
 			errorString:    "",
 		},
 		{
-			name: "runs succesffuly with  partial errors",
+			name: "runs successfully with  partial errors",
 			ctx: metadata.NewIncomingContext(
 				context.Background(), metadata.New(
 					map[string]string{
@@ -700,18 +712,20 @@ func Test_CompleteFileUploads(t *testing.T) {
 			output: &pb.CompleteFileUploadsResponse{
 				FileUploads: []*pb.FileUpload{
 					{
-						Id:           "fp_id1",
-						Name:         "file1.pdf",
-						PresignedUrl: "https://presigned_url1",
-						Status:       "",
-						Error:        "THIS IS BAD: unable to update fileUpload: dbError while updating",
+						Id:               "fp_id1",
+						Name:             "file1.pdf",
+						PresignedUrl:     "https://presigned_url1",
+						Status:           "",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "THIS IS BAD: unable to update fileUpload: dbError while updating",
 					},
 					{
-						Id:           "fp_id2",
-						Name:         "file2.pdf",
-						PresignedUrl: "https://presigned_url2",
-						Status:       "SUCCESS",
-						Error:        "",
+						Id:               "fp_id2",
+						Name:             "file2.pdf",
+						PresignedUrl:     "https://presigned_url2",
+						Status:           "SUCCESS",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "",
 					},
 				},
 			},

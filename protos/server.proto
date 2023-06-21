@@ -20,7 +20,8 @@ message FileUpload {
   string name = 2;
   string presignedUrl = 3;
   string status = 4;
-  string error = 5;
+  string processingStatus = 5;
+  string error = 6;
 }
 
 message UploadFilesRequest {

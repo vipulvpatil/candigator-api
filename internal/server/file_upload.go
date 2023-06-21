@@ -74,6 +74,7 @@ func (s *CandidateTrackerGoService) getUpdatedFileUploadForTeam(fileUploadUpdate
 
 	fileUploadResponse.Name = fileUpload.Name()
 	fileUploadResponse.PresignedUrl = fileUpload.PresignedUrl()
+	fileUploadResponse.ProcessingStatus = fileUpload.ProcessingStatus()
 
 	if fileUpload.Completed() {
 		return fileUploadResponseWithError(&fileUploadResponse, errors.New("unable to update fileUpload"))
@@ -110,6 +111,7 @@ func (s *CandidateTrackerGoService) newFileUploadForTeam(fileName string, team *
 	fileUploadId := fileUpload.Id()
 	fileUploadResponse.Id = fileUploadId
 	fileUploadResponse.Status = fileUpload.Status()
+	fileUploadResponse.ProcessingStatus = fileUpload.ProcessingStatus()
 
 	presignedUrl, err := s.fileStorer.GetPresignedUrl(team.Id(), fileUploadId, fileName)
 	if err != nil {

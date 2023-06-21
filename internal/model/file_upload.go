@@ -72,6 +72,10 @@ func (f *FileUpload) Status() string {
 	return f.status.String()
 }
 
+func (f *FileUpload) ProcessingStatus() string {
+	return f.processingStatus.String()
+}
+
 func (f *FileUpload) Completed() bool {
 	return f.status == success || f.status == failure
 }
