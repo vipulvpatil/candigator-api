@@ -15,11 +15,12 @@ func Test_GetFileUpload(t *testing.T) {
 		Name: "Team1",
 	})
 	fileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
-		Id:           "fp_id1",
-		Name:         "file1.pdf",
-		PresignedUrl: "https://presigned_url1",
-		Status:       "INITIATED",
-		Team:         team,
+		Id:               "fp_id1",
+		Name:             "file1.pdf",
+		PresignedUrl:     "https://presigned_url1",
+		Status:           "INITIATED",
+		ProcessingStatus: "NOT STARTED",
+		Team:             team,
 	})
 	tests := []struct {
 		name            string
@@ -63,10 +64,10 @@ func Test_GetFileUpload(t *testing.T) {
 				},
 				{
 					Query: `INSERT INTO public."file_uploads" (
-								"id", "name", "presigned_url", "status", "team_id"
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
 							)
 							VALUES (
-								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'team_id1'
+								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
 							)`,
 				},
 			},
@@ -107,18 +108,20 @@ func Test_GetFileUploadsForTeam(t *testing.T) {
 		Name: "Team1",
 	})
 	fileUpload1, _ := model.NewFileUpload(model.FileUploadOptions{
-		Id:           "fp_id1",
-		Name:         "file1.pdf",
-		PresignedUrl: "https://presigned_url1",
-		Status:       "INITIATED",
-		Team:         team,
+		Id:               "fp_id1",
+		Name:             "file1.pdf",
+		PresignedUrl:     "https://presigned_url1",
+		Status:           "INITIATED",
+		ProcessingStatus: "NOT STARTED",
+		Team:             team,
 	})
 	fileUpload2, _ := model.NewFileUpload(model.FileUploadOptions{
-		Id:           "fp_id2",
-		Name:         "file2.pdf",
-		PresignedUrl: "https://presigned_url2",
-		Status:       "INITIATED",
-		Team:         team,
+		Id:               "fp_id2",
+		Name:             "file2.pdf",
+		PresignedUrl:     "https://presigned_url2",
+		Status:           "INITIATED",
+		ProcessingStatus: "NOT STARTED",
+		Team:             team,
 	})
 	tests := []struct {
 		name            string
@@ -162,18 +165,18 @@ func Test_GetFileUploadsForTeam(t *testing.T) {
 				},
 				{
 					Query: `INSERT INTO public."file_uploads" (
-								"id", "name", "presigned_url", "status", "team_id"
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
 							)
 							VALUES (
-								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'team_id1'
+								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
 							)`,
 				},
 				{
 					Query: `INSERT INTO public."file_uploads" (
-								"id", "name", "presigned_url", "status", "team_id"
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
 							)
 							VALUES (
-								'fp_id2', 'file2.pdf', 'https://presigned_url2', 'INITIATED', 'team_id1'
+								'fp_id2', 'file2.pdf', 'https://presigned_url2', 'INITIATED', 'NOT STARTED', 'team_id1'
 							)`,
 				},
 			},
@@ -215,11 +218,12 @@ func Test_CreateFileUploadForTeam(t *testing.T) {
 		Name: "Team1",
 	})
 	fileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
-		Id:           "fp_id1",
-		Name:         "file1.pdf",
-		PresignedUrl: "",
-		Status:       "INITIATED",
-		Team:         team,
+		Id:               "fp_id1",
+		Name:             "file1.pdf",
+		PresignedUrl:     "",
+		Status:           "INITIATED",
+		ProcessingStatus: "NOT STARTED",
+		Team:             team,
 	})
 	tests := []struct {
 		name  string
@@ -421,10 +425,10 @@ func Test_UpdateFileUploadWithPresignedUrl(t *testing.T) {
 				},
 				{
 					Query: `INSERT INTO public."file_uploads" (
-								"id", "name", "presigned_url", "status", "team_id"
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
 							)
 							VALUES (
-								'fp_id1', 'file1.pdf', '', 'INITIATED', 'team_id1'
+								'fp_id1', 'file1.pdf', '', 'INITIATED', 'NOT STARTED', 'team_id1'
 							)`,
 				},
 			},
@@ -549,10 +553,10 @@ func Test_UpdateFileUploadWithStatus(t *testing.T) {
 				},
 				{
 					Query: `INSERT INTO public."file_uploads" (
-								"id", "name", "presigned_url", "status", "team_id"
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
 							)
 							VALUES (
-								'fp_id1', 'file1.pdf', 'http://presigned_url1', 'INITIATED', 'team_id1'
+								'fp_id1', 'file1.pdf', 'http://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
 							)`,
 				},
 			},

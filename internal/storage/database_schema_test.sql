@@ -24,6 +24,7 @@ CREATE TABLE "file_uploads" (
     "status" TEXT NOT NULL,
     "team_id" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "processing_status" TEXT NOT NULL,
 
     CONSTRAINT "file_uploads_pkey" PRIMARY KEY ("id")
 );

@@ -6,19 +6,21 @@ import (
 )
 
 type FileUpload struct {
-	id           string
-	name         string
-	presignedUrl string
-	status       fileUploadStatus
-	team         *Team
+	id               string
+	name             string
+	presignedUrl     string
+	processingStatus fileUploadProcessingStatus
+	status           fileUploadStatus
+	team             *Team
 }
 
 type FileUploadOptions struct {
-	Id           string
-	Name         string
-	PresignedUrl string
-	Status       string
-	Team         *Team
+	Id               string
+	Name             string
+	PresignedUrl     string
+	ProcessingStatus string
+	Status           string
+	Team             *Team
 }
 
 func NewFileUpload(opts FileUploadOptions) (*FileUpload, error) {
@@ -35,16 +37,22 @@ func NewFileUpload(opts FileUploadOptions) (*FileUpload, error) {
 		status = initiated
 	}
 
+	processingStatus := FileUploadProcessingStatus(opts.ProcessingStatus)
+	if !processingStatus.Valid() {
+		return nil, errors.New("cannot create FileUpload with an invalid processing status")
+	}
+
 	if opts.Team == nil {
 		return nil, errors.New("cannot create FileUpload with a nil team")
 	}
 
 	return &FileUpload{
-		id:           opts.Id,
-		name:         opts.Name,
-		presignedUrl: opts.PresignedUrl,
-		status:       status,
-		team:         opts.Team,
+		id:               opts.Id,
+		name:             opts.Name,
+		presignedUrl:     opts.PresignedUrl,
+		processingStatus: processingStatus,
+		status:           status,
+		team:             opts.Team,
 	}, nil
 }
 

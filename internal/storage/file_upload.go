@@ -22,15 +22,15 @@ func (s *Storage) GetFileUpload(id string) (*model.FileUpload, error) {
 		return nil, errors.New("id cannot be blank")
 	}
 
-	var name, status, presignedUrl, teamId, teamName string
+	var name, status, presignedUrl, teamId, teamName, processingStatus string
 
 	row := s.db.QueryRow(
-		`SELECT f.name, f.status, f.presigned_url, teams.id, teams.name
+		`SELECT f.name, f.status, f.presigned_url, f.processing_status, teams.id, teams.name
 		FROM public."file_uploads" AS f
 		JOIN public."teams" ON f.team_id = teams.id
 		WHERE f.id = $1 ORDER BY f.created_at ASC LIMIT 1`, id,
 	)
-	err := row.Scan(&name, &status, &presignedUrl, &teamId, &teamName)
+	err := row.Scan(&name, &status, &presignedUrl, &processingStatus, &teamId, &teamName)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -48,11 +48,12 @@ func (s *Storage) GetFileUpload(id string) (*model.FileUpload, error) {
 	}
 
 	return model.NewFileUpload(model.FileUploadOptions{
-		Id:           id,
-		Name:         name,
-		PresignedUrl: presignedUrl,
-		Status:       status,
-		Team:         team,
+		Id:               id,
+		Name:             name,
+		PresignedUrl:     presignedUrl,
+		ProcessingStatus: processingStatus,
+		Status:           status,
+		Team:             team,
 	})
 }
 
@@ -62,7 +63,7 @@ func (s *Storage) GetFileUploadsForTeam(team *model.Team) ([]*model.FileUpload, 
 	}
 
 	rows, err := s.db.Query(
-		`SELECT f.id, f.name, f.status, f.presigned_url
+		`SELECT f.id, f.name, f.status, f.presigned_url, f.processing_status
 		FROM public."file_uploads" AS f
 		WHERE f.team_id = $1 ORDER BY f.created_at ASC, f.id ASC`,
 		team.Id(),
@@ -75,19 +76,20 @@ func (s *Storage) GetFileUploadsForTeam(team *model.Team) ([]*model.FileUpload, 
 	fileUploads := []*model.FileUpload{}
 
 	for rows.Next() {
-		var id, name, status, presignedUrl string
-		err := rows.Scan(&id, &name, &status, &presignedUrl)
+		var id, name, status, presignedUrl, processingStatus string
+		err := rows.Scan(&id, &name, &status, &presignedUrl, &processingStatus)
 
 		if err != nil {
 			return nil, utilities.WrapBadError(err, "failed while scanning rows")
 		}
 
 		fileUpload, err := model.NewFileUpload(model.FileUploadOptions{
-			Id:           id,
-			Name:         name,
-			PresignedUrl: presignedUrl,
-			Status:       status,
-			Team:         team,
+			Id:               id,
+			Name:             name,
+			PresignedUrl:     presignedUrl,
+			ProcessingStatus: processingStatus,
+			Status:           status,
+			Team:             team,
 		})
 
 		if err != nil {
@@ -108,12 +110,14 @@ func (s *Storage) GetFileUploadsForTeam(team *model.Team) ([]*model.FileUpload, 
 func (s *Storage) CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error) {
 	id := s.IdGenerator.Generate()
 	initialFileUploadStatus := "INITIATED"
+	initialFileUploadProcessingStatus := "NOT STARTED"
 
 	newFileUpload, err := model.NewFileUpload(model.FileUploadOptions{
-		Id:     id,
-		Name:   name,
-		Status: initialFileUploadStatus,
-		Team:   team,
+		Id:               id,
+		Name:             name,
+		Status:           initialFileUploadStatus,
+		ProcessingStatus: initialFileUploadProcessingStatus,
+		Team:             team,
 	})
 	if err != nil {
 		return nil, err
@@ -121,10 +125,10 @@ func (s *Storage) CreateFileUploadForTeam(name string, team *model.Team) (*model
 
 	result, err := s.db.Exec(
 		`INSERT INTO public."file_uploads"
-		("id", "name", "presigned_url", "status", "team_id")
+		("id", "name", "presigned_url", "status", "processing_status", "team_id")
 		VALUES
-		($1, $2, '', $3, $4)`,
-		id, name, initialFileUploadStatus, team.Id(),
+		($1, $2, '', $3, $4, $5)`,
+		id, name, initialFileUploadStatus, initialFileUploadProcessingStatus, team.Id(),
 	)
 	if err != nil {
 		return nil, utilities.WrapBadError(err, fmt.Sprintf("dbError while inserting file_upload: %s", id))

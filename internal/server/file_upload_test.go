@@ -134,10 +134,11 @@ func Test_UploadFiles(t *testing.T) {
 			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
 				CreateFileUploadForTeamInteral: func(name string, team *model.Team) (*model.FileUpload, error) {
 					return model.NewFileUpload(model.FileUploadOptions{
-						Id:     "fp_id1",
-						Name:   name,
-						Status: "INITIATED",
-						Team:   team,
+						Id:               "fp_id1",
+						Name:             name,
+						Status:           "INITIATED",
+						ProcessingStatus: "NOT STARTED",
+						Team:             team,
 					})
 				},
 			},
@@ -177,10 +178,11 @@ func Test_UploadFiles(t *testing.T) {
 			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
 				CreateFileUploadForTeamInteral: func(name string, team *model.Team) (*model.FileUpload, error) {
 					return model.NewFileUpload(model.FileUploadOptions{
-						Id:     "fp_id1",
-						Name:   name,
-						Status: "INITIATED",
-						Team:   team,
+						Id:               "fp_id1",
+						Name:             name,
+						Status:           "INITIATED",
+						ProcessingStatus: "NOT STARTED",
+						Team:             team,
 					})
 				},
 				UpdateFileUploadWithPresignedUrlInternal: func(id, presignedUrl string) error {
@@ -223,10 +225,11 @@ func Test_UploadFiles(t *testing.T) {
 			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
 				CreateFileUploadForTeamInteral: func(name string, team *model.Team) (*model.FileUpload, error) {
 					return model.NewFileUpload(model.FileUploadOptions{
-						Id:     "fp_id1",
-						Name:   name,
-						Status: "INITIATED",
-						Team:   team,
+						Id:               "fp_id1",
+						Name:             name,
+						Status:           "INITIATED",
+						ProcessingStatus: "NOT STARTED",
+						Team:             team,
 					})
 				},
 				UpdateFileUploadWithPresignedUrlInternal: func(id, presignedUrl string) error {
@@ -290,17 +293,19 @@ func Test_UploadFiles(t *testing.T) {
 				CreateFileUploadForTeamInteral: func(name string, team *model.Team) (*model.FileUpload, error) {
 					if name == "file1.pdf" {
 						return model.NewFileUpload(model.FileUploadOptions{
-							Id:     "fp_id1",
-							Name:   name,
-							Status: "INITIATED",
-							Team:   team,
+							Id:               "fp_id1",
+							Name:             name,
+							Status:           "INITIATED",
+							ProcessingStatus: "NOT STARTED",
+							Team:             team,
 						})
 					} else if name == "file2.pdf" {
 						return model.NewFileUpload(model.FileUploadOptions{
-							Id:     "fp_id2",
-							Name:   name,
-							Status: "INITIATED",
-							Team:   team,
+							Id:               "fp_id2",
+							Name:             name,
+							Status:           "INITIATED",
+							ProcessingStatus: "NOT STARTED",
+							Team:             team,
 						})
 					} else {
 						return nil, errors.New("unable to create fileUpload")
@@ -361,32 +366,36 @@ func Test_CompleteFileUploads(t *testing.T) {
 		Team:  team,
 	})
 	initiatedFileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
-		Id:           "fp_id1",
-		Name:         "file1.pdf",
-		PresignedUrl: "https://presigned_url1",
-		Status:       "INITIATED",
-		Team:         team,
+		Id:               "fp_id1",
+		Name:             "file1.pdf",
+		PresignedUrl:     "https://presigned_url1",
+		Status:           "INITIATED",
+		ProcessingStatus: "NOT STARTED",
+		Team:             team,
 	})
 	initiatedFileUpload2, _ := model.NewFileUpload(model.FileUploadOptions{
-		Id:           "fp_id2",
-		Name:         "file2.pdf",
-		PresignedUrl: "https://presigned_url2",
-		Status:       "INITIATED",
-		Team:         team,
+		Id:               "fp_id2",
+		Name:             "file2.pdf",
+		PresignedUrl:     "https://presigned_url2",
+		Status:           "INITIATED",
+		ProcessingStatus: "NOT STARTED",
+		Team:             team,
 	})
 	completedFileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
-		Id:           "fp_id1",
-		Name:         "file1.pdf",
-		PresignedUrl: "https://presigned_url1",
-		Status:       "SUCCESS",
-		Team:         team,
+		Id:               "fp_id1",
+		Name:             "file1.pdf",
+		PresignedUrl:     "https://presigned_url1",
+		Status:           "SUCCESS",
+		ProcessingStatus: "NOT STARTED",
+		Team:             team,
 	})
 	anotherFileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
-		Id:           "fp_id1",
-		Name:         "file1.pdf",
-		PresignedUrl: "https://presigned_url1",
-		Status:       "INITIATED",
-		Team:         otherTeam,
+		Id:               "fp_id1",
+		Name:             "file1.pdf",
+		PresignedUrl:     "https://presigned_url1",
+		Status:           "INITIATED",
+		ProcessingStatus: "NOT STARTED",
+		Team:             otherTeam,
 	})
 
 	tests := []struct {

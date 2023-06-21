@@ -31,11 +31,24 @@ func Test_NewFileUpload(t *testing.T) {
 			errorString:    "cannot create FileUpload with an empty name",
 		},
 		{
-			name: "user is nil",
+			name: "processingStatus is invalid",
 			input: FileUploadOptions{
-				Id:           "123",
-				Name:         "test",
-				PresignedUrl: "some_url",
+				Id:               "123",
+				Name:             "test",
+				PresignedUrl:     "some_url",
+				ProcessingStatus: "",
+			},
+			expectedOutput: nil,
+			errorExpected:  true,
+			errorString:    "cannot create FileUpload with an invalid processing status",
+		},
+		{
+			name: "team is nil",
+			input: FileUploadOptions{
+				Id:               "123",
+				Name:             "test",
+				PresignedUrl:     "some_url",
+				ProcessingStatus: "NOT STARTED",
 			},
 			expectedOutput: nil,
 			errorExpected:  true,
@@ -44,20 +57,22 @@ func Test_NewFileUpload(t *testing.T) {
 		{
 			name: "FileUpload gets created successfully",
 			input: FileUploadOptions{
-				Id:           "123",
-				Name:         "test",
-				PresignedUrl: "some_url",
-				Status:       "FAILURE",
+				Id:               "123",
+				Name:             "test",
+				PresignedUrl:     "some_url",
+				ProcessingStatus: "NOT STARTED",
+				Status:           "FAILURE",
 				Team: &Team{
 					id:   "team_id1",
 					name: "test",
 				},
 			},
 			expectedOutput: &FileUpload{
-				id:           "123",
-				name:         "test",
-				presignedUrl: "some_url",
-				status:       failure,
+				id:               "123",
+				name:             "test",
+				presignedUrl:     "some_url",
+				processingStatus: not_started,
+				status:           failure,
 				team: &Team{
 					id:   "team_id1",
 					name: "test",
@@ -69,19 +84,21 @@ func Test_NewFileUpload(t *testing.T) {
 		{
 			name: "FileUpload gets created successfully with default status",
 			input: FileUploadOptions{
-				Id:           "123",
-				Name:         "test",
-				PresignedUrl: "some_url",
+				Id:               "123",
+				Name:             "test",
+				PresignedUrl:     "some_url",
+				ProcessingStatus: "NOT STARTED",
 				Team: &Team{
 					id:   "team_id1",
 					name: "test",
 				},
 			},
 			expectedOutput: &FileUpload{
-				id:           "123",
-				name:         "test",
-				presignedUrl: "some_url",
-				status:       initiated,
+				id:               "123",
+				name:             "test",
+				presignedUrl:     "some_url",
+				status:           initiated,
+				processingStatus: not_started,
 				team: &Team{
 					id:   "team_id1",
 					name: "test",

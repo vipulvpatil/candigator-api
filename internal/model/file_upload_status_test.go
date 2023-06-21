@@ -49,22 +49,22 @@ func Test_FileUploadStatus_String(t *testing.T) {
 		expectedOutput string
 	}{
 		{
-			name:           "gets INITIATED from ai game state",
+			name:           "gets INITIATED from initiated file upload status",
 			input:          initiated,
 			expectedOutput: "INITIATED",
 		},
 		{
-			name:           "gets SUCCESS from human game state",
+			name:           "gets SUCCESS from success file upload status",
 			input:          success,
 			expectedOutput: "SUCCESS",
 		},
 		{
-			name:           "gets FAILURE from human game state",
+			name:           "gets FAILURE from failure file upload status",
 			input:          failure,
 			expectedOutput: "FAILURE",
 		},
 		{
-			name:           "gets unknown from undefinedFileUploadStatus game state",
+			name:           "gets unknown from undefinedFileUploadStatus file upload status",
 			input:          undefinedFileUploadStatus,
 			expectedOutput: "UNDEFINED",
 		},
@@ -78,7 +78,7 @@ func Test_FileUploadStatus_String(t *testing.T) {
 	}
 }
 
-func Test_BotType_Valid(t *testing.T) {
+func Test_FileUploadStatus_Valid(t *testing.T) {
 	t.Run("returns true for a valid file upload status", func(t *testing.T) {
 		assert.True(t, failure.Valid())
 	})
