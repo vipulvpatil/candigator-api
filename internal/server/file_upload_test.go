@@ -779,7 +779,184 @@ func Test_CompleteFileUploads(t *testing.T) {
 	}
 }
 
-func Test_GetUnprocessedUploadFilesCount(t *testing.T) {
+func Test_GetFileUploads(t *testing.T) {
+	team, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id1",
+		Name: "test@example.com",
+	})
+	userWithTeam, _ := model.NewUser(model.UserOptions{
+		Id:    "user_id1",
+		Email: "test@example.com",
+		Team:  team,
+	})
+	fileUpload1, _ := model.NewFileUpload(model.FileUploadOptions{
+		Id:               "fp_id1",
+		Name:             "file1.pdf",
+		PresignedUrl:     "https://presigned_url1",
+		Status:           "SUCCESS",
+		ProcessingStatus: "COMPLETED",
+		Team:             team,
+	})
+	fileUpload2, _ := model.NewFileUpload(model.FileUploadOptions{
+		Id:               "fp_id2",
+		Name:             "file2.pdf",
+		PresignedUrl:     "https://presigned_url2",
+		Status:           "FAILURE",
+		ProcessingStatus: "NOT STARTED",
+		Team:             team,
+	})
+	fileUpload3, _ := model.NewFileUpload(model.FileUploadOptions{
+		Id:               "fp_id3",
+		Name:             "file3.pdf",
+		PresignedUrl:     "https://presigned_url3",
+		Status:           "SUCCESS",
+		ProcessingStatus: "ONGOING",
+		Team:             team,
+	})
+
+	tests := []struct {
+		name                   string
+		ctx                    context.Context
+		input                  *pb.GetFileUploadsRequest
+		output                 *pb.GetFileUploadsResponse
+		teamHydratorMock       storage.TeamHydrator
+		fileUploadAccessorMock storage.FileUploadAccessor
+		fileStorerMock         filestorage.FileStorer
+		errorExpected          bool
+		errorString            string
+	}{
+		{
+			name:                   "errors if no user in context",
+			ctx:                    context.Background(),
+			input:                  &pb.GetFileUploadsRequest{},
+			output:                 &pb.GetFileUploadsResponse{},
+			teamHydratorMock:       nil,
+			fileUploadAccessorMock: nil,
+			fileStorerMock:         nil,
+			errorExpected:          true,
+			errorString:            "rpc error: code = Unauthenticated desc = retrieving user data failed",
+		},
+		{
+			name: "errors if unable to hydrate team",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input:                  &pb.GetFileUploadsRequest{},
+			output:                 &pb.GetFileUploadsResponse{},
+			teamHydratorMock:       &storage.TeamHydratorMockFailure{},
+			fileUploadAccessorMock: nil,
+			fileStorerMock:         nil,
+			errorExpected:          true,
+			errorString:            "unable to hydrate team",
+		},
+		{
+			name: "returns error if database errors when getting fileUploads",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input:            &pb.GetFileUploadsRequest{},
+			output:           nil,
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetFileUploadsForTeamInteral: func(team *model.Team) ([]*model.FileUpload, error) {
+					return nil, errors.New("dbError when querying")
+				},
+			},
+			fileStorerMock: nil,
+			errorExpected:  true,
+			errorString:    "dbError when querying",
+		},
+		{
+			name: "runs successfully even with partial errors",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.GetFileUploadsRequest{},
+			output: &pb.GetFileUploadsResponse{
+				FileUploads: []*pb.FileUpload{
+					{
+						Id:               "fp_id1",
+						Name:             "file1.pdf",
+						PresignedUrl:     "https://presigned_url1",
+						Status:           "SUCCESS",
+						ProcessingStatus: "COMPLETED",
+						Error:            "",
+					},
+					{
+						Id:               "fp_id2",
+						Name:             "file2.pdf",
+						PresignedUrl:     "https://presigned_url2",
+						Status:           "FAILURE",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "",
+					},
+					{
+						Id:               "fp_id3",
+						Name:             "file3.pdf",
+						PresignedUrl:     "https://presigned_url3",
+						Status:           "SUCCESS",
+						ProcessingStatus: "ONGOING",
+						Error:            "",
+					},
+				},
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetFileUploadsForTeamInteral: func(team *model.Team) ([]*model.FileUpload, error) {
+					return []*model.FileUpload{
+						fileUpload1, fileUpload2, fileUpload3,
+					}, nil
+				},
+			},
+			fileStorerMock: nil,
+			errorExpected:  false,
+			errorString:    "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server, _ := NewServer(ServerDependencies{
+				Storage: storage.NewStorageAccessorMock(
+					storage.WithTeamHydratorMock(tt.teamHydratorMock),
+					storage.WithFileUploadAccessorMock(tt.fileUploadAccessorMock),
+				),
+				Logger:     &utilities.NullLogger{},
+				FileStorer: tt.fileStorerMock,
+			})
+
+			response, err := server.GetFileUploads(
+				tt.ctx,
+				tt.input,
+			)
+			if !tt.errorExpected {
+				assert.Empty(t, tt.errorString)
+				assert.NoError(t, err)
+				assert.EqualValues(t, tt.output, response)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+		})
+	}
+}
+
+func Test_GetUnprocessedFileUploadsCount(t *testing.T) {
 	team, _ := model.NewTeam(model.TeamOptions{
 		Id:   "team_id1",
 		Name: "test@example.com",
@@ -793,8 +970,8 @@ func Test_GetUnprocessedUploadFilesCount(t *testing.T) {
 	tests := []struct {
 		name                   string
 		ctx                    context.Context
-		input                  *pb.GetUnprocessedUploadFilesCountRequest
-		output                 *pb.GetUnprocessedUploadFilesCountResponse
+		input                  *pb.GetUnprocessedFileUploadsCountRequest
+		output                 *pb.GetUnprocessedFileUploadsCountResponse
 		teamHydratorMock       storage.TeamHydrator
 		fileUploadAccessorMock storage.FileUploadAccessor
 		errorExpected          bool
@@ -803,8 +980,8 @@ func Test_GetUnprocessedUploadFilesCount(t *testing.T) {
 		{
 			name:                   "errors if no user in context",
 			ctx:                    context.Background(),
-			input:                  &pb.GetUnprocessedUploadFilesCountRequest{},
-			output:                 &pb.GetUnprocessedUploadFilesCountResponse{},
+			input:                  &pb.GetUnprocessedFileUploadsCountRequest{},
+			output:                 &pb.GetUnprocessedFileUploadsCountResponse{},
 			teamHydratorMock:       nil,
 			fileUploadAccessorMock: nil,
 			errorExpected:          true,
@@ -820,8 +997,8 @@ func Test_GetUnprocessedUploadFilesCount(t *testing.T) {
 					},
 				),
 			),
-			input:                  &pb.GetUnprocessedUploadFilesCountRequest{},
-			output:                 &pb.GetUnprocessedUploadFilesCountResponse{},
+			input:                  &pb.GetUnprocessedFileUploadsCountRequest{},
+			output:                 &pb.GetUnprocessedFileUploadsCountResponse{},
 			teamHydratorMock:       &storage.TeamHydratorMockFailure{},
 			fileUploadAccessorMock: nil,
 			errorExpected:          true,
@@ -837,7 +1014,7 @@ func Test_GetUnprocessedUploadFilesCount(t *testing.T) {
 					},
 				),
 			),
-			input:            &pb.GetUnprocessedUploadFilesCountRequest{},
+			input:            &pb.GetUnprocessedFileUploadsCountRequest{},
 			output:           nil,
 			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
 			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
@@ -858,8 +1035,8 @@ func Test_GetUnprocessedUploadFilesCount(t *testing.T) {
 					},
 				),
 			),
-			input: &pb.GetUnprocessedUploadFilesCountRequest{},
-			output: &pb.GetUnprocessedUploadFilesCountResponse{
+			input: &pb.GetUnprocessedFileUploadsCountRequest{},
+			output: &pb.GetUnprocessedFileUploadsCountResponse{
 				Count: 0,
 			},
 			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
@@ -881,8 +1058,8 @@ func Test_GetUnprocessedUploadFilesCount(t *testing.T) {
 					},
 				),
 			),
-			input: &pb.GetUnprocessedUploadFilesCountRequest{},
-			output: &pb.GetUnprocessedUploadFilesCountResponse{
+			input: &pb.GetUnprocessedFileUploadsCountRequest{},
+			output: &pb.GetUnprocessedFileUploadsCountResponse{
 				Count: 3,
 			},
 			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
@@ -906,7 +1083,7 @@ func Test_GetUnprocessedUploadFilesCount(t *testing.T) {
 				Logger: &utilities.NullLogger{},
 			})
 
-			response, err := server.GetUnprocessedUploadFilesCount(
+			response, err := server.GetUnprocessedFileUploadsCount(
 				tt.ctx,
 				tt.input,
 			)

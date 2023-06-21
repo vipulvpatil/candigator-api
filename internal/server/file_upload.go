@@ -58,7 +58,42 @@ func (s *CandidateTrackerGoService) CompleteFileUploads(ctx context.Context, req
 	}, nil
 }
 
-func (s *CandidateTrackerGoService) GetUnprocessedUploadFilesCount(ctx context.Context, req *pb.GetUnprocessedUploadFilesCountRequest) (*pb.GetUnprocessedUploadFilesCountResponse, error) {
+func (s *CandidateTrackerGoService) GetFileUploads(ctx context.Context, req *pb.GetFileUploadsRequest) (*pb.GetFileUploadsResponse, error) {
+	user, err := getUserFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	userWithTeam, err := s.storage.HydrateTeam(user)
+	if err != nil {
+		return nil, err
+	}
+
+	team := userWithTeam.Team()
+
+	responseData := []*pb.FileUpload{}
+	fileUploads, err := s.storage.GetFileUploadsForTeam(team)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, fileUpload := range fileUploads {
+		fileUploadResponse := pb.FileUpload{
+			Id:               fileUpload.Id(),
+			Name:             fileUpload.Name(),
+			PresignedUrl:     fileUpload.PresignedUrl(),
+			Status:           fileUpload.Status(),
+			ProcessingStatus: fileUpload.ProcessingStatus(),
+		}
+		responseData = append(responseData, &fileUploadResponse)
+	}
+
+	return &pb.GetFileUploadsResponse{
+		FileUploads: responseData,
+	}, nil
+}
+
+func (s *CandidateTrackerGoService) GetUnprocessedFileUploadsCount(ctx context.Context, req *pb.GetUnprocessedFileUploadsCountRequest) (*pb.GetUnprocessedFileUploadsCountResponse, error) {
 	user, err := getUserFromContext(ctx)
 	if err != nil {
 		return nil, err
@@ -76,7 +111,7 @@ func (s *CandidateTrackerGoService) GetUnprocessedUploadFilesCount(ctx context.C
 		return nil, err
 	}
 
-	return &pb.GetUnprocessedUploadFilesCountResponse{Count: int64(count)}, nil
+	return &pb.GetUnprocessedFileUploadsCountResponse{Count: int64(count)}, nil
 }
 
 func (s *CandidateTrackerGoService) newFileUploadForTeam(fileName string, team *model.Team) *pb.FileUpload {

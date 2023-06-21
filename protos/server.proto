@@ -47,17 +47,26 @@ message CompleteFileUploadsResponse {
   repeated FileUpload fileUploads = 1;
 }
 
-message GetUnprocessedUploadFilesCountRequest {
+message GetUnprocessedFileUploadsCountRequest {
   string userEmail = 1;
 }
 
-message GetUnprocessedUploadFilesCountResponse {
+message GetUnprocessedFileUploadsCountResponse {
   int64 count = 1;
+}
+
+message GetFileUploadsRequest {
+  string userEmail = 1;
+}
+
+message GetFileUploadsResponse {
+  repeated FileUpload fileUploads = 1;
 }
 
 service CandidateTrackerGo {
   rpc CheckConnection(CheckConnectionRequest) returns (CheckConnectionResponse) {}
-  rpc GetUnprocessedUploadFilesCount(GetUnprocessedUploadFilesCountRequest) returns (GetUnprocessedUploadFilesCountResponse) {}
+  rpc GetUnprocessedFileUploadsCount(GetUnprocessedFileUploadsCountRequest) returns (GetUnprocessedFileUploadsCountResponse) {}
+  rpc GetFileUploads(GetFileUploadsRequest) returns (GetFileUploadsResponse) {}
   rpc UploadFiles(UploadFilesRequest) returns (UploadFilesResponse) {}
   rpc CompleteFileUploads(CompleteFileUploadsRequest) returns (CompleteFileUploadsResponse) {}
 }
