@@ -47,8 +47,17 @@ message CompleteFileUploadsResponse {
   repeated FileUpload fileUploads = 1;
 }
 
+message GetUnprocessedUploadFilesCountRequest {
+  string userEmail = 1;
+}
+
+message GetUnprocessedUploadFilesCountResponse {
+  int64 count = 1;
+}
+
 service CandidateTrackerGo {
   rpc CheckConnection(CheckConnectionRequest) returns (CheckConnectionResponse) {}
+  rpc GetUnprocessedUploadFilesCount(GetUnprocessedUploadFilesCountRequest) returns (GetUnprocessedUploadFilesCountResponse) {}
   rpc UploadFiles(UploadFilesRequest) returns (UploadFilesResponse) {}
   rpc CompleteFileUploads(CompleteFileUploadsRequest) returns (CompleteFileUploadsResponse) {}
 }

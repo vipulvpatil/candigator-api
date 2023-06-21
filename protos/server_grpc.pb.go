@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CandidateTrackerGoClient interface {
 	CheckConnection(ctx context.Context, in *CheckConnectionRequest, opts ...grpc.CallOption) (*CheckConnectionResponse, error)
+	GetUnprocessedUploadFilesCount(ctx context.Context, in *GetUnprocessedUploadFilesCountRequest, opts ...grpc.CallOption) (*GetUnprocessedUploadFilesCountResponse, error)
 	UploadFiles(ctx context.Context, in *UploadFilesRequest, opts ...grpc.CallOption) (*UploadFilesResponse, error)
 	CompleteFileUploads(ctx context.Context, in *CompleteFileUploadsRequest, opts ...grpc.CallOption) (*CompleteFileUploadsResponse, error)
 }
@@ -38,6 +39,15 @@ func NewCandidateTrackerGoClient(cc grpc.ClientConnInterface) CandidateTrackerGo
 func (c *candidateTrackerGoClient) CheckConnection(ctx context.Context, in *CheckConnectionRequest, opts ...grpc.CallOption) (*CheckConnectionResponse, error) {
 	out := new(CheckConnectionResponse)
 	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/CheckConnection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *candidateTrackerGoClient) GetUnprocessedUploadFilesCount(ctx context.Context, in *GetUnprocessedUploadFilesCountRequest, opts ...grpc.CallOption) (*GetUnprocessedUploadFilesCountResponse, error) {
+	out := new(GetUnprocessedUploadFilesCountResponse)
+	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/GetUnprocessedUploadFilesCount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,6 +77,7 @@ func (c *candidateTrackerGoClient) CompleteFileUploads(ctx context.Context, in *
 // for forward compatibility
 type CandidateTrackerGoServer interface {
 	CheckConnection(context.Context, *CheckConnectionRequest) (*CheckConnectionResponse, error)
+	GetUnprocessedUploadFilesCount(context.Context, *GetUnprocessedUploadFilesCountRequest) (*GetUnprocessedUploadFilesCountResponse, error)
 	UploadFiles(context.Context, *UploadFilesRequest) (*UploadFilesResponse, error)
 	CompleteFileUploads(context.Context, *CompleteFileUploadsRequest) (*CompleteFileUploadsResponse, error)
 	mustEmbedUnimplementedCandidateTrackerGoServer()
@@ -78,6 +89,9 @@ type UnimplementedCandidateTrackerGoServer struct {
 
 func (UnimplementedCandidateTrackerGoServer) CheckConnection(context.Context, *CheckConnectionRequest) (*CheckConnectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckConnection not implemented")
+}
+func (UnimplementedCandidateTrackerGoServer) GetUnprocessedUploadFilesCount(context.Context, *GetUnprocessedUploadFilesCountRequest) (*GetUnprocessedUploadFilesCountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUnprocessedUploadFilesCount not implemented")
 }
 func (UnimplementedCandidateTrackerGoServer) UploadFiles(context.Context, *UploadFilesRequest) (*UploadFilesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadFiles not implemented")
@@ -112,6 +126,24 @@ func _CandidateTrackerGo_CheckConnection_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CandidateTrackerGoServer).CheckConnection(ctx, req.(*CheckConnectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CandidateTrackerGo_GetUnprocessedUploadFilesCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUnprocessedUploadFilesCountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CandidateTrackerGoServer).GetUnprocessedUploadFilesCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protos.CandidateTrackerGo/GetUnprocessedUploadFilesCount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CandidateTrackerGoServer).GetUnprocessedUploadFilesCount(ctx, req.(*GetUnprocessedUploadFilesCountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -162,6 +194,10 @@ var CandidateTrackerGo_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckConnection",
 			Handler:    _CandidateTrackerGo_CheckConnection_Handler,
+		},
+		{
+			MethodName: "GetUnprocessedUploadFilesCount",
+			Handler:    _CandidateTrackerGo_GetUnprocessedUploadFilesCount_Handler,
 		},
 		{
 			MethodName: "UploadFiles",

@@ -778,3 +778,146 @@ func Test_CompleteFileUploads(t *testing.T) {
 		})
 	}
 }
+
+func Test_GetUnprocessedUploadFilesCount(t *testing.T) {
+	team, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id1",
+		Name: "test@example.com",
+	})
+	userWithTeam, _ := model.NewUser(model.UserOptions{
+		Id:    "user_id1",
+		Email: "test@example.com",
+		Team:  team,
+	})
+
+	tests := []struct {
+		name                   string
+		ctx                    context.Context
+		input                  *pb.GetUnprocessedUploadFilesCountRequest
+		output                 *pb.GetUnprocessedUploadFilesCountResponse
+		teamHydratorMock       storage.TeamHydrator
+		fileUploadAccessorMock storage.FileUploadAccessor
+		errorExpected          bool
+		errorString            string
+	}{
+		{
+			name:                   "errors if no user in context",
+			ctx:                    context.Background(),
+			input:                  &pb.GetUnprocessedUploadFilesCountRequest{},
+			output:                 &pb.GetUnprocessedUploadFilesCountResponse{},
+			teamHydratorMock:       nil,
+			fileUploadAccessorMock: nil,
+			errorExpected:          true,
+			errorString:            "rpc error: code = Unauthenticated desc = retrieving user data failed",
+		},
+		{
+			name: "errors if unable to hydrate team",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input:                  &pb.GetUnprocessedUploadFilesCountRequest{},
+			output:                 &pb.GetUnprocessedUploadFilesCountResponse{},
+			teamHydratorMock:       &storage.TeamHydratorMockFailure{},
+			fileUploadAccessorMock: nil,
+			errorExpected:          true,
+			errorString:            "unable to hydrate team",
+		},
+		{
+			name: "returns error if database errors when getting fileUpload count",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input:            &pb.GetUnprocessedUploadFilesCountRequest{},
+			output:           nil,
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetUnprocessedFileUploadsCountForTeamInternal: func(id *model.Team) (int, error) {
+					return 0, errors.New("dbError when querying")
+				},
+			},
+			errorExpected: true,
+			errorString:   "dbError when querying",
+		},
+		{
+			name: "returns response with 0 if fileUpload count not in database",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.GetUnprocessedUploadFilesCountRequest{},
+			output: &pb.GetUnprocessedUploadFilesCountResponse{
+				Count: 0,
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetUnprocessedFileUploadsCountForTeamInternal: func(id *model.Team) (int, error) {
+					return 0, nil
+				},
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+		{
+			name: "runs successfully",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.GetUnprocessedUploadFilesCountRequest{},
+			output: &pb.GetUnprocessedUploadFilesCountResponse{
+				Count: 3,
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				GetUnprocessedFileUploadsCountForTeamInternal: func(id *model.Team) (int, error) {
+					return 3, nil
+				},
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server, _ := NewServer(ServerDependencies{
+				Storage: storage.NewStorageAccessorMock(
+					storage.WithTeamHydratorMock(tt.teamHydratorMock),
+					storage.WithFileUploadAccessorMock(tt.fileUploadAccessorMock),
+				),
+				Logger: &utilities.NullLogger{},
+			})
+
+			response, err := server.GetUnprocessedUploadFilesCount(
+				tt.ctx,
+				tt.input,
+			)
+			if !tt.errorExpected {
+				assert.Empty(t, tt.errorString)
+				assert.NoError(t, err)
+				assert.EqualValues(t, tt.output, response)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+		})
+	}
+}

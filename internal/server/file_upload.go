@@ -58,6 +58,54 @@ func (s *CandidateTrackerGoService) CompleteFileUploads(ctx context.Context, req
 	}, nil
 }
 
+func (s *CandidateTrackerGoService) GetUnprocessedUploadFilesCount(ctx context.Context, req *pb.GetUnprocessedUploadFilesCountRequest) (*pb.GetUnprocessedUploadFilesCountResponse, error) {
+	user, err := getUserFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	userWithTeam, err := s.storage.HydrateTeam(user)
+	if err != nil {
+		return nil, err
+	}
+
+	team := userWithTeam.Team()
+
+	count, err := s.storage.GetUnprocessedFileUploadsCountForTeam(team)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetUnprocessedUploadFilesCountResponse{Count: int64(count)}, nil
+}
+
+func (s *CandidateTrackerGoService) newFileUploadForTeam(fileName string, team *model.Team) *pb.FileUpload {
+	fileUploadResponse := pb.FileUpload{
+		Name: fileName,
+	}
+
+	fileUpload, err := s.storage.CreateFileUploadForTeam(fileName, team)
+	if err != nil {
+		return fileUploadResponseWithError(&fileUploadResponse, err)
+	}
+	fileUploadId := fileUpload.Id()
+	fileUploadResponse.Id = fileUploadId
+	fileUploadResponse.Status = fileUpload.Status()
+	fileUploadResponse.ProcessingStatus = fileUpload.ProcessingStatus()
+
+	presignedUrl, err := s.fileStorer.GetPresignedUrl(team.Id(), fileUploadId, fileName)
+	if err != nil {
+		return fileUploadResponseWithError(&fileUploadResponse, err)
+	}
+	fileUploadResponse.PresignedUrl = presignedUrl
+
+	err = s.storage.UpdateFileUploadWithPresignedUrl(fileUploadId, presignedUrl)
+	if err != nil {
+		return fileUploadResponseWithError(&fileUploadResponse, err)
+	}
+	return &fileUploadResponse
+}
+
 func (s *CandidateTrackerGoService) getUpdatedFileUploadForTeam(fileUploadUpdate *pb.FileUploadUpdate, team *model.Team) *pb.FileUpload {
 	fileUploadResponse := pb.FileUpload{
 		Id: fileUploadUpdate.GetId(),
@@ -96,33 +144,6 @@ func (s *CandidateTrackerGoService) getUpdatedFileUploadForTeam(fileUploadUpdate
 
 	fileUploadResponse.Status = updateStatus.String()
 
-	return &fileUploadResponse
-}
-
-func (s *CandidateTrackerGoService) newFileUploadForTeam(fileName string, team *model.Team) *pb.FileUpload {
-	fileUploadResponse := pb.FileUpload{
-		Name: fileName,
-	}
-
-	fileUpload, err := s.storage.CreateFileUploadForTeam(fileName, team)
-	if err != nil {
-		return fileUploadResponseWithError(&fileUploadResponse, err)
-	}
-	fileUploadId := fileUpload.Id()
-	fileUploadResponse.Id = fileUploadId
-	fileUploadResponse.Status = fileUpload.Status()
-	fileUploadResponse.ProcessingStatus = fileUpload.ProcessingStatus()
-
-	presignedUrl, err := s.fileStorer.GetPresignedUrl(team.Id(), fileUploadId, fileName)
-	if err != nil {
-		return fileUploadResponseWithError(&fileUploadResponse, err)
-	}
-	fileUploadResponse.PresignedUrl = presignedUrl
-
-	err = s.storage.UpdateFileUploadWithPresignedUrl(fileUploadId, presignedUrl)
-	if err != nil {
-		return fileUploadResponseWithError(&fileUploadResponse, err)
-	}
 	return &fileUploadResponse
 }
 
