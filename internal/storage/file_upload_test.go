@@ -73,7 +73,6 @@ func Test_GetFileUpload(t *testing.T) {
 			},
 			cleanupSqlStmts: []TestSqlStmts{
 				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
-				{Query: `DELETE FROM public."file_uploads" WHERE id = 'fp_id1'`},
 			},
 			errorExpected: false,
 			errorString:   "",
@@ -182,8 +181,6 @@ func Test_GetFileUploadsForTeam(t *testing.T) {
 			},
 			cleanupSqlStmts: []TestSqlStmts{
 				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
-				{Query: `DELETE FROM public."file_uploads" WHERE id = 'fp_id1'`},
-				{Query: `DELETE FROM public."file_uploads" WHERE id = 'fp_id2'`},
 			},
 			errorExpected: false,
 			errorString:   "",
@@ -201,6 +198,122 @@ func Test_GetFileUploadsForTeam(t *testing.T) {
 			runSqlOnDb(t, s.db, tt.setupSqlStmts)
 			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
 			fileUpload, err := s.GetFileUploadsForTeam(tt.input)
+			assert.Equal(t, tt.output, fileUpload)
+			if !tt.errorExpected {
+				assert.NoError(t, err)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+		})
+	}
+}
+
+func Test_GetUnprocessedFileUploadsCountForTeam(t *testing.T) {
+	team, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id1",
+		Name: "Team1",
+	})
+	tests := []struct {
+		name            string
+		input           *model.Team
+		output          int
+		setupSqlStmts   []TestSqlStmts
+		cleanupSqlStmts []TestSqlStmts
+		errorExpected   bool
+		errorString     string
+	}{
+		{
+			name:            "errors when team is empty",
+			input:           nil,
+			output:          0,
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			errorExpected:   true,
+			errorString:     "team cannot be blank",
+		},
+		{
+			name:            "errors when team id is empty",
+			input:           &model.Team{},
+			output:          0,
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			errorExpected:   true,
+			errorString:     "team cannot be blank",
+		},
+		{
+			name:   "successfully gets correct unprocessed file upload count",
+			input:  team,
+			output: 2,
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+								"id", "name"
+							)
+							VALUES (
+								'team_id1', 'Team1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."teams" (
+								"id", "name"
+							)
+							VALUES (
+								'team_id2', 'Team2'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id2', 'file2.pdf', 'https://presigned_url2', 'INITIATED', 'ONGOING', 'team_id1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id3', 'file3.pdf', 'https://presigned_url3', 'INITIATED', 'ONGOING', 'team_id2'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id4', 'file4.pdf', 'https://presigned_url4', 'SUCCESS', 'COMPLETED', 'team_id1'
+							)`,
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s, _ := NewDbStorage(
+				StorageOptions{
+					Db: testDb,
+				},
+			)
+
+			runSqlOnDb(t, s.db, tt.setupSqlStmts)
+			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
+			fileUpload, err := s.GetUnprocessedFileUploadsCountForTeam(tt.input)
 			assert.Equal(t, tt.output, fileUpload)
 			if !tt.errorExpected {
 				assert.NoError(t, err)
@@ -304,7 +417,6 @@ func Test_CreateFileUploadForTeam(t *testing.T) {
 			},
 			cleanupSqlStmts: []TestSqlStmts{
 				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
-				{Query: `DELETE FROM public."file_uploads" WHERE id = 'fp_id1'`},
 			},
 			dbUpdateCheck: func(db *sql.DB) bool {
 				var id, name, presignedUrl, status, createdAt string

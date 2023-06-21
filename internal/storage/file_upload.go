@@ -12,6 +12,7 @@ import (
 type FileUploadAccessor interface {
 	GetFileUpload(id string) (*model.FileUpload, error)
 	GetFileUploadsForTeam(team *model.Team) ([]*model.FileUpload, error)
+	GetUnprocessedFileUploadsCountForTeam(team *model.Team) (int, error)
 	CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error)
 	UpdateFileUploadWithPresignedUrl(id, presignedUrl string) error
 	UpdateFileUploadWithStatus(id, status string) error
@@ -105,6 +106,30 @@ func (s *Storage) GetFileUploadsForTeam(team *model.Team) ([]*model.FileUpload, 
 		return nil, utilities.WrapBadError(err, "failed to correctly go through file_upload rows")
 	}
 	return fileUploads, nil
+}
+
+func (s *Storage) GetUnprocessedFileUploadsCountForTeam(team *model.Team) (int, error) {
+	if team == nil || utilities.IsBlank(team.Id()) {
+		return 0, errors.New("team cannot be blank")
+	}
+
+	var count int
+	row := s.db.QueryRow(
+		`SELECT count(id)
+		FROM public."file_uploads"
+		WHERE team_id = $1
+		AND processing_status <> 'COMPLETED'`,
+		team.Id(),
+	)
+	err := row.Scan(&count)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
+		return 0, errors.Errorf("getting unprocessed file upload count for team %s: %v", team.Id(), err)
+	}
+
+	return count, nil
 }
 
 func (s *Storage) CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error) {
