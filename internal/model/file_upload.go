@@ -91,3 +91,7 @@ func (f *FileUpload) ProcessingOngoing() bool {
 func (f *FileUpload) ProcessingFinised() bool {
 	return f.processingStatus == completed || f.processingStatus == failed
 }
+
+func (f *FileUpload) StoragePath() string {
+	return f.team.id + "/" + f.id
+}

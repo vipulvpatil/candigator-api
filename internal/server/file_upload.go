@@ -127,8 +127,7 @@ func (s *CandidateTrackerGoService) newFileUploadForTeam(fileName string, team *
 	fileUploadResponse.Id = fileUploadId
 	fileUploadResponse.Status = fileUpload.Status()
 	fileUploadResponse.ProcessingStatus = fileUpload.ProcessingStatus()
-
-	presignedUrl, err := s.fileStorer.GetPresignedUrl(team.Id(), fileUploadId, fileName)
+	presignedUrl, err := s.fileStorer.GetPresignedUrl(fileUpload.StoragePath(), fileUpload.Name())
 	if err != nil {
 		return fileUploadResponseWithError(&fileUploadResponse, err)
 	}
