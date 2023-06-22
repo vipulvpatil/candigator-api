@@ -10,6 +10,7 @@ type FileUploadAccessorConfigurableMock struct {
 	CreateFileUploadForTeamInteral                  func(name string, team *model.Team) (*model.FileUpload, error)
 	UpdateFileUploadWithPresignedUrlInternal        func(id, presignedUrl string) error
 	UpdateFileUploadWithStatusInternal              func(id, status string) error
+	UpdateFileUploadWithProcessingStatusInternal    func(id, processingStatus string) error
 }
 
 func (f *FileUploadAccessorConfigurableMock) GetFileUpload(id string) (*model.FileUpload, error) {
@@ -38,4 +39,8 @@ func (f *FileUploadAccessorConfigurableMock) UpdateFileUploadWithPresignedUrl(id
 
 func (f *FileUploadAccessorConfigurableMock) UpdateFileUploadWithStatus(id, status string) error {
 	return f.UpdateFileUploadWithStatusInternal(id, status)
+}
+
+func (f *FileUploadAccessorConfigurableMock) UpdateFileUploadWithProcessingStatus(id, processingStatus string) error {
+	return f.UpdateFileUploadWithProcessingStatusInternal(id, processingStatus)
 }

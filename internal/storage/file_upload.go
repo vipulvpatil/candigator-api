@@ -250,3 +250,28 @@ func (s *Storage) UpdateFileUploadWithStatus(id, status string) error {
 	}
 	return nil
 }
+
+func (s *Storage) UpdateFileUploadWithProcessingStatus(id, processingStatus string) error {
+	if utilities.IsBlank(id) {
+		return errors.New("id cannot be blank")
+	}
+
+	if !model.FileUploadProcessingStatus(processingStatus).Valid() {
+		return errors.New("processing status should be valid")
+	}
+
+	result, err := s.db.Exec(`UPDATE public."file_uploads" SET "processing_status" = $2 WHERE id = $1`, id, processingStatus)
+	if err != nil {
+		return utilities.WrapBadError(err, fmt.Sprintf("dbError while updating fileUpload: %s %s", id, processingStatus))
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return utilities.WrapBadError(err, fmt.Sprintf("dbError while checking affected row while updating fileUpload: %s %s", id, processingStatus))
+	}
+
+	if rowsAffected != 1 {
+		return utilities.NewBadError(fmt.Sprintf("Very few or too many rows were affected when inserting file_upload in db. This is highly unexpected. rowsAffected: %d", rowsAffected))
+	}
+	return nil
+}
