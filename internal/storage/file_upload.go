@@ -11,26 +11,55 @@ import (
 
 type FileUploadAccessor interface {
 	GetFileUpload(id string) (*model.FileUpload, error)
+	GetFileUploadUsingTx(id string, tx DatabaseTransaction) (*model.FileUpload, error)
 	GetFileUploadsForTeam(team *model.Team) ([]*model.FileUpload, error)
 	GetUnprocessedFileUploadsCountForTeam(team *model.Team) (int, error)
 	GetAllProcessingNotStartedFileUploadIds() ([]string, error)
 	CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error)
 	UpdateFileUploadWithPresignedUrl(id, presignedUrl string) error
 	UpdateFileUploadWithStatus(id, status string) error
+	UpdateFileUploadWithProcessingStatus(id, processingStatus string) error
+	UpdateFileUploadWithProcessingStatusUsingTx(id, processingStatus string, tx DatabaseTransaction) error
 }
 
 func (s *Storage) GetFileUpload(id string) (*model.FileUpload, error) {
+	return getFileUploadUsingCustomDbHandler(s.db, id, false)
+}
+
+func (s *Storage) GetFileUploadUsingTx(id string, tx DatabaseTransaction) (*model.FileUpload, error) {
+	return getFileUploadUsingCustomDbHandler(tx, id, true)
+}
+
+func getFileUploadUsingCustomDbHandler(customDb customDbHandler, id string, exclusiveLock bool) (*model.FileUpload, error) {
 	if utilities.IsBlank(id) {
 		return nil, errors.New("id cannot be blank")
 	}
 
 	var name, status, presignedUrl, teamId, teamName, processingStatus string
 
-	row := s.db.QueryRow(
-		`SELECT f.name, f.status, f.presigned_url, f.processing_status, teams.id, teams.name
-		FROM public."file_uploads" AS f
-		JOIN public."teams" ON f.team_id = teams.id
-		WHERE f.id = $1 ORDER BY f.created_at ASC LIMIT 1`, id,
+	queryWithoutLock := `SELECT
+	f.name, f.status, f.presigned_url, f.processing_status, teams.id, teams.name
+	FROM public."file_uploads" AS f
+	JOIN public."teams" ON f.team_id = teams.id
+	WHERE f.id = $1 ORDER BY f.created_at ASC LIMIT 1`
+
+	queryWithLock := `SELECT
+	f.name, f.status, f.presigned_url, f.processing_status, teams.id, teams.name
+	FROM public."file_uploads" AS f
+	JOIN public."teams" ON f.team_id = teams.id
+	WHERE f.id = $1 ORDER BY f.created_at ASC LIMIT 1
+	FOR UPDATE`
+
+	var query string
+
+	if exclusiveLock {
+		query = queryWithLock
+	} else {
+		query = queryWithoutLock
+	}
+
+	row := customDb.QueryRow(
+		query, id,
 	)
 	err := row.Scan(&name, &status, &presignedUrl, &processingStatus, &teamId, &teamName)
 	if err != nil {
@@ -252,6 +281,14 @@ func (s *Storage) UpdateFileUploadWithStatus(id, status string) error {
 }
 
 func (s *Storage) UpdateFileUploadWithProcessingStatus(id, processingStatus string) error {
+	return updateFileUploadWithProcessingStatusUsingCustomDbHandler(s.db, id, processingStatus)
+}
+
+func (s *Storage) UpdateFileUploadWithProcessingStatusUsingTx(id, processingStatus string, tx DatabaseTransaction) error {
+	return updateFileUploadWithProcessingStatusUsingCustomDbHandler(tx, id, processingStatus)
+}
+
+func updateFileUploadWithProcessingStatusUsingCustomDbHandler(customDb customDbHandler, id, processingStatus string) error {
 	if utilities.IsBlank(id) {
 		return errors.New("id cannot be blank")
 	}
@@ -260,7 +297,7 @@ func (s *Storage) UpdateFileUploadWithProcessingStatus(id, processingStatus stri
 		return errors.New("processing status should be valid")
 	}
 
-	result, err := s.db.Exec(`UPDATE public."file_uploads" SET "processing_status" = $2 WHERE id = $1`, id, processingStatus)
+	result, err := customDb.Exec(`UPDATE public."file_uploads" SET "processing_status" = $2 WHERE id = $1`, id, processingStatus)
 	if err != nil {
 		return utilities.WrapBadError(err, fmt.Sprintf("dbError while updating fileUpload: %s %s", id, processingStatus))
 	}

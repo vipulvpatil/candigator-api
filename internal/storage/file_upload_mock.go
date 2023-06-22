@@ -3,18 +3,24 @@ package storage
 import "github.com/vipulvpatil/candidate-tracker-go/internal/model"
 
 type FileUploadAccessorConfigurableMock struct {
-	GetFileUploadInternal                           func(id string) (*model.FileUpload, error)
-	GetFileUploadsForTeamInteral                    func(team *model.Team) ([]*model.FileUpload, error)
-	GetUnprocessedFileUploadsCountForTeamInternal   func(team *model.Team) (int, error)
-	GetAllProcessingNotStartedFileUploadIdsInternal func() ([]string, error)
-	CreateFileUploadForTeamInteral                  func(name string, team *model.Team) (*model.FileUpload, error)
-	UpdateFileUploadWithPresignedUrlInternal        func(id, presignedUrl string) error
-	UpdateFileUploadWithStatusInternal              func(id, status string) error
-	UpdateFileUploadWithProcessingStatusInternal    func(id, processingStatus string) error
+	GetFileUploadInternal                               func(id string) (*model.FileUpload, error)
+	GetFileUploadUsingTxInternal                        func(id string, tx DatabaseTransaction) (*model.FileUpload, error)
+	GetFileUploadsForTeamInteral                        func(team *model.Team) ([]*model.FileUpload, error)
+	GetUnprocessedFileUploadsCountForTeamInternal       func(team *model.Team) (int, error)
+	GetAllProcessingNotStartedFileUploadIdsInternal     func() ([]string, error)
+	CreateFileUploadForTeamInteral                      func(name string, team *model.Team) (*model.FileUpload, error)
+	UpdateFileUploadWithPresignedUrlInternal            func(id, presignedUrl string) error
+	UpdateFileUploadWithStatusInternal                  func(id, status string) error
+	UpdateFileUploadWithProcessingStatusInternal        func(id, processingStatus string) error
+	UpdateFileUploadWithProcessingStatusUsingTxInternal func(id, processingStatus string, tx DatabaseTransaction) error
 }
 
 func (f *FileUploadAccessorConfigurableMock) GetFileUpload(id string) (*model.FileUpload, error) {
 	return f.GetFileUploadInternal(id)
+}
+
+func (f *FileUploadAccessorConfigurableMock) GetFileUploadUsingTx(id string, tx DatabaseTransaction) (*model.FileUpload, error) {
+	return f.GetFileUploadUsingTxInternal(id, tx)
 }
 
 func (f *FileUploadAccessorConfigurableMock) GetFileUploadsForTeam(team *model.Team) ([]*model.FileUpload, error) {
@@ -43,4 +49,8 @@ func (f *FileUploadAccessorConfigurableMock) UpdateFileUploadWithStatus(id, stat
 
 func (f *FileUploadAccessorConfigurableMock) UpdateFileUploadWithProcessingStatus(id, processingStatus string) error {
 	return f.UpdateFileUploadWithProcessingStatusInternal(id, processingStatus)
+}
+
+func (f *FileUploadAccessorConfigurableMock) UpdateFileUploadWithProcessingStatusUsingTx(id, processingStatus string, tx DatabaseTransaction) error {
+	return f.UpdateFileUploadWithProcessingStatusUsingTxInternal(id, processingStatus, tx)
 }
