@@ -9,7 +9,7 @@ import (
 	"github.com/vipulvpatil/candidate-tracker-go/internal/workers"
 )
 
-func (s *CandidateTrackerGoService) Loop(ctx context.Context, tickerDuration time.Duration, wg *sync.WaitGroup, jobStarter workers.JobStarter) {
+func (s *CandidateTrackerGoService) ProcessingLoop(ctx context.Context, tickerDuration time.Duration, wg *sync.WaitGroup, jobStarter workers.JobStarter) {
 	wg.Add(1)
 	defer wg.Done()
 

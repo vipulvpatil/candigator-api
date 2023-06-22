@@ -11,7 +11,7 @@ import (
 	"github.com/vipulvpatil/candidate-tracker-go/internal/workers"
 )
 
-func Test_Loop(t *testing.T) {
+func Test_ProcessingLoop(t *testing.T) {
 	t.Run("looks for file uploads that are not already being processed and calls job starter to process them, until canceled", func(t *testing.T) {
 		jobStarterMock := &workers.JobStarterMockCallCheck{}
 		tickerDuration := 10 * time.Millisecond
@@ -62,8 +62,8 @@ func Test_Loop(t *testing.T) {
 		)
 
 		var wg sync.WaitGroup
-		loopCtx, cancelLoop := context.WithCancel(context.Background())
-		go server.Loop(loopCtx, tickerDuration, &wg, jobStarterMock)
+		loopCtx, cancelProcessingLoop := context.WithCancel(context.Background())
+		go server.ProcessingLoop(loopCtx, tickerDuration, &wg, jobStarterMock)
 		time.Sleep(45 * time.Millisecond)
 
 		for _, jobsStarted := range jobStartedCallsToVerify {
@@ -78,7 +78,7 @@ func Test_Loop(t *testing.T) {
 		for _, f := range functionsToCheck {
 			assertCallCount(t, f.expectedCallCount, f.functionCall, f.name, "loop should run continuously until canceled")
 		}
-		cancelLoop()
+		cancelProcessingLoop()
 		time.Sleep(45 * time.Millisecond)
 		for _, f := range functionsToCheck {
 			assertCallCount(t, f.expectedCallCount, f.functionCall, f.name, "function call count should not change once loop is canceled")

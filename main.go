@@ -95,7 +95,8 @@ func main() {
 			return redis.DialURL(cfg.RedisUrl)
 		},
 	}
-	_ = workers.NewJobStarter(WORKER_NAMESPACE, redisPool)
+
+	jobStarter := workers.NewJobStarter(WORKER_NAMESPACE, redisPool)
 
 	serverDeps := server.ServerDependencies{
 		Storage:      dbStorage,
@@ -125,12 +126,18 @@ func main() {
 	startGrpcServerAsync("candidate tracker go", &wg, grpcServer, "9000", logger)
 	httpHealthServer := startHTTPHealthServer(&wg, logger)
 
+	processingLoopCtx, cancelProcessingLoop := context.WithCancel(context.Background())
+	processingLoopTickerDuration := 1 * time.Second
+	go s.ProcessingLoop(processingLoopCtx, processingLoopTickerDuration, &wg, jobStarter)
+
 	osTermSig := make(chan os.Signal, 1)
 	signal.Notify(osTermSig, syscall.SIGINT, syscall.SIGTERM)
 
 	logger.LogMessageln("Everything started correctly")
 
 	<-osTermSig
+
+	cancelProcessingLoop()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
