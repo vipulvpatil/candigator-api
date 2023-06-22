@@ -6,6 +6,7 @@ import (
 
 type FileStorer interface {
 	GetPresignedUrl(path, fileName string) (string, error)
+	GetFileData(path, fileName string) (string, error)
 }
 
 type fileStorage struct {
@@ -20,4 +21,8 @@ func NewFileStorage(s3client s3.Client) (*fileStorage, error) {
 
 func (f *fileStorage) GetPresignedUrl(path, fileName string) (string, error) {
 	return f.s3Client.GetPresignedUploadUrl(path, fileName)
+}
+
+func (f *fileStorage) GetFileData(path, fileName string) (string, error) {
+	return f.s3Client.GetFileData(path, fileName)
 }

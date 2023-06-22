@@ -118,6 +118,7 @@ func main() {
 		Storage:      dbStorage,
 		OpenAiApiKey: cfg.OpenAiApiKey,
 		Logger:       logger,
+		FileStorer:   fileStorer,
 	}
 	workerPool := workers.NewPool(workerPooldeps)
 	workerPool.Start()

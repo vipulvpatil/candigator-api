@@ -1,6 +1,8 @@
 package workers
 
 import (
+	"fmt"
+
 	"github.com/gocraft/work"
 	"github.com/pkg/errors"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
@@ -31,7 +33,7 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 	}
 
 	if fileUpload.ProcessingOngoing() || fileUpload.ProcessingFinised() {
-		err = errors.New("fileUpload is in incorrect processing state")
+		err = fmt.Errorf("fileUpload is in incorrect processing state: %s", fileUpload.Id())
 		logger.LogError(err)
 		return err
 	}
@@ -48,6 +50,16 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 		return err
 	}
 
+	logger.LogMessageln(fileUpload.StoragePath())
+	logger.LogMessageln(fileUpload.Name())
+
+	data, err := fileStorer.GetFileData(fileUpload.StoragePath(), fileUpload.Name())
+	if err != nil {
+		logger.LogError(err)
+		return err
+	}
+
+	fmt.Println(data)
 	// TODO: Get PDF file from storage
 	// TODO: Parse PDF
 	// TODO: Make call to Open AI

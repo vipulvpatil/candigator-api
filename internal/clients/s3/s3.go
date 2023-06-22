@@ -1,16 +1,20 @@
 package s3
 
 import (
+	"bytes"
+	"io"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	s3go "github.com/aws/aws-sdk-go/service/s3"
 )
 
 type Client interface {
 	GetPresignedUploadUrl(path, fileName string) (string, error)
+	GetFileData(path, fileName string) (string, error)
 }
 
 type client struct {
@@ -52,4 +56,28 @@ func (c *client) GetPresignedUploadUrl(path, fileName string) (string, error) {
 		return "", err
 	}
 	return urlStr, nil
+}
+
+func (c *client) GetFileData(path, fileName string) (string, error) {
+	input := &s3.GetObjectInput{
+		Bucket: aws.String(c.s3Bucket),
+		Key:    aws.String(path + "/" + fileName),
+	}
+
+	result, err := c.s3Client.GetObject(input)
+	if err != nil {
+		return "", err
+	}
+
+	// out, err := os.Create("/tmp/local-file.ext")
+	// defer out.Close()
+
+	var byteString bytes.Buffer
+
+	_, err = io.Copy(&byteString, result.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return byteString.String(), nil
 }

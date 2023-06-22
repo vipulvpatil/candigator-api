@@ -127,7 +127,7 @@ func Test_UploadFiles(t *testing.T) {
 						PresignedUrl:     "",
 						Status:           "INITIATED",
 						ProcessingStatus: "NOT STARTED",
-						Error:            "unable to get presignedUrl",
+						Error:            "unable to get PresignedUrl",
 					},
 				},
 			},
@@ -143,7 +143,7 @@ func Test_UploadFiles(t *testing.T) {
 					})
 				},
 			},
-			fileStorerMock: &filestorage.FileStorerMockFailure{},
+			fileStorerMock: &filestorage.FileStorerMock{},
 			errorExpected:  false,
 			errorString:    "",
 		},
@@ -191,7 +191,7 @@ func Test_UploadFiles(t *testing.T) {
 					return errors.New("unable to update fileUpload")
 				},
 			},
-			fileStorerMock: &filestorage.FileStorerMockSuccess{PresignedUrl: "http://presigned_url1"},
+			fileStorerMock: &filestorage.FileStorerMock{PresignedUrl: "http://presigned_url1"},
 			errorExpected:  false,
 			errorString:    "",
 		},
@@ -239,7 +239,7 @@ func Test_UploadFiles(t *testing.T) {
 					return nil
 				},
 			},
-			fileStorerMock: &filestorage.FileStorerMockSuccess{PresignedUrl: "http://presigned_url1"},
+			fileStorerMock: &filestorage.FileStorerMock{PresignedUrl: "http://presigned_url1"},
 			errorExpected:  false,
 			errorString:    "",
 		},
@@ -324,7 +324,7 @@ func Test_UploadFiles(t *testing.T) {
 					return nil
 				},
 			},
-			fileStorerMock: &filestorage.FileStorerMockSuccess{PresignedUrl: "http://presigned_url1"},
+			fileStorerMock: &filestorage.FileStorerMock{PresignedUrl: "http://presigned_url1"},
 			errorExpected:  false,
 			errorString:    "",
 		},
