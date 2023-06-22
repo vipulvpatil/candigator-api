@@ -297,6 +297,7 @@ func Test_GetUnprocessedFileUploadsCountForTeam(t *testing.T) {
 			},
 			cleanupSqlStmts: []TestSqlStmts{
 				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id2'`},
 			},
 			errorExpected: false,
 			errorString:   "",
@@ -315,6 +316,98 @@ func Test_GetUnprocessedFileUploadsCountForTeam(t *testing.T) {
 			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
 			fileUpload, err := s.GetUnprocessedFileUploadsCountForTeam(tt.input)
 			assert.Equal(t, tt.output, fileUpload)
+			if !tt.errorExpected {
+				assert.NoError(t, err)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+		})
+	}
+}
+
+func Test_GetAllProcessingNotStartedFileUploadIds(t *testing.T) {
+	tests := []struct {
+		name            string
+		output          []string
+		setupSqlStmts   []TestSqlStmts
+		cleanupSqlStmts []TestSqlStmts
+		errorExpected   bool
+		errorString     string
+	}{
+		{
+			name:   "successfully gets file upload ids",
+			output: []string{"fp_id1", "fp_id2"},
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+								"id", "name"
+							)
+							VALUES (
+								'team_id1', 'Team1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id2', 'file2.pdf', 'https://presigned_url2', 'INITIATED', 'NOT STARTED', 'team_id1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id3', 'file3.pdf', 'https://presigned_url3', 'INITIATED', 'COMPLETED', 'team_id1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id4', 'file4.pdf', 'https://presigned_url4', 'INITIATED', 'ONGOING', 'team_id1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id5', 'file5.pdf', 'https://presigned_url5', 'INITIATED', 'FAILED', 'team_id1'
+							)`,
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s, _ := NewDbStorage(
+				StorageOptions{
+					Db: testDb,
+				},
+			)
+
+			runSqlOnDb(t, s.db, tt.setupSqlStmts)
+			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
+			fileUploadIds, err := s.GetAllProcessingNotStartedFileUploadIds()
+			assert.Equal(t, tt.output, fileUploadIds)
 			if !tt.errorExpected {
 				assert.NoError(t, err)
 			} else {

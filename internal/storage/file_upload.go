@@ -13,6 +13,7 @@ type FileUploadAccessor interface {
 	GetFileUpload(id string) (*model.FileUpload, error)
 	GetFileUploadsForTeam(team *model.Team) ([]*model.FileUpload, error)
 	GetUnprocessedFileUploadsCountForTeam(team *model.Team) (int, error)
+	GetAllProcessingNotStartedFileUploadIds() ([]string, error)
 	CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error)
 	UpdateFileUploadWithPresignedUrl(id, presignedUrl string) error
 	UpdateFileUploadWithStatus(id, status string) error
@@ -130,6 +131,37 @@ func (s *Storage) GetUnprocessedFileUploadsCountForTeam(team *model.Team) (int, 
 	}
 
 	return count, nil
+}
+
+func (s *Storage) GetAllProcessingNotStartedFileUploadIds() ([]string, error) {
+	rows, err := s.db.Query(
+		`SELECT id
+		FROM public."file_uploads"
+		WHERE processing_status = 'NOT STARTED'
+		ORDER BY created_at ASC, id ASC`,
+	)
+	if err != nil {
+		return nil, utilities.WrapBadError(err, "failed to select file_upload ids")
+	}
+	defer rows.Close()
+
+	fileUploadIds := []string{}
+
+	for rows.Next() {
+		var id string
+		err := rows.Scan(&id)
+		if err != nil {
+			return nil, utilities.WrapBadError(err, "failed while scanning rows")
+		}
+
+		fileUploadIds = append(fileUploadIds, id)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return nil, utilities.WrapBadError(err, "failed to correctly go through file_upload id rows")
+	}
+	return fileUploadIds, nil
 }
 
 func (s *Storage) CreateFileUploadForTeam(name string, team *model.Team) (*model.FileUpload, error) {
