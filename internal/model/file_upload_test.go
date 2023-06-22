@@ -282,3 +282,95 @@ func Test_FileUpload_BelongsToTeam(t *testing.T) {
 		assert.False(t, fileUpload.BelongsToTeam(team))
 	})
 }
+
+func Test_FileUpload_ProcessingOngoing(t *testing.T) {
+	t.Run("ProcessingOngoing returns false if processingStatus is non_started", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           success,
+		}
+		assert.False(t, fileUpload.ProcessingOngoing())
+	})
+
+	t.Run("ProcessingOngoing returns true if processingStatus is ongoing", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: ongoing,
+			status:           failure,
+		}
+		assert.True(t, fileUpload.ProcessingOngoing())
+	})
+
+	t.Run("ProcessingOngoing returns false if processingStatus is completed", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: completed,
+			status:           initiated,
+		}
+		assert.False(t, fileUpload.ProcessingOngoing())
+	})
+
+	t.Run("ProcessingOngoing returns false if processingStatus is failed", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: failed,
+			status:           initiated,
+		}
+		assert.False(t, fileUpload.ProcessingOngoing())
+	})
+}
+
+func Test_FileUpload_ProcessingFinised(t *testing.T) {
+	t.Run("ProcessingFinised returns false if processingStatus is non_started", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           success,
+		}
+		assert.False(t, fileUpload.ProcessingFinised())
+	})
+
+	t.Run("ProcessingFinised returns false if processingStatus is ongoing", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: ongoing,
+			status:           failure,
+		}
+		assert.False(t, fileUpload.ProcessingFinised())
+	})
+
+	t.Run("ProcessingFinised returns true if processingStatus is completed", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: completed,
+			status:           initiated,
+		}
+		assert.True(t, fileUpload.ProcessingFinised())
+	})
+
+	t.Run("ProcessingFinised returns true if processingStatus is failed", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: failed,
+			status:           initiated,
+		}
+		assert.True(t, fileUpload.ProcessingFinised())
+	})
+}

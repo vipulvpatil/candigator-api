@@ -83,3 +83,11 @@ func (f *FileUpload) Completed() bool {
 func (f *FileUpload) BelongsToTeam(t *Team) bool {
 	return f.team.id == t.id
 }
+
+func (f *FileUpload) ProcessingOngoing() bool {
+	return f.processingStatus == ongoing
+}
+
+func (f *FileUpload) ProcessingFinised() bool {
+	return f.processingStatus == completed || f.processingStatus == failed
+}
