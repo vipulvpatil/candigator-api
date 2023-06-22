@@ -432,7 +432,7 @@ func Test_GetAllProcessingNotStartedFileUploadIds(t *testing.T) {
 	}{
 		{
 			name:   "successfully gets file upload ids",
-			output: []string{"fp_id1", "fp_id2"},
+			output: []string{"fp_id1", "fp_id6"},
 			setupSqlStmts: []TestSqlStmts{
 				{
 					Query: `INSERT INTO public."teams" (
@@ -447,7 +447,7 @@ func Test_GetAllProcessingNotStartedFileUploadIds(t *testing.T) {
 								"id", "name", "presigned_url", "status", "processing_status", "team_id"
 							)
 							VALUES (
-								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
+								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'SUCCESS', 'NOT STARTED', 'team_id1'
 							)`,
 				},
 				{
@@ -463,7 +463,7 @@ func Test_GetAllProcessingNotStartedFileUploadIds(t *testing.T) {
 								"id", "name", "presigned_url", "status", "processing_status", "team_id"
 							)
 							VALUES (
-								'fp_id3', 'file3.pdf', 'https://presigned_url3', 'INITIATED', 'COMPLETED', 'team_id1'
+								'fp_id3', 'file3.pdf', 'https://presigned_url3', 'SUCCESS', 'COMPLETED', 'team_id1'
 							)`,
 				},
 				{
@@ -471,7 +471,7 @@ func Test_GetAllProcessingNotStartedFileUploadIds(t *testing.T) {
 								"id", "name", "presigned_url", "status", "processing_status", "team_id"
 							)
 							VALUES (
-								'fp_id4', 'file4.pdf', 'https://presigned_url4', 'INITIATED', 'ONGOING', 'team_id1'
+								'fp_id4', 'file4.pdf', 'https://presigned_url4', 'SUCCESS', 'ONGOING', 'team_id1'
 							)`,
 				},
 				{
@@ -479,7 +479,15 @@ func Test_GetAllProcessingNotStartedFileUploadIds(t *testing.T) {
 								"id", "name", "presigned_url", "status", "processing_status", "team_id"
 							)
 							VALUES (
-								'fp_id5', 'file5.pdf', 'https://presigned_url5', 'INITIATED', 'FAILED', 'team_id1'
+								'fp_id5', 'file5.pdf', 'https://presigned_url5', 'SUCCESS', 'FAILED', 'team_id1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id6', 'file6.pdf', 'https://presigned_url6', 'SUCCESS', 'NOT STARTED', 'team_id1'
 							)`,
 				},
 			},

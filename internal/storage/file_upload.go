@@ -166,7 +166,8 @@ func (s *Storage) GetAllProcessingNotStartedFileUploadIds() ([]string, error) {
 	rows, err := s.db.Query(
 		`SELECT id
 		FROM public."file_uploads"
-		WHERE processing_status = 'NOT STARTED'
+		WHERE status = 'SUCCESS'
+		AND processing_status = 'NOT STARTED'
 		ORDER BY created_at ASC, id ASC`,
 	)
 	if err != nil {
