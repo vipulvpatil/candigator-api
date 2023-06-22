@@ -12,7 +12,7 @@ import (
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
 )
 
-func Test_processFileUploads(t *testing.T) {
+func Test_processFileUpload(t *testing.T) {
 	team, _ := model.NewTeam(model.TeamOptions{
 		Id:   "team_id1",
 		Name: "test@example.com",
@@ -126,7 +126,7 @@ func Test_processFileUploads(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rand.Seed(0)
 			jc := jobContext{}
-			err := jc.processFileUploads(&work.Job{
+			err := jc.processFileUpload(&work.Job{
 				Args: tt.input,
 			})
 			if tt.errorExpected {

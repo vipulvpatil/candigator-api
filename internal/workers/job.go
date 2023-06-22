@@ -8,7 +8,7 @@ import (
 
 type jobContext struct{}
 
-func (j *jobContext) processFileUploads(job *work.Job) error {
+func (j *jobContext) processFileUpload(job *work.Job) error {
 	fileUploadId := job.ArgString("fileUploadId")
 
 	if utilities.IsBlank(fileUploadId) {
