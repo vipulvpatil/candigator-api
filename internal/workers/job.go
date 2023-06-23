@@ -53,14 +53,12 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 	logger.LogMessageln(fileUpload.StoragePath())
 	logger.LogMessageln(fileUpload.Name())
 
-	data, err := fileStorer.GetFileData(fileUpload.StoragePath(), fileUpload.Name())
+	_, err = fileStorer.GetLocalFilePath(fileUpload.StoragePath(), fileUpload.Name())
 	if err != nil {
 		logger.LogError(err)
 		return err
 	}
 
-	fmt.Println(data)
-	// TODO: Get PDF file from storage
 	// TODO: Parse PDF
 	// TODO: Make call to Open AI
 	// TODO: Create Candidate object

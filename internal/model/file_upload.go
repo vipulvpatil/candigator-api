@@ -1,6 +1,8 @@
 package model
 
 import (
+	"path/filepath"
+
 	"github.com/pkg/errors"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
 )
@@ -93,5 +95,5 @@ func (f *FileUpload) ProcessingFinised() bool {
 }
 
 func (f *FileUpload) StoragePath() string {
-	return f.team.id + "/" + f.id
+	return filepath.Join(f.team.id, f.id)
 }

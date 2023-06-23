@@ -18,7 +18,7 @@ func (f *FileStorerMock) GetPresignedUrl(path, fileName string) (string, error) 
 	return f.PresignedUrl, nil
 }
 
-func (f *FileStorerMock) GetFileData(path, fileName string) (string, error) {
+func (f *FileStorerMock) GetLocalFilePath(path, fileName string) (string, error) {
 	if utilities.IsBlank(f.FileData) {
 		return "", errors.New("unable to get FileData")
 	}

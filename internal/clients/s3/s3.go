@@ -1,20 +1,20 @@
 package s3
 
 import (
-	"bytes"
 	"io"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
 	s3go "github.com/aws/aws-sdk-go/service/s3"
 )
 
 type Client interface {
 	GetPresignedUploadUrl(path, fileName string) (string, error)
-	GetFileData(path, fileName string) (string, error)
+	GetLocalFilePath(path, fileName string) (string, error)
 }
 
 type client struct {
@@ -47,9 +47,10 @@ func NewS3Client(opts ClientOptions) (Client, error) {
 }
 
 func (c *client) GetPresignedUploadUrl(path, fileName string) (string, error) {
+	fullPath := filepath.Join(path, fileName)
 	req, _ := c.s3Client.PutObjectRequest(&s3go.PutObjectInput{
 		Bucket: aws.String(c.s3Bucket),
-		Key:    aws.String(path + "/" + fileName),
+		Key:    aws.String(fullPath),
 	})
 	urlStr, err := req.Presign(15 * time.Minute)
 	if err != nil {
@@ -58,10 +59,11 @@ func (c *client) GetPresignedUploadUrl(path, fileName string) (string, error) {
 	return urlStr, nil
 }
 
-func (c *client) GetFileData(path, fileName string) (string, error) {
-	input := &s3.GetObjectInput{
+func (c *client) GetLocalFilePath(path, fileName string) (string, error) {
+	fullPath := filepath.Join(path, fileName)
+	input := &s3go.GetObjectInput{
 		Bucket: aws.String(c.s3Bucket),
-		Key:    aws.String(path + "/" + fileName),
+		Key:    aws.String(fullPath),
 	}
 
 	result, err := c.s3Client.GetObject(input)
@@ -69,15 +71,42 @@ func (c *client) GetFileData(path, fileName string) (string, error) {
 		return "", err
 	}
 
-	// out, err := os.Create("/tmp/local-file.ext")
-	// defer out.Close()
-
-	var byteString bytes.Buffer
-
-	_, err = io.Copy(&byteString, result.Body)
+	localTmpFile, err := createLocalTmpFile(path, fileName, result.Body)
 	if err != nil {
 		return "", err
 	}
 
-	return byteString.String(), nil
+	return localTmpFile, nil
+}
+
+func createLocalTmpFile(path, fileName string, data io.Reader) (string, error) {
+	tempDirPath := filepath.Join(os.TempDir(), path)
+	fileMode := os.FileMode(0644)
+	err := os.MkdirAll(tempDirPath, fileMode)
+	if err != nil {
+		return "", err
+	}
+
+	tempFilePath := filepath.Join(tempDirPath, fileName)
+
+	err = writeFile(tempFilePath, data)
+	if err != nil {
+		return "", err
+	}
+
+	return tempFilePath, nil
+}
+
+func writeFile(path string, data io.Reader) error {
+	out, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, data)
+	if err != nil {
+		return err
+	}
+	return nil
 }
