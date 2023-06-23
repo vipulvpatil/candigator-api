@@ -5,6 +5,7 @@ import (
 
 	"github.com/gocraft/work"
 	"github.com/pkg/errors"
+	"github.com/vipulvpatil/candidate-tracker-go/internal/lib/parser"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
 )
 
@@ -50,16 +51,20 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 		return err
 	}
 
-	logger.LogMessageln(fileUpload.StoragePath())
-	logger.LogMessageln(fileUpload.Name())
-
-	_, err = fileStorer.GetLocalFilePath(fileUpload.StoragePath(), fileUpload.Name())
+	localFilePath, err := fileStorer.GetLocalFilePath(fileUpload.StoragePath(), fileUpload.Name())
 	if err != nil {
 		logger.LogError(err)
 		return err
 	}
 
-	// TODO: Parse PDF
+	text, err := parser.GetTextFromPdf(localFilePath)
+	if err != nil {
+		logger.LogError(err)
+		return err
+	}
+
+	fmt.Println(text)
+
 	// TODO: Make call to Open AI
 	// TODO: Create Candidate object
 	// TODO: Update FileUpload

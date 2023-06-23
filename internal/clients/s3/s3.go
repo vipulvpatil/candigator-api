@@ -81,7 +81,7 @@ func (c *client) GetLocalFilePath(path, fileName string) (string, error) {
 
 func createLocalTmpFile(path, fileName string, data io.Reader) (string, error) {
 	tempDirPath := filepath.Join(os.TempDir(), path)
-	fileMode := os.FileMode(0644)
+	fileMode := os.FileMode(0700)
 	err := os.MkdirAll(tempDirPath, fileMode)
 	if err != nil {
 		return "", err

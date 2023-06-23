@@ -10,6 +10,7 @@ require (
 	github.com/lib/pq v1.10.7
 	github.com/lucsky/cuid v1.2.1
 	github.com/pkg/errors v0.9.1
+	github.com/rudolfoborges/pdf2go v0.1.1
 	github.com/sashabaranov/go-openai v1.5.2
 	github.com/stretchr/testify v1.8.2
 	google.golang.org/grpc v1.53.0
