@@ -7,6 +7,7 @@
 * Install and run Postgresql. This is the primary database.
 * Install and run redis. This is the backing database for running jobs using gocraft/work.
 * Install and run Docker. Not needed for development but is used in production and is useful for creating a production-like setup locally.
+* Install Poppler as indicated by [Pdf2go](https://github.com/rudolfoborges/pdf2go). Pdf2go is used to parse incoming PDFs.
 
 ### Env vars
 

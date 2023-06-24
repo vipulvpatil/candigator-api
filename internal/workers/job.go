@@ -63,7 +63,7 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 		return err
 	}
 
-	fmt.Println(text)
+	logger.LogMessageln(text)
 
 	// TODO: Make call to Open AI
 	// TODO: Create Candidate object

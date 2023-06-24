@@ -6,6 +6,8 @@ COPY . .
 
 RUN apk update && apk add git
 
+RUN apk add poppler-utils
+
 RUN go mod download
 
 RUN go build -o ./bin/candidate-tracker-go
