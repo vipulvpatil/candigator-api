@@ -15,6 +15,7 @@ type client struct {
 
 type Client interface {
 	CallCompletionApi(prompt string) (string, error)
+	CallChatCompletionApi(request chatCompletionRequest) (string, error)
 }
 
 type ClientOptions struct {
@@ -44,4 +45,30 @@ func (c *client) CallCompletionApi(prompt string) (string, error) {
 		return "", errors.Wrap(err, "Open Ai error")
 	}
 	return resp.Choices[0].Text, nil
+}
+
+func (c *client) CallChatCompletionApi(request chatCompletionRequest) (string, error) {
+	messages := request.GetChatCompletionMessages()
+	if len(messages) == 0 {
+		return "", errors.New("no messages provided to be sent to OpenAI")
+	}
+
+	openAiGoClient := openaigo.NewClient(c.apiKey)
+	ctx := context.Background()
+
+	req := openaigo.ChatCompletionRequest{
+		Model:     openaigo.GPT3Dot5Turbo,
+		MaxTokens: 1000,
+		Messages:  messages,
+	}
+
+	resp, err := openAiGoClient.CreateChatCompletion(ctx, req)
+	if err != nil {
+		c.logger.LogError(err)
+		return "", errors.Wrap(err, "Open Ai error")
+	}
+
+	c.logger.LogMessageln(resp.Choices)
+
+	return resp.Choices[0].Message.Content, nil
 }

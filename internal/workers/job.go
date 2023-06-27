@@ -6,6 +6,7 @@ import (
 	"github.com/gocraft/work"
 	"github.com/pkg/errors"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/lib/parser"
+	"github.com/vipulvpatil/candidate-tracker-go/internal/lib/parser/candidatebuilder"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
 )
 
@@ -64,6 +65,14 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 	}
 
 	logger.LogMessageln(text)
+
+	resp, err := candidatebuilder.Build(text, openAiClient)
+	if err != nil {
+		logger.LogError(err)
+		return err
+	}
+
+	logger.LogMessageln(resp)
 
 	// TODO: Make call to Open AI
 	// TODO: Create Candidate object
