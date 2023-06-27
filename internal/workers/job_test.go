@@ -84,7 +84,7 @@ func Test_processFileUpload(t *testing.T) {
 			txMock:         &storage.DatabaseTransactionMock{},
 			txShouldCommit: false,
 			errorExpected:  true,
-			errorString:    "fileUpload is in incorrect processing state",
+			errorString:    "fileUpload is in incorrect processing state: fp_id1",
 		},
 		{
 			name: "errors if unable to update fileUpload",
