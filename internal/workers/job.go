@@ -66,13 +66,11 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 
 	logger.LogMessageln(text)
 
-	resp, err := candidatebuilder.Build(text, openAiClient)
+	_, err = candidatebuilder.Build(text, openAiClient)
 	if err != nil {
 		logger.LogError(err)
 		return err
 	}
-
-	logger.LogMessageln(resp)
 
 	// TODO: Make call to Open AI
 	// TODO: Create Candidate object
