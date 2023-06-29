@@ -7,12 +7,13 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/clients/openai"
+	"github.com/vipulvpatil/candidate-tracker-go/internal/model"
 )
 
 const NOT_A_RESUME = "NOT A RESUME"
 const BUILDER_VERSION = "1.0.0"
 
-func Build(resumeText string, openAiClient openai.Client) (*Persona, error) {
+func Build(resumeText string, openAiClient openai.Client) (*model.Persona, error) {
 	response, err := OpenAiResponseForResumeText(resumeText, openAiClient)
 	if err != nil {
 		return nil, err
@@ -50,33 +51,33 @@ func OpenAiResponseForResumeText(resumeText string, openAiClient openai.Client) 
 	return openAiClient.CallChatCompletionApi(&openAiChatCompletionRequest)
 }
 
-type Education struct {
-	Institute      string `json:"Institute"`
-	Qualification  string `json:"Qualification"`
-	CompletionYear string `json:"CompletionYear"`
-}
-type Persona struct {
-	Name             string      `json:"Name"`
-	Email            string      `json:"Email"`
-	Phone            string      `json:"Phone"`
-	City             string      `json:"City"`
-	State            string      `json:"State"`
-	Country          string      `json:"Country"`
-	YoE              int         `json:"YoE"`
-	TechSkills       []string    `json:"Tech Skills"`
-	SoftSkills       []string    `json:"Soft Skills"`
-	RecommendedRoles []string    `json:"Recommended Roles"`
-	Education        []Education `json:"Education"`
-	Certifications   []string    `json:"Certifications"`
-	BuilderVersion   string
-}
+// type Education struct {
+// 	Institute      string `json:"Institute"`
+// 	Qualification  string `json:"Qualification"`
+// 	CompletionYear string `json:"CompletionYear"`
+// }
+// type Persona struct {
+// 	Name             string      `json:"Name"`
+// 	Email            string      `json:"Email"`
+// 	Phone            string      `json:"Phone"`
+// 	City             string      `json:"City"`
+// 	State            string      `json:"State"`
+// 	Country          string      `json:"Country"`
+// 	YoE              int         `json:"YoE"`
+// 	TechSkills       []string    `json:"Tech Skills"`
+// 	SoftSkills       []string    `json:"Soft Skills"`
+// 	RecommendedRoles []string    `json:"Recommended Roles"`
+// 	Education        []Education `json:"Education"`
+// 	Certifications   []string    `json:"Certifications"`
+// 	BuilderVersion   string
+// }
 
-func getPersonaDataFromOpenAiResponse(response string) (*Persona, error) {
+func getPersonaDataFromOpenAiResponse(response string) (*model.Persona, error) {
 	if strings.Contains(response, NOT_A_RESUME) {
 		return nil, errors.New("needs a valid resume to parse")
 	}
 
-	var persona Persona
+	var persona model.Persona
 
 	err := json.Unmarshal([]byte(response), &persona)
 	if err != nil {
