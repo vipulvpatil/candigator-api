@@ -6,7 +6,7 @@ import (
 	"github.com/gocraft/work"
 	"github.com/pkg/errors"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/lib/parser"
-	"github.com/vipulvpatil/candidate-tracker-go/internal/lib/parser/candidatebuilder"
+	"github.com/vipulvpatil/candidate-tracker-go/internal/lib/parser/personabuilder"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
 )
 
@@ -66,7 +66,7 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 
 	logger.LogMessageln(text)
 
-	_, err = candidatebuilder.Build(text, openAiClient)
+	_, err = personabuilder.Build(text, openAiClient)
 	if err != nil {
 		logger.LogError(err)
 		return err

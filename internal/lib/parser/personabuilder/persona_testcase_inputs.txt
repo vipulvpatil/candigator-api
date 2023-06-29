@@ -1,0 +1,399 @@
+{
+  "Name": "Person",
+  "Email": "someemail@example.com",
+  "Phone": "+91-1234567890",
+  "City": "",
+  "State": "",
+  "Country": "",
+  "YoE": 9,
+  "Tech Skills": [
+    "Go",
+    "NodeJS",
+    "Ruby on Rails",
+    "Xcode",
+    "ObjC"
+  ],
+  "Soft Skills": [],
+  "Recommended Roles": [
+    "Senior Software Engineer",
+    "Backend Developer",
+    "iOS Developer"
+  ],
+  "Education": [
+    {
+      "Qualification": "B.E., Computer Engineering",
+      "CompletionYear": "2008",
+      "Institute": "Ramrao Adik Institute of Technology"
+    },
+    {
+      "Qualification": "HSC, Science",
+      "CompletionYear": "2004",
+      "Institute": "Ramnivas Ruia Junior College"
+    },
+    {
+      "Qualification": "SSC",
+      "CompletionYear": "2002",
+      "Institute": "St. John The Baptist High School"
+    }
+  ]
+}
+***
+{
+  "Name": "Person",
+  "Email": "someemail@example.com",
+  "Phone": "+91-1234567890",
+  "City": "",
+  "State": "",
+  "Country": "",
+  "YoE": 7,
+  "Tech Skills": [
+    "React JS",
+    "React Native",
+    "TypeScript",
+    "Next JS",
+    "Graphql"
+  ],
+  "Soft Skills": [
+    "Leadership",
+    "Collaboration",
+    "Problem-solving",
+    "Communication",
+    "Creativity"
+  ],
+  "Recommended Roles": [
+    "Senior Software Engineer",
+    "Product Engineer",
+    "Lead Front End Developer"
+  ],
+  "Education": [
+    {
+      "Institute": "Dehradun Institute of Technology, Dehradun",
+      "Qualification": "Bachelor of Technology",
+      "CompletionYear": "May 2016"
+    }
+  ]
+}
+***
+{
+  "Name": "Person",
+  "Email": "someemail@example.com",
+  "Phone": "+91-1234567890",
+  "City": "San Francisco",
+  "State": "California",
+  "Country": "United States",
+  "YoE": 10,
+  "Tech Skills": [
+    "AWS",
+    "JavaScript",
+    "NodeJS",
+    "ReactJS",
+    "Java"
+  ],
+  "Soft Skills": [
+    "Team Management",
+    "Technical Leadership",
+    "Hiring",
+    "Sprint Planning",
+    "Scrum"
+  ],
+  "Recommended Roles": [
+    "Software Engineering Manager",
+    "Engineering Manager",
+    "Senior Software Engineer"
+  ],
+  "Education": [
+    {
+      "Qualification": "Masters in Computer Science",
+      "CompletionYear": "December 2010",
+      "Institute": "San Francisco State University"
+    },
+    {
+      "Qualification": "Bachelors in Computer Engineering",
+      "CompletionYear": "July 2008",
+      "Institute": "University of Mumbai, India"
+    }
+  ]
+}
+***
+{
+  "Name": "Person",
+  "Email": "someemail@example.com",
+  "Phone": "+91-1234567890",
+  "City": "Mumbai",
+  "State": "Maharashtra",
+  "Country": "India",
+  "YoE": 14,
+  "Tech Skills": [
+    "Delphi",
+    "C#",
+    "Elixir",
+    "Azure DevOps",
+    "JavaScript"
+  ],
+  "Soft Skills": [
+    "Team player",
+    "Problem-solving",
+    "Communication",
+    "Leadership",
+    "Time management"
+  ],
+  "Recommended Roles": [
+    "Software Engineer",
+    "Solution Architect",
+    "Technical Specialist"
+  ],
+  "Education": [
+    {
+      "Qualification": "Bachelor's Degree in Information Technology (Data Warehousing and Mining)",
+      "CompletionYear": "2008",
+      "Institute": "Konkan Gyanpeeth College Of Engineering"
+    },
+    {
+      "Qualification": "Master in Information Technology",
+      "CompletionYear": "Ongoing",
+      "Institute": "Distance Open Learning (Mumbai University)"
+    }
+  ]
+}
+***
+{
+  "Name": "Person",
+  "Email": "someemail@example.com",
+  "Phone": "+91-1234567890",
+  "City": "Mumbai",
+  "State": "Maharashtra",
+  "Country": "India",
+  "YoE": 11,
+  "Tech Skills": [
+    "C#",
+    ".NET",
+    "ASP.Net MVC",
+    "Angular 9",
+    "Web API"
+  ],
+  "Soft Skills": [
+    "Good Communication",
+    "Interpersonal Skills",
+    "Flexible",
+    "Self-Motivated",
+    "Team Player"
+  ],
+  "Recommended Roles": [
+    "Sr. Technical Lead",
+    "Sr. Manager",
+    "Sr. Software Engineer"
+  ],
+  "Education": [
+    {
+      "Qualification": "B. E. Computer Engineering",
+      "CompletionYear": "June 2011",
+      "Institute": "Ramrao Adik Institute of Technology (R.A.I.T)",
+      "City": "Nerul",
+      "State": "Navi Mumbai",
+      "Country": "India"
+    },
+    {
+      "Qualification": "Diploma in Computer Technology",
+      "CompletionYear": "June 2008",
+      "Institute": "Shreeram Polytechnic",
+      "City": "Airoli",
+      "State": "Navi Mumbai",
+      "Country": "India"
+    }
+  ]
+}
+***
+{
+  "Name": "Person",
+  "Email": "someemail@example.com",
+  "Phone": "+91-1234567890",
+  "City": "",
+  "State": "",
+  "Country": "",
+  "YoE": 14,
+  "Tech Skills": [
+    "Account Management",
+    "Business Development",
+    "Market Analysis",
+    "Client Relationship Management",
+    "Advertising Strategies"
+  ],
+  "Soft Skills": [
+    "Communication",
+    "Leadership",
+    "Negotiation",
+    "Team Management",
+    "Problem Solving"
+  ],
+  "Recommended Roles": [
+    "Business Development Manager",
+    "Key Accounts Manager",
+    "Senior Manager, Marketing"
+  ],
+  "Education": [
+    {
+      "Qualification": "MMS in Marketing Management",
+      "Institute": "VIT (Wadala)",
+      "CompletionYear": "2011"
+    },
+    {
+      "Qualification": "B.E. in Engineering",
+      "Institute": "Vivekanand Education Society’s Institute of Technology",
+      "CompletionYear": "2008"
+    },
+    {
+      "Qualification": "H.S.C",
+      "Institute": "St. John the Baptist Junior College",
+      "CompletionYear": ""
+    },
+    {
+      "Qualification": "SSC",
+      "Institute": "St. John the Baptist High School",
+      "CompletionYear": ""
+    }
+  ]
+}
+***
+{
+  "Name": "Person",
+  "Email": "someemail@example.com",
+  "Phone": "+91-1234567890",
+  "City": "Berkeley",
+  "State": "California",
+  "Country": "United States",
+  "YoE": 10,
+  "Tech Skills": [
+    "Evaluation and assessment",
+    "Therapeutic physical therapy interventions",
+    "Documentation in EMR",
+    "Skilled therapeutic exercises",
+    "Electrotherapy treatments"
+  ],
+  "Soft Skills": [
+    "Team player",
+    "Management",
+    "Communication",
+    "Flexibility",
+    "Multidisciplinary collaboration"
+  ],
+  "Recommended Roles": [
+    "Cardiopulmonary Physical Therapist",
+    "Orthopedic Physical Therapist",
+    "Rehabilitation Program Director"
+  ],
+  "Certifications": [
+    "CPR certified",
+    "Spine, Elbow & Ankle Manipulation, C Institute, India",
+    "Diploma in Yoga Therapy",
+    "Balance training and Swiss ball Thera TheraAcademy"
+  ],
+  "Education": [
+    {
+      "Qualification": "Doctorate of Physical Therapy",
+      "CompletionYear": "2021",
+      "Institute": "Arcadia University, Pennsylvania"
+    },
+    {
+      "Qualification": "MSc Kinesiology",
+      "CompletionYear": "2011",
+      "Institute": "San Francisco State University, San Francisco"
+    },
+    {
+      "Qualification": "BSc Physiotherapy",
+      "CompletionYear": "2008",
+      "Institute": "Laxmi Memorial College, India"
+    }
+  ]
+}
+***
+{
+  "Name": "Person",
+  "Email": "someemail@example.com",
+  "Phone": "+91-1234567890",
+  "City": "Thane",
+  "State": "Maharashtra",
+  "Country": "India",
+  "YoE": 10,
+  "Tech Skills": [
+    "AutoCAD 2D",
+    "MS Office",
+    "SketchUp 3D",
+    "Photoshop",
+    "Revit"
+  ],
+  "Soft Skills": [
+    "Communication",
+    "Project Management",
+    "Team Collaboration",
+    "Problem Solving",
+    "Attention to Detail"
+  ],
+  "Recommended Roles": [
+    "Senior Architect",
+    "Junior Architect",
+    "Intern"
+  ],
+  "Education": [
+    {
+      "Qualification": "Bachelor of Architecture",
+      "Institute": "Bharati Vidyapeeth College Of Architecture",
+      "CompletionYear": "2012"
+    },
+    {
+      "Qualification": "Higher Secondary Certificate",
+      "Institute": "South Indian Education Society",
+      "CompletionYear": "2004"
+    },
+    {
+      "Qualification": "Secondary School Certificate",
+      "Institute": "St.John The Baptist High School",
+      "CompletionYear": "2002"
+    }
+  ]
+}
+***
+{
+  "Name": "Person",
+  "Email": "someemail@example.com",
+  "Phone": "+91-1234567890",
+  "City": "Navi Mumbai",
+  "State": "Maharashtra",
+  "Country": "India",
+  "YoE": 10,
+  "Tech Skills": [
+    "Financial Accounting",
+    "Taxation",
+    "Planning",
+    "Reporting",
+    "ERP"
+  ],
+  "Soft Skills": [
+    "Strategic Thinking",
+    "Problem Solving",
+    "Data Collection",
+    "Communication",
+    "Analytical Skills"
+  ],
+  "Recommended Roles": [
+    "Financial Accountant",
+    "Tax Consultant",
+    "ERP Specialist"
+  ],
+  "Education": [
+    {
+      "Qualification": "CMA",
+      "Institute": "ICWAI",
+      "CompletionYear": "2010"
+    },
+    {
+      "Qualification": "M.Com (Costing)",
+      "Institute": "Pune University",
+      "CompletionYear": "2011"
+    },
+    {
+      "Qualification": "B.Com (Accounts and Finance)",
+      "Institute": "Mumbai University",
+      "CompletionYear": "2005"
+    }
+  ]
+}
