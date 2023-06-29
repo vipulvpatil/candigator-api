@@ -18,7 +18,7 @@ type LoggerParams struct {
 func InitLogger(params LoggerParams) (Logger, func(time.Duration) bool, error) {
 	switch params.Mode {
 	case "stdout":
-		return &stdoutLogger{}, nil, nil
+		return &StdoutLogger{}, nil, nil
 	case "sentry":
 		err := sentry.Init(sentry.ClientOptions{
 			Dsn:              params.SentryParams.Dsn,
@@ -45,17 +45,17 @@ func (l *NullLogger) LogMessagef(format string, a ...any) {}
 
 func (l *NullLogger) LogError(err error) {}
 
-type stdoutLogger struct{}
+type StdoutLogger struct{}
 
-func (l *stdoutLogger) LogMessageln(a ...any) {
+func (l *StdoutLogger) LogMessageln(a ...any) {
 	fmt.Println(a...)
 }
 
-func (l *stdoutLogger) LogMessagef(format string, a ...any) {
+func (l *StdoutLogger) LogMessagef(format string, a ...any) {
 	fmt.Printf(format, a...)
 }
 
-func (l *stdoutLogger) LogError(err error) {
+func (l *StdoutLogger) LogError(err error) {
 	fmt.Println(err)
 }
 

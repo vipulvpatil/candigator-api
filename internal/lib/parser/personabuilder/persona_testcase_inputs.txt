@@ -397,3 +397,54 @@
     }
   ]
 }
+***
+{
+  "Name": "Person",
+  "Email": "someemail@example.com",
+  "Phone": "+91-1234567890",
+  "City": "Bangalore",
+  "State": "Karnataka",
+  "Country": "India",
+  "YoE": 11,
+  "Tech Skills": [
+    "Brand Development",
+    "Marketing Strategy",
+    "Product Launch",
+    "Digital Marketing",
+    "Content Development"
+  ],
+  "Soft Skills": [
+    "Leadership",
+    "Team Management",
+    "Strategic Thinking",
+    "Communication",
+    "Analytical Skills"
+  ],
+  "Recommended Roles": [
+    "Chief Marketing Officer",
+    "Brand Manager",
+    "Senior Marketing Manager"
+  ],
+  "Education": [
+    {
+      "Qualification": "PGDM(C)",
+      "CompletionYear": "2013",
+      "Institute": "Mudra Institute of Communications, Ahmedabad"
+    },
+    {
+      "Qualification": "B.E. (Electronics)",
+      "CompletionYear": "2009",
+      "Institute": "Mumbai University"
+    },
+    {
+      "Qualification": "Class XII (Maharashtra State Board)",
+      "CompletionYear": "2004",
+      "Institute": "S.I.E.S. College of Arts, Science and Commerce, Mumbai"
+    },
+    {
+      "Qualification": "Class X (Maharashtra State Board)",
+      "CompletionYear": "2002",
+      "Institute": "St. John the Baptist High School, Thane"
+    }
+  ]
+}

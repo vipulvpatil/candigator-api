@@ -13,6 +13,19 @@ const NOT_A_RESUME = "NOT A RESUME"
 const BUILDER_VERSION = "1.0.0"
 
 func Build(resumeText string, openAiClient openai.Client) (*Persona, error) {
+	response, err := OpenAiResponseForResumeText(resumeText, openAiClient)
+	if err != nil {
+		return nil, err
+	}
+	personaData, err := getPersonaDataFromOpenAiResponse(response)
+	if err != nil {
+		return nil, err
+	}
+
+	return personaData, nil
+}
+
+func OpenAiResponseForResumeText(resumeText string, openAiClient openai.Client) (string, error) {
 	openAiChatCompletionRequest := openai.ChatCompletionRequest{
 		Messages: []openai.ChatCompletionMessage{
 			{
@@ -34,17 +47,7 @@ func Build(resumeText string, openAiClient openai.Client) (*Persona, error) {
 		},
 	}
 
-	response, err := openAiClient.CallChatCompletionApi(&openAiChatCompletionRequest)
-	if err != nil {
-		return nil, err
-	}
-
-	personaData, err := getPersonaDataFromOpenAiResponse(response)
-	if err != nil {
-		return nil, err
-	}
-
-	return personaData, nil
+	return openAiClient.CallChatCompletionApi(&openAiChatCompletionRequest)
 }
 
 type Education struct {

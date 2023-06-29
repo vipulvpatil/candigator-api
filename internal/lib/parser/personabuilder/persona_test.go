@@ -1,7 +1,7 @@
 package personabuilder
 
 import (
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -82,7 +82,7 @@ func Test_BuildSuccess(t *testing.T) {
 	// }
 
 	t.Run("run examples", func(t *testing.T) {
-		fileContent, err := ioutil.ReadFile("persona_testcase_inputs.txt")
+		fileContent, err := os.ReadFile("persona_testcase_inputs.txt")
 		assert.NoError(t, err)
 
 		testInputs := strings.Split(string(fileContent), "***")
@@ -96,6 +96,7 @@ func Test_BuildSuccess(t *testing.T) {
 			{Name: "Person", Email: "someemail@example.com", Phone: "+91-1234567890", City: "Berkeley", State: "California", Country: "United States", YoE: 10, TechSkills: []string{"Evaluation and assessment", "Therapeutic physical therapy interventions", "Documentation in EMR", "Skilled therapeutic exercises", "Electrotherapy treatments"}, SoftSkills: []string{"Team player", "Management", "Communication", "Flexibility", "Multidisciplinary collaboration"}, RecommendedRoles: []string{"Cardiopulmonary Physical Therapist", "Orthopedic Physical Therapist", "Rehabilitation Program Director"}, Education: []Education{{Institute: "Arcadia University, Pennsylvania", Qualification: "Doctorate of Physical Therapy", CompletionYear: "2021"}, {Institute: "San Francisco State University, San Francisco", Qualification: "MSc Kinesiology", CompletionYear: "2011"}, {Institute: "Laxmi Memorial College, India", Qualification: "BSc Physiotherapy", CompletionYear: "2008"}}, Certifications: []string{"CPR certified", "Spine, Elbow & Ankle Manipulation, C Institute, India", "Diploma in Yoga Therapy", "Balance training and Swiss ball Thera TheraAcademy"}, BuilderVersion: "1.0.0"},
 			{Name: "Person", Email: "someemail@example.com", Phone: "+91-1234567890", City: "Thane", State: "Maharashtra", Country: "India", YoE: 10, TechSkills: []string{"AutoCAD 2D", "MS Office", "SketchUp 3D", "Photoshop", "Revit"}, SoftSkills: []string{"Communication", "Project Management", "Team Collaboration", "Problem Solving", "Attention to Detail"}, RecommendedRoles: []string{"Senior Architect", "Junior Architect", "Intern"}, Education: []Education{{Institute: "Bharati Vidyapeeth College Of Architecture", Qualification: "Bachelor of Architecture", CompletionYear: "2012"}, {Institute: "South Indian Education Society", Qualification: "Higher Secondary Certificate", CompletionYear: "2004"}, {Institute: "St.John The Baptist High School", Qualification: "Secondary School Certificate", CompletionYear: "2002"}}, Certifications: []string(nil), BuilderVersion: "1.0.0"},
 			{Name: "Person", Email: "someemail@example.com", Phone: "+91-1234567890", City: "Navi Mumbai", State: "Maharashtra", Country: "India", YoE: 10, TechSkills: []string{"Financial Accounting", "Taxation", "Planning", "Reporting", "ERP"}, SoftSkills: []string{"Strategic Thinking", "Problem Solving", "Data Collection", "Communication", "Analytical Skills"}, RecommendedRoles: []string{"Financial Accountant", "Tax Consultant", "ERP Specialist"}, Education: []Education{{Institute: "ICWAI", Qualification: "CMA", CompletionYear: "2010"}, {Institute: "Pune University", Qualification: "M.Com (Costing)", CompletionYear: "2011"}, {Institute: "Mumbai University", Qualification: "B.Com (Accounts and Finance)", CompletionYear: "2005"}}, Certifications: []string(nil), BuilderVersion: "1.0.0"},
+			{Name: "Person", Email: "someemail@example.com", Phone: "+91-1234567890", City: "Bangalore", State: "Karnataka", Country: "India", YoE: 11, TechSkills: []string{"Brand Development", "Marketing Strategy", "Product Launch", "Digital Marketing", "Content Development"}, SoftSkills: []string{"Leadership", "Team Management", "Strategic Thinking", "Communication", "Analytical Skills"}, RecommendedRoles: []string{"Chief Marketing Officer", "Brand Manager", "Senior Marketing Manager"}, Education: []Education{{Institute: "Mudra Institute of Communications, Ahmedabad", Qualification: "PGDM(C)", CompletionYear: "2013"}, {Institute: "Mumbai University", Qualification: "B.E. (Electronics)", CompletionYear: "2009"}, {Institute: "S.I.E.S. College of Arts, Science and Commerce, Mumbai", Qualification: "Class XII (Maharashtra State Board)", CompletionYear: "2004"}, {Institute: "St. John the Baptist High School, Thane", Qualification: "Class X (Maharashtra State Board)", CompletionYear: "2002"}}, Certifications: []string(nil), BuilderVersion: "1.0.0"},
 		}
 
 		for i, testInput := range testInputs {

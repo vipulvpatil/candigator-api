@@ -68,7 +68,5 @@ func (c *client) CallChatCompletionApi(request chatCompletionRequest) (string, e
 		return "", errors.Wrap(err, "Open Ai error")
 	}
 
-	c.logger.LogMessageln(resp.Choices)
-
 	return resp.Choices[0].Message.Content, nil
 }
