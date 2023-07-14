@@ -1,5 +1,7 @@
 package model
 
+import "github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
+
 type Persona struct {
 	Id               string
 	Name             string      `json:"Name"`
@@ -22,4 +24,11 @@ type Education struct {
 	Institute      string `json:"Institute"`
 	Qualification  string `json:"Qualification"`
 	CompletionYear string `json:"CompletionYear"`
+}
+
+func (p *Persona) IsValid() bool {
+	if p == nil {
+		return false
+	}
+	return !utilities.IsBlank(p.Name)
 }
