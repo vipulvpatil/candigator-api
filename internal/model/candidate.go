@@ -12,6 +12,8 @@ type Candidate struct {
 	createdAt              time.Time
 	aiGeneratedPersona     *Persona
 	manuallyCreatedPersona *Persona
+	team                   *Team
+	fileUploadId           string
 }
 
 type CandidateOptions struct {
@@ -19,11 +21,17 @@ type CandidateOptions struct {
 	CreatedAt              time.Time
 	AiGeneratedPersona     *Persona
 	ManuallyCreatedPersona *Persona
+	Team                   *Team
+	FileUploadId           string
 }
 
 func NewCandidate(opts CandidateOptions) (*Candidate, error) {
 	if utilities.IsBlank(opts.Id) {
-		return nil, errors.New("cannot create candidate with an empty id")
+		return nil, errors.New("cannot create Candidate with an empty id")
+	}
+
+	if opts.Team == nil {
+		return nil, errors.New("cannot create Candidate with a nil Team")
 	}
 
 	var aiGeneratedPersona, manuallyCreatedPersona *Persona
@@ -36,7 +44,7 @@ func NewCandidate(opts CandidateOptions) (*Candidate, error) {
 	}
 
 	if aiGeneratedPersona == nil && manuallyCreatedPersona == nil {
-		return nil, errors.New("cannot create candidate without a valid persona")
+		return nil, errors.New("cannot create Candidate without a valid persona")
 	}
 
 	candidate := Candidate{
@@ -44,6 +52,8 @@ func NewCandidate(opts CandidateOptions) (*Candidate, error) {
 		createdAt:              opts.CreatedAt,
 		aiGeneratedPersona:     aiGeneratedPersona,
 		manuallyCreatedPersona: manuallyCreatedPersona,
+		team:                   opts.Team,
+		fileUploadId:           opts.FileUploadId,
 	}
 	return &candidate, nil
 }

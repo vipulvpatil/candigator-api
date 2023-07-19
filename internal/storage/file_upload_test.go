@@ -573,7 +573,7 @@ func Test_CreateFileUploadForTeam(t *testing.T) {
 			cleanupSqlStmts: nil,
 			dbUpdateCheck:   nil,
 			errorExpected:   true,
-			errorString:     "cannot create FileUpload with a nil team",
+			errorString:     "cannot create FileUpload with a nil Team",
 		},
 		{
 			name: "errors when team does not exist in Database",

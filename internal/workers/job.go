@@ -66,11 +66,13 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 
 	logger.LogMessageln(text)
 
-	_, err = personabuilder.Build(text, openAiClient)
+	persona, err := personabuilder.Build(text, openAiClient)
 	if err != nil {
 		logger.LogError(err)
 		return err
 	}
+
+	persona.FileUploadId = fileUploadId
 
 	// TODO: Make call to Open AI
 	// TODO: Create Candidate object

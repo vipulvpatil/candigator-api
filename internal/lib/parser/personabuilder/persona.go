@@ -85,6 +85,7 @@ func getPersonaDataFromOpenAiResponse(response string) (*model.Persona, error) {
 	}
 
 	persona.BuilderVersion = BUILDER_VERSION
+	persona.BuiltBy = "AI"
 
 	return &persona, nil
 }

@@ -1,9 +1,14 @@
 package model
 
-import "github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
+import (
+	"database/sql/driver"
+	"encoding/json"
+
+	"github.com/pkg/errors"
+	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
+)
 
 type Persona struct {
-	Id               string
 	Name             string      `json:"Name"`
 	Email            string      `json:"Email"`
 	Phone            string      `json:"Phone"`
@@ -17,10 +22,11 @@ type Persona struct {
 	Education        []Education `json:"Education"`
 	Certifications   []string    `json:"Certifications"`
 	BuilderVersion   string
+	BuiltBy          string
+	FileUploadId     string
 }
 
 type Education struct {
-	Id             string
 	Institute      string `json:"Institute"`
 	Qualification  string `json:"Qualification"`
 	CompletionYear string `json:"CompletionYear"`
@@ -30,5 +36,27 @@ func (p *Persona) IsValid() bool {
 	if p == nil {
 		return false
 	}
-	return !utilities.IsBlank(p.Name)
+
+	if utilities.IsBlank(p.Name) {
+		return false
+	}
+
+	if p.BuiltBy == "AI" {
+		return !utilities.IsBlank(p.FileUploadId)
+	}
+
+	return true
+}
+
+func (p *Persona) Value() (driver.Value, error) {
+	return json.Marshal(p)
+}
+
+func (p *Persona) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+
+	return json.Unmarshal(b, &p)
 }

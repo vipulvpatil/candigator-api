@@ -33,7 +33,7 @@ func Test_NewUser(t *testing.T) {
 			errorString:    "cannot create user with a empty email",
 		},
 		{
-			name: "User gets created successfully with nil team",
+			name: "User gets created successfully with nil Team",
 			input: UserOptions{
 				Id:    "123",
 				Email: "test@example.com",
@@ -46,7 +46,7 @@ func Test_NewUser(t *testing.T) {
 			errorString:   "",
 		},
 		{
-			name: "User gets created successfully with non-nil team",
+			name: "User gets created successfully with non-nil Team",
 			input: UserOptions{
 				Id:    "123",
 				Email: "test@example.com",

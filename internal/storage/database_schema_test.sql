@@ -17,6 +17,18 @@ CREATE TABLE "accounts" (
 );
 
 -- CreateTable
+CREATE TABLE "candidates" (
+    "id" TEXT NOT NULL,
+    "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "ai_generated_persona" JSONB,
+    "manually_created_persona" JSONB,
+    "file_upload_id" TEXT,
+    "team_id" TEXT NOT NULL,
+
+    CONSTRAINT "candidates_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "file_uploads" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -64,6 +76,9 @@ CREATE TABLE "users" (
 CREATE UNIQUE INDEX "accounts_provider_provider_account_id_key" ON "accounts"("provider" ASC, "provider_account_id" ASC);
 
 -- CreateIndex
+CREATE UNIQUE INDEX "candidates_file_upload_id_key" ON "candidates"("file_upload_id" ASC);
+
+-- CreateIndex
 CREATE UNIQUE INDEX "sessions_session_token_key" ON "sessions"("session_token" ASC);
 
 -- CreateIndex
@@ -71,6 +86,12 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email" ASC);
 
 -- AddForeignKey
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "candidates" ADD CONSTRAINT "candidates_file_upload_id_fkey" FOREIGN KEY ("file_upload_id") REFERENCES "file_uploads"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "candidates" ADD CONSTRAINT "candidates_team_id_fkey" FOREIGN KEY ("team_id") REFERENCES "teams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "file_uploads" ADD CONSTRAINT "file_uploads_team_id_fkey" FOREIGN KEY ("team_id") REFERENCES "teams"("id") ON DELETE CASCADE ON UPDATE CASCADE;

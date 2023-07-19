@@ -45,7 +45,7 @@ func NewFileUpload(opts FileUploadOptions) (*FileUpload, error) {
 	}
 
 	if opts.Team == nil {
-		return nil, errors.New("cannot create FileUpload with a nil team")
+		return nil, errors.New("cannot create FileUpload with a nil Team")
 	}
 
 	return &FileUpload{

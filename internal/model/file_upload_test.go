@@ -52,7 +52,7 @@ func Test_NewFileUpload(t *testing.T) {
 			},
 			expectedOutput: nil,
 			errorExpected:  true,
-			errorString:    "cannot create FileUpload with a nil team",
+			errorString:    "cannot create FileUpload with a nil Team",
 		},
 		{
 			name: "FileUpload gets created successfully",

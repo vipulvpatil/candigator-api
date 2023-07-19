@@ -7,6 +7,10 @@ import (
 )
 
 func Test_NewCandidate(t *testing.T) {
+	team, _ := NewTeam(TeamOptions{
+		Id:   "team_id1",
+		Name: "test@example.com",
+	})
 	tests := []struct {
 		name           string
 		input          CandidateOptions
@@ -19,26 +23,38 @@ func Test_NewCandidate(t *testing.T) {
 			input:          CandidateOptions{},
 			expectedOutput: nil,
 			errorExpected:  true,
-			errorString:    "cannot create candidate with an empty id",
+			errorString:    "cannot create Candidate with an empty id",
 		},
 		{
-			name: "has no associated persoa",
+			name: "has nil Team",
 			input: CandidateOptions{
 				Id: "123",
 			},
 			expectedOutput: nil,
 			errorExpected:  true,
-			errorString:    "cannot create candidate without a valid persona",
+			errorString:    "cannot create Candidate with a nil Team",
+		},
+		{
+			name: "has no associated persoa",
+			input: CandidateOptions{
+				Id:   "123",
+				Team: team,
+			},
+			expectedOutput: nil,
+			errorExpected:  true,
+			errorString:    "cannot create Candidate without a valid persona",
 		},
 		{
 			name: "Candidate gets created successfully with AI Generated Persona",
 			input: CandidateOptions{
 				Id:                 "123",
-				AiGeneratedPersona: &Persona{Name: "persona name"},
+				Team:               team,
+				AiGeneratedPersona: &Persona{Name: "persona name", BuiltBy: "AI", FileUploadId: "fp_id1"},
 			},
 			expectedOutput: &Candidate{
 				id:                 "123",
-				aiGeneratedPersona: &Persona{Name: "persona name"},
+				team:               team,
+				aiGeneratedPersona: &Persona{Name: "persona name", BuiltBy: "AI", FileUploadId: "fp_id1"},
 			},
 			errorExpected: false,
 			errorString:   "",
@@ -47,10 +63,12 @@ func Test_NewCandidate(t *testing.T) {
 			name: "Candidate gets created successfully with Manual Persona",
 			input: CandidateOptions{
 				Id:                     "123",
+				Team:                   team,
 				ManuallyCreatedPersona: &Persona{Name: "persona name"},
 			},
 			expectedOutput: &Candidate{
 				id:                     "123",
+				team:                   team,
 				manuallyCreatedPersona: &Persona{Name: "persona name"},
 			},
 			errorExpected: false,
