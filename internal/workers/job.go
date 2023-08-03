@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/lib/parser"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/lib/parser/personabuilder"
+	"github.com/vipulvpatil/candidate-tracker-go/internal/model"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
 )
 
@@ -15,8 +16,59 @@ type jobContext struct{}
 func (j *jobContext) processFileUpload(job *work.Job) error {
 	fileUploadId := job.ArgString("fileUploadId")
 
+	fileUpload, err := updateFileUploadToProcessing(fileUploadId)
+	if err != nil {
+		logger.LogError(err)
+		return err
+	}
+
+	err = processFileUploadUsingAi(fileUpload)
+	if err != nil {
+		logger.LogError(err)
+		return err
+	}
+
+	return nil
+}
+
+func updateFileUploadToProcessing(fileUploadId string) (*model.FileUpload, error) {
 	if utilities.IsBlank(fileUploadId) {
 		err := errors.New("fileUploadId is required")
+		logger.LogError(err)
+		return nil, err
+	}
+
+	tx, err := workerStorage.BeginTransaction()
+	if err != nil {
+		logger.LogError(err)
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	fileUpload, err := workerStorage.GetFileUploadUsingTx(fileUploadId, tx)
+	if err != nil {
+		logger.LogError(err)
+		return nil, err
+	}
+
+	if fileUpload.ProcessingOngoing() || fileUpload.ProcessingFinised() {
+		err = fmt.Errorf("fileUpload is in incorrect processing state: %s", fileUpload.Id())
+		logger.LogError(err)
+		return nil, err
+	}
+
+	err = workerStorage.UpdateFileUploadWithProcessingStatusUsingTx(fileUploadId, "ONGOING", tx)
+	if err != nil {
+		logger.LogError(err)
+		return nil, err
+	}
+
+	return fileUpload, tx.Commit()
+}
+
+func processFileUploadUsingAi(fileUpload *model.FileUpload) error {
+	if fileUpload == nil {
+		err := errors.New("fileUpload is required")
 		logger.LogError(err)
 		return err
 	}
@@ -27,30 +79,6 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 		return err
 	}
 	defer tx.Rollback()
-
-	fileUpload, err := workerStorage.GetFileUploadUsingTx(fileUploadId, tx)
-	if err != nil {
-		logger.LogError(err)
-		return err
-	}
-
-	if fileUpload.ProcessingOngoing() || fileUpload.ProcessingFinised() {
-		err = fmt.Errorf("fileUpload is in incorrect processing state: %s", fileUpload.Id())
-		logger.LogError(err)
-		return err
-	}
-
-	err = workerStorage.UpdateFileUploadWithProcessingStatusUsingTx(fileUploadId, "ONGOING", tx)
-	if err != nil {
-		logger.LogError(err)
-		return err
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		logger.LogError(err)
-		return err
-	}
 
 	localFilePath, err := fileStorer.GetLocalFilePath(fileUpload.StoragePath(), fileUpload.Name())
 	if err != nil {
@@ -72,16 +100,19 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 		return err
 	}
 
-	persona.FileUploadId = fileUploadId
+	persona.FileUploadId = fileUpload.Id()
 
-	// TODO: Make call to Open AI
-	// TODO: Create Candidate object
-	// TODO: Update FileUpload
-	// err = workerStorage.UpdateFileUploadWithProcessingStatus(fileUploadId, "COMPLETED")
-	// if err != nil {
-	// 	logger.LogError(err)
-	// 	return err
-	// }
+	err = workerStorage.CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(persona, fileUpload.Team(), tx)
+	if err != nil {
+		logger.LogError(err)
+		return err
+	}
 
-	return nil
+	err = workerStorage.UpdateFileUploadWithProcessingStatusUsingTx(fileUpload.Id(), "COMPLETED", tx)
+	if err != nil {
+		logger.LogError(err)
+		return err
+	}
+
+	return tx.Commit()
 }

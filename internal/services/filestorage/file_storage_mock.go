@@ -7,8 +7,8 @@ import (
 )
 
 type FileStorerMock struct {
-	PresignedUrl string
-	FileData     string
+	PresignedUrl  string
+	LocalFilePath string
 }
 
 func (f *FileStorerMock) GetPresignedUrl(path, fileName string) (string, error) {
@@ -19,8 +19,8 @@ func (f *FileStorerMock) GetPresignedUrl(path, fileName string) (string, error) 
 }
 
 func (f *FileStorerMock) GetLocalFilePath(path, fileName string) (string, error) {
-	if utilities.IsBlank(f.FileData) {
-		return "", errors.New("unable to get FileData")
+	if utilities.IsBlank(f.LocalFilePath) {
+		return "", errors.New("unable to get LocalFilePath")
 	}
-	return f.FileData, nil
+	return f.LocalFilePath, nil
 }

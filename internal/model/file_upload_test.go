@@ -391,3 +391,23 @@ func Test_FileUpload_StoragePath(t *testing.T) {
 		assert.Equal(t, "team_id1/fp_id1", fileUpload.StoragePath())
 	})
 }
+
+func Test_FileUpload_Team(t *testing.T) {
+	t.Run("Team returns fileUpload's Team", func(t *testing.T) {
+		fileUpload := &FileUpload{
+			id:               "fp_id1",
+			name:             "file1.pdf",
+			presignedUrl:     "http://presignedUrl1",
+			processingStatus: not_started,
+			status:           initiated,
+			team: &Team{
+				id:   "team_id1",
+				name: "test",
+			},
+		}
+		assert.Equal(t, &Team{
+			id:   "team_id1",
+			name: "test",
+		}, fileUpload.Team())
+	})
+}

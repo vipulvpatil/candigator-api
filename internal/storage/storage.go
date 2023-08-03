@@ -12,6 +12,7 @@ type StorageAccessor interface {
 	DatabaseTransactionProvider
 	TeamHydrator
 	FileUploadAccessor
+	CandidateAccessor
 }
 
 type Storage struct {

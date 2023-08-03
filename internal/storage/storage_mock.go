@@ -5,6 +5,7 @@ type StorageAccessorMock struct {
 	DatabaseTransactionProvider
 	TeamHydrator
 	FileUploadAccessor
+	CandidateAccessor
 }
 
 type StorageAccessorMockOption func(*StorageAccessorMock)
@@ -33,5 +34,11 @@ func WithTeamHydratorMock(mock TeamHydrator) StorageAccessorMockOption {
 func WithFileUploadAccessorMock(mock FileUploadAccessor) StorageAccessorMockOption {
 	return func(s *StorageAccessorMock) {
 		s.FileUploadAccessor = mock
+	}
+}
+
+func WithCandidateAccessorMock(mock CandidateAccessor) StorageAccessorMockOption {
+	return func(s *StorageAccessorMock) {
+		s.CandidateAccessor = mock
 	}
 }

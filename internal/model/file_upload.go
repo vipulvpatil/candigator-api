@@ -97,3 +97,7 @@ func (f *FileUpload) ProcessingFinised() bool {
 func (f *FileUpload) StoragePath() string {
 	return filepath.Join(f.team.id, f.id)
 }
+
+func (f *FileUpload) Team() *Team {
+	return f.team
+}
