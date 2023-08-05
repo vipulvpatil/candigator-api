@@ -10,7 +10,7 @@ import (
 
 type CandidateAccessor interface {
 	CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(persona *model.Persona, team *model.Team, tx DatabaseTransaction) error
-	// GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, error)
+	GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, error)
 }
 
 func (s *Storage) CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(persona *model.Persona, team *model.Team, tx DatabaseTransaction) error {
@@ -48,4 +48,8 @@ func (s *Storage) CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(persona *m
 	}
 
 	return nil
+}
+
+func (s *Storage) GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, error) {
+	return nil, nil
 }
