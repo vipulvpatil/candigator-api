@@ -88,3 +88,92 @@ func Test_NewCandidate(t *testing.T) {
 		})
 	}
 }
+
+func Test_Candidate_Id(t *testing.T) {
+	team, _ := NewTeam(TeamOptions{
+		Id:   "team_id1",
+		Name: "test@example.com",
+	})
+	t.Run("returns Id", func(t *testing.T) {
+		candidate := &Candidate{
+			id: "c_id1",
+			aiGeneratedPersona: &Persona{
+				Name: "candidate_1",
+			},
+			team:         team,
+			fileUploadId: "fp_id1",
+		}
+		assert.Equal(t, "c_id1", candidate.Id())
+	})
+}
+func Test_Candidate_FileUploadId(t *testing.T) {
+	team, _ := NewTeam(TeamOptions{
+		Id:   "team_id1",
+		Name: "test@example.com",
+	})
+	t.Run("returns FileUploadId", func(t *testing.T) {
+		candidate := &Candidate{
+			id: "c_id1",
+			aiGeneratedPersona: &Persona{
+				Name: "candidate_1",
+			},
+			team:         team,
+			fileUploadId: "fp_id1",
+		}
+		assert.Equal(t, "fp_id1", candidate.FileUploadId())
+	})
+}
+
+func Test_Candidate_AiGeneratedPersonaAsJsonString(t *testing.T) {
+	team, _ := NewTeam(TeamOptions{
+		Id:   "team_id1",
+		Name: "test@example.com",
+	})
+	t.Run("returns AiGeneratedPersonaAsJsonString", func(t *testing.T) {
+		candidate := &Candidate{
+			id: "c_id1",
+			aiGeneratedPersona: &Persona{
+				Name: "candidate_1",
+			},
+			team:         team,
+			fileUploadId: "fp_id1",
+		}
+		assert.Equal(t, "{\"Name\":\"candidate_1\",\"Email\":\"\",\"Phone\":\"\",\"City\":\"\",\"State\":\"\",\"Country\":\"\",\"YoE\":0,\"Tech Skills\":null,\"Soft Skills\":null,\"Recommended Roles\":null,\"Education\":null,\"Certifications\":null,\"BuilderVersion\":\"\",\"BuiltBy\":\"\",\"FileUploadId\":\"\"}", candidate.AiGeneratedPersonaAsJsonString())
+	})
+
+	t.Run("returns AiGeneratedPersonaAsJsonString", func(t *testing.T) {
+		candidate := &Candidate{
+			id:           "c_id1",
+			team:         team,
+			fileUploadId: "fp_id1",
+		}
+		assert.Equal(t, "", candidate.AiGeneratedPersonaAsJsonString())
+	})
+}
+
+func Test_Candidate_ManuallyCreatedPersonaAsJsonString(t *testing.T) {
+	team, _ := NewTeam(TeamOptions{
+		Id:   "team_id1",
+		Name: "test@example.com",
+	})
+	t.Run("returns ManuallyCreatedPersonaAsJsonString", func(t *testing.T) {
+		candidate := &Candidate{
+			id: "c_id1",
+			manuallyCreatedPersona: &Persona{
+				Name: "candidate_1",
+			},
+			team:         team,
+			fileUploadId: "fp_id1",
+		}
+		assert.Equal(t, "{\"Name\":\"candidate_1\",\"Email\":\"\",\"Phone\":\"\",\"City\":\"\",\"State\":\"\",\"Country\":\"\",\"YoE\":0,\"Tech Skills\":null,\"Soft Skills\":null,\"Recommended Roles\":null,\"Education\":null,\"Certifications\":null,\"BuilderVersion\":\"\",\"BuiltBy\":\"\",\"FileUploadId\":\"\"}", candidate.ManuallyCreatedPersonaAsJsonString())
+	})
+
+	t.Run("returns ManuallyCreatedPersonaAsJsonString", func(t *testing.T) {
+		candidate := &Candidate{
+			id:           "c_id1",
+			team:         team,
+			fileUploadId: "fp_id1",
+		}
+		assert.Equal(t, "", candidate.ManuallyCreatedPersonaAsJsonString())
+	})
+}

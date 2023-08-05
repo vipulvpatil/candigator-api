@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/pkg/errors"
@@ -56,4 +57,38 @@ func NewCandidate(opts CandidateOptions) (*Candidate, error) {
 		fileUploadId:           opts.FileUploadId,
 	}
 	return &candidate, nil
+}
+
+func (c *Candidate) Id() string {
+	return c.id
+}
+
+func (c *Candidate) AiGeneratedPersonaAsJsonString() string {
+	if c.aiGeneratedPersona == nil {
+		return ""
+	}
+
+	jsonString, err := json.Marshal(c.aiGeneratedPersona)
+	if err != nil {
+		return ""
+	}
+
+	return string(jsonString)
+}
+
+func (c *Candidate) ManuallyCreatedPersonaAsJsonString() string {
+	if c.manuallyCreatedPersona == nil {
+		return ""
+	}
+
+	jsonString, err := json.Marshal(c.manuallyCreatedPersona)
+	if err != nil {
+		return ""
+	}
+
+	return string(jsonString)
+}
+
+func (c *Candidate) FileUploadId() string {
+	return c.fileUploadId
 }
