@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -51,5 +52,57 @@ func (s *Storage) CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(persona *m
 }
 
 func (s *Storage) GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, error) {
-	return nil, nil
+	if team == nil || utilities.IsBlank(team.Id()) {
+		return nil, errors.New("team cannot be blank")
+	}
+
+	rows, err := s.db.Query(
+		`SELECT id, ai_generated_persona, manually_created_persona, file_upload_id
+		FROM public."candidates"
+		WHERE team_id = $1 ORDER BY created_at ASC, id ASC`,
+		team.Id(),
+	)
+	if err != nil {
+		return nil, utilities.WrapBadError(err, "failed to select candidates")
+	}
+	defer rows.Close()
+
+	candidates := []*model.Candidate{}
+
+	for rows.Next() {
+		var id string
+		var aiGeneratedPersona, manuallyCreatedPersona model.Persona
+		var fileUploadId sql.NullString
+		err := rows.Scan(&id, &aiGeneratedPersona, &manuallyCreatedPersona, &fileUploadId)
+
+		if err != nil {
+			return nil, utilities.WrapBadError(err, "failed while scanning rows")
+		}
+
+		var fileUploadIdString string
+		if fileUploadId.Valid {
+			fileUploadIdString = fileUploadId.String
+		}
+
+		candidate, err := model.NewCandidate(model.CandidateOptions{
+			Id:                     id,
+			AiGeneratedPersona:     &aiGeneratedPersona,
+			ManuallyCreatedPersona: &manuallyCreatedPersona,
+			Team:                   team,
+			FileUploadId:           fileUploadIdString,
+		})
+
+		if err != nil {
+			// TODO: Log this error?
+			continue
+		}
+
+		candidates = append(candidates, candidate)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return nil, utilities.WrapBadError(err, "failed to correctly go through candidates rows")
+	}
+	return candidates, nil
 }
