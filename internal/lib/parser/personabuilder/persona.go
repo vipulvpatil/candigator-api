@@ -43,34 +43,13 @@ func OpenAiResponseForResumeText(resumeText string, openAiClient openai.Client) 
 			},
 			{
 				Role:    "user",
-				Content: "Given the above resume, please build a persona in JSON with the following attributes. Name, Email, Phone, City, State, Country, Years of experience as \"YoE\" (type int), Top 5 technical skills present in this profile as \"Tech Skills\", Top 5 soft skills present in this profile as \"Soft Skills\", Top 3 recommended job positions as \"Recommended Roles\", Certifications, Institutes attended as \"Education\" including \"Qualification\" and \"CompletionYear\" (type string).",
+				Content: "Given the above resume, please build a persona in JSON with the following attributes. Name, Email, Phone, City, State, Country, Years of experience as \"YoE\" (type int), Top 5 technical skills present in this profile as \"Tech Skills\", Top 5 soft skills present in this profile as \"Soft Skills\", Top 3 recommended job positions as \"Recommended Roles\", Certifications, Institutes attended as \"Education\" including \"Qualification\" and \"CompletionYear\" (type string), Jobs held as \"Experience\" including \"Title\", \"Company Name\", \"Starting Year\", \"Ending Year\", \"Ongoing\" (type boolean).",
 			},
 		},
 	}
 
 	return openAiClient.CallChatCompletionApi(&openAiChatCompletionRequest)
 }
-
-// type Education struct {
-// 	Institute      string `json:"Institute"`
-// 	Qualification  string `json:"Qualification"`
-// 	CompletionYear string `json:"CompletionYear"`
-// }
-// type Persona struct {
-// 	Name             string      `json:"Name"`
-// 	Email            string      `json:"Email"`
-// 	Phone            string      `json:"Phone"`
-// 	City             string      `json:"City"`
-// 	State            string      `json:"State"`
-// 	Country          string      `json:"Country"`
-// 	YoE              int         `json:"YoE"`
-// 	TechSkills       []string    `json:"Tech Skills"`
-// 	SoftSkills       []string    `json:"Soft Skills"`
-// 	RecommendedRoles []string    `json:"Recommended Roles"`
-// 	Education        []Education `json:"Education"`
-// 	Certifications   []string    `json:"Certifications"`
-// 	BuilderVersion   string
-// }
 
 func getPersonaDataFromOpenAiResponse(response string) (*model.Persona, error) {
 	if strings.Contains(response, NOT_A_RESUME) {

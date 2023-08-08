@@ -152,18 +152,18 @@ func Test_GetCandidates(t *testing.T) {
 				Candidates: []*pb.Candidate{
 					{
 						Id:                 "c_id1",
-						AiGeneratedPersona: "{\"Name\":\"ai persona 1\",\"Email\":\"email_1\",\"Phone\":\"phone_1\",\"City\":\"city_1\",\"State\":\"state_1\",\"Country\":\"country_1\",\"YoE\":5,\"Tech Skills\":[\"tech skill 1\",\"tech skill 2\",\"tech skill 3\"],\"Soft Skills\":null,\"Recommended Roles\":null,\"Education\":null,\"Certifications\":null,\"BuilderVersion\":\"\",\"BuiltBy\":\"\",\"FileUploadId\":\"\"}",
+						AiGeneratedPersona: "{\"Name\":\"ai persona 1\",\"Email\":\"email_1\",\"Phone\":\"phone_1\",\"City\":\"city_1\",\"State\":\"state_1\",\"Country\":\"country_1\",\"YoE\":5,\"Tech Skills\":[\"tech skill 1\",\"tech skill 2\",\"tech skill 3\"]}",
 						FileUploadId:       "fp_id1",
 					},
 					{
 						Id:                     "c_id2",
-						AiGeneratedPersona:     "{\"Name\":\"ai persona 1\",\"Email\":\"email_1\",\"Phone\":\"phone_1\",\"City\":\"city_1\",\"State\":\"state_1\",\"Country\":\"country_1\",\"YoE\":5,\"Tech Skills\":[\"tech skill 1\",\"tech skill 2\",\"tech skill 3\"],\"Soft Skills\":null,\"Recommended Roles\":null,\"Education\":null,\"Certifications\":null,\"BuilderVersion\":\"\",\"BuiltBy\":\"\",\"FileUploadId\":\"\"}",
-						ManuallyCreatedPersona: "{\"Name\":\"manual persona 1\",\"Email\":\"email_1\",\"Phone\":\"phone_1\",\"City\":\"city_1\",\"State\":\"state_1\",\"Country\":\"country_1\",\"YoE\":5,\"Tech Skills\":[\"tech skill 1\",\"tech skill 2\",\"tech skill 3\"],\"Soft Skills\":null,\"Recommended Roles\":null,\"Education\":null,\"Certifications\":null,\"BuilderVersion\":\"\",\"BuiltBy\":\"\",\"FileUploadId\":\"\"}",
+						AiGeneratedPersona:     "{\"Name\":\"ai persona 1\",\"Email\":\"email_1\",\"Phone\":\"phone_1\",\"City\":\"city_1\",\"State\":\"state_1\",\"Country\":\"country_1\",\"YoE\":5,\"Tech Skills\":[\"tech skill 1\",\"tech skill 2\",\"tech skill 3\"]}",
+						ManuallyCreatedPersona: "{\"Name\":\"manual persona 1\",\"Email\":\"email_1\",\"Phone\":\"phone_1\",\"City\":\"city_1\",\"State\":\"state_1\",\"Country\":\"country_1\",\"YoE\":5,\"Tech Skills\":[\"tech skill 1\",\"tech skill 2\",\"tech skill 3\"]}",
 						FileUploadId:           "fp_id2",
 					},
 					{
 						Id:                     "c_id3",
-						ManuallyCreatedPersona: "{\"Name\":\"manual persona 1\",\"Email\":\"email_1\",\"Phone\":\"phone_1\",\"City\":\"city_1\",\"State\":\"state_1\",\"Country\":\"country_1\",\"YoE\":5,\"Tech Skills\":[\"tech skill 1\",\"tech skill 2\",\"tech skill 3\"],\"Soft Skills\":null,\"Recommended Roles\":null,\"Education\":null,\"Certifications\":null,\"BuilderVersion\":\"\",\"BuiltBy\":\"\",\"FileUploadId\":\"\"}",
+						ManuallyCreatedPersona: "{\"Name\":\"manual persona 1\",\"Email\":\"email_1\",\"Phone\":\"phone_1\",\"City\":\"city_1\",\"State\":\"state_1\",\"Country\":\"country_1\",\"YoE\":5,\"Tech Skills\":[\"tech skill 1\",\"tech skill 2\",\"tech skill 3\"]}",
 					},
 				},
 			},

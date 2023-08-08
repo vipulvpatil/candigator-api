@@ -138,7 +138,7 @@ func Test_Candidate_AiGeneratedPersonaAsJsonString(t *testing.T) {
 			team:         team,
 			fileUploadId: "fp_id1",
 		}
-		assert.Equal(t, "{\"Name\":\"candidate_1\",\"Email\":\"\",\"Phone\":\"\",\"City\":\"\",\"State\":\"\",\"Country\":\"\",\"YoE\":0,\"Tech Skills\":null,\"Soft Skills\":null,\"Recommended Roles\":null,\"Education\":null,\"Certifications\":null,\"BuilderVersion\":\"\",\"BuiltBy\":\"\",\"FileUploadId\":\"\"}", candidate.AiGeneratedPersonaAsJsonString())
+		assert.Equal(t, "{\"Name\":\"candidate_1\"}", candidate.AiGeneratedPersonaAsJsonString())
 	})
 
 	t.Run("returns AiGeneratedPersonaAsJsonString", func(t *testing.T) {
@@ -165,7 +165,7 @@ func Test_Candidate_ManuallyCreatedPersonaAsJsonString(t *testing.T) {
 			team:         team,
 			fileUploadId: "fp_id1",
 		}
-		assert.Equal(t, "{\"Name\":\"candidate_1\",\"Email\":\"\",\"Phone\":\"\",\"City\":\"\",\"State\":\"\",\"Country\":\"\",\"YoE\":0,\"Tech Skills\":null,\"Soft Skills\":null,\"Recommended Roles\":null,\"Education\":null,\"Certifications\":null,\"BuilderVersion\":\"\",\"BuiltBy\":\"\",\"FileUploadId\":\"\"}", candidate.ManuallyCreatedPersonaAsJsonString())
+		assert.Equal(t, "{\"Name\":\"candidate_1\"}", candidate.ManuallyCreatedPersonaAsJsonString())
 	})
 
 	t.Run("returns ManuallyCreatedPersonaAsJsonString", func(t *testing.T) {
