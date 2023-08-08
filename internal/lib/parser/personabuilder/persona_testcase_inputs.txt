@@ -1,11 +1,905 @@
 {
-  "Name": "Person",
-  "Email": "someemail@example.com",
-  "Phone": "+91-1234567890",
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
   "City": "",
   "State": "",
   "Country": "",
-  "YoE": 9,
+  "YoE": 7,
+  "Tech Skills": [
+    "React JS",
+    "React Native",
+    "TypeScript",
+    "Next JS",
+    "Graphql"
+  ],
+  "Soft Skills": [],
+  "Recommended Roles": [
+    "Software Engineer",
+    "Senior Software Engineer",
+    "Product Engineer"
+  ],
+  "Certifications": [],
+  "Education": [
+    {
+      "Qualification": "Bachelor of Technology",
+      "CompletionYear": "2016",
+      "Institute": "Dehradun Institute of Technology"
+    }
+  ],
+  "Experience": [
+    {
+      "Title": "Senior Software Engineer",
+      "Company Name": "Coinbase",
+      "Starting Year": "2021",
+      "Ending Year": null,
+      "Ongoing": true
+    },
+    {
+      "Title": "Software Engineer II",
+      "Company Name": "Microsoft",
+      "Starting Year": "2020",
+      "Ending Year": "2021",
+      "Ongoing": false
+    },
+    {
+      "Title": "Product Engineer",
+      "Company Name": "GoJek",
+      "Starting Year": "2019",
+      "Ending Year": "2020",
+      "Ongoing": false
+    },
+    {
+      "Title": "Senior Software Engineer",
+      "Company Name": "Paytm Smart Retail",
+      "Starting Year": "2018",
+      "Ending Year": "2019",
+      "Ongoing": false
+    },
+    {
+      "Title": "Lead Front End Developer",
+      "Company Name": "Designbids Technologies Pvt. Ltd.",
+      "Starting Year": "2016",
+      "Ending Year": "2018",
+      "Ongoing": false
+    },
+    {
+      "Title": "Front End Developer",
+      "Company Name": "Vaidik Technologies Pvt. Ltd.",
+      "Starting Year": "2015",
+      "Ending Year": "2016",
+      "Ongoing": false
+    }
+  ]
+}
+***
+{
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
+  "City": "Bangalore",
+  "State": "Karnataka",
+  "Country": "India",
+  "YoE": 11,
+  "Tech Skills": [
+    "Brand Development",
+    "Marketing Strategy",
+    "Product Launch",
+    "Digital Marketing",
+    "Campaign Management"
+  ],
+  "Soft Skills": [
+    "Leadership",
+    "Team Management",
+    "Strategic Planning",
+    "Communication",
+    "Problem Solving"
+  ],
+  "Recommended Roles": [
+    "Chief Marketing Officer",
+    "Brand Manager",
+    "Marketing Director"
+  ],
+  "Certifications": [],
+  "Education": [
+    {
+      "Qualification": "PGDM(C)",
+      "CompletionYear": "2013",
+      "Institute": "Mudra Institute of Communications"
+    },
+    {
+      "Qualification": "B.E. (Electronics)",
+      "CompletionYear": "2009",
+      "Institute": "Mumbai University"
+    }
+  ],
+  "Experience": [
+    {
+      "Title": "Chief Business Officer",
+      "CompanyName": "Hector Beverages (Paper Boat)",
+      "StartingYear": "2022",
+      "EndingYear": "Present",
+      "Ongoing": true
+    },
+    {
+      "Title": "Manager, Marketing",
+      "CompanyName": "Amazon",
+      "StartingYear": "2019",
+      "EndingYear": "2022",
+      "Ongoing": false
+    },
+    {
+      "Title": "Senior Marketing Manager",
+      "CompanyName": "Amazon",
+      "StartingYear": "2017",
+      "EndingYear": "2019",
+      "Ongoing": false
+    },
+    {
+      "Title": "Marketing Manager",
+      "CompanyName": "Amazon",
+      "StartingYear": "2015",
+      "EndingYear": "2017",
+      "Ongoing": false
+    },
+    {
+      "Title": "Sr. Site Merchandizer",
+      "CompanyName": "Amazon.in",
+      "StartingYear": "2014",
+      "EndingYear": "2015",
+      "Ongoing": false
+    },
+    {
+      "Title": "Site Merchandizer",
+      "CompanyName": "Amazon.in",
+      "StartingYear": "2013",
+      "EndingYear": "2014",
+      "Ongoing": false
+    },
+    {
+      "Title": "Assistant Project Manager",
+      "CompanyName": "Convonix Systems Pvt. Ltd.",
+      "StartingYear": "2009",
+      "EndingYear": "2010",
+      "Ongoing": false
+    }
+  ]
+}
+***
+{
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
+  "City": "Trivandrum",
+  "State": "Kerala",
+  "Country": "India",
+  "YoE": 4,
+  "Tech Skills": [
+    "C",
+    "C++",
+    "Java",
+    "Python",
+    "Go"
+  ],
+  "Soft Skills": [],
+  "Recommended Roles": [
+    "Software Engineer",
+    "Full Stack Developer",
+    "Cloud Engineer"
+  ],
+  "Certifications": [
+    "AWS Certified Solutions Architect Associate",
+    "Hashicorp Certified Terraform Associate"
+  ],
+  "Education": [
+    {
+      "Qualification": "B.Tech in Computer Science",
+      "CompletionYear": "2019",
+      "Institute": "College of Engineering Trivandrum"
+    },
+    {
+      "Qualification": "Higher Secondary Education",
+      "CompletionYear": "2015",
+      "Institute": "Silver Hills Higher Secondary School"
+    }
+  ],
+  "Experience": [
+    {
+      "Title": "Software Engineer II (L4)",
+      "Company Name": "Uber",
+      "Starting Year": "Sept 2022",
+      "Ending Year": "Present",
+      "Ongoing": true
+    },
+    {
+      "Title": "Software Engineer (IC4)",
+      "Company Name": "Coinbase",
+      "Starting Year": "Oct 2021",
+      "Ending Year": "Sept 2022",
+      "Ongoing": false
+    },
+    {
+      "Title": "Software Development Engineer - II",
+      "Company Name": "Amazon",
+      "Starting Year": "July 2019",
+      "Ending Year": "Oct 2021",
+      "Ongoing": false
+    },
+    {
+      "Title": "Research Intern",
+      "Company Name": "IIT Madras",
+      "Starting Year": "May 2018",
+      "Ending Year": "July 2018",
+      "Ongoing": false
+    }
+  ]
+}
+***
+{
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
+  "City": "Thane",
+  "State": "Maharashtra",
+  "Country": "India",
+  "YoE": 10,
+  "Tech Skills": ["AutoCAD 2D", "MS Office", "SketchUp 3D", "Photoshop", "Revit"],
+  "Soft Skills": ["Communication", "Client Relationship", "Project Management", "Team Collaboration", "Creativity"],
+  "Recommended Roles": ["Senior Architect", "Junior Architect", "Intern"],
+  "Certifications": [],
+  "Education": [
+    {
+      "Qualification": "BACHELOR OF ARCHITECTURE",
+      "Institute": "Bharati Vidyapeeth College Of Architecture, Kharghar",
+      "CompletionYear": "2012"
+    },
+    {
+      "Qualification": "HIGHER SECONDARY CERTIFICATE",
+      "Institute": "South Indian Education Society, Sion",
+      "CompletionYear": "2004"
+    },
+    {
+      "Qualification": "SECONDARY SCHOOL CERTIFICATE",
+      "Institute": "St.John The Baptist High School, Thane",
+      "CompletionYear": "2002"
+    }
+  ],
+  "Experience": [
+    {
+      "Title": "Senior Architect",
+      "Company Name": "SAAKAAR ARCHITECTS",
+      "Starting Year": "Feb' 2018",
+      "Ending Year": null,
+      "Ongoing": true
+    },
+    {
+      "Title": "Junior Architect",
+      "Company Name": "DA DESIGNS",
+      "Starting Year": "July' 2012",
+      "Ending Year": "Jan' 2018",
+      "Ongoing": false
+    },
+    {
+      "Title": "Intern",
+      "Company Name": "ARCHITECTS COLLABORATION",
+      "Starting Year": "Oct' 2011",
+      "Ending Year": "Jan' 2012",
+      "Ongoing": false
+    }
+  ]
+}
+***
+{
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
+  "City": "Navi Mumbai",
+  "Country": "India",
+  "YoE": 10,
+  "Tech Skills": [
+    "Financial Accounting",
+    "Taxation",
+    "Planning",
+    "Reporting",
+    "ERP"
+  ],
+  "Soft Skills": [
+    "Strategic Thinking",
+    "Problem Solving",
+    "Data Analysis",
+    "Communication",
+    "Attention to Detail"
+  ],
+  "Recommended Roles": [
+    "Cost & Management Accountant",
+    "Financial Analyst",
+    "Tax Consultant"
+  ],
+  "Certifications": [
+    "CMA (ICWAI)",
+    "M.Com (Costing)"
+  ],
+  "Education": [
+    {
+      "Qualification": "CMA",
+      "CompletionYear": "2010"
+    },
+    {
+      "Qualification": "M.Com (Costing)",
+      "CompletionYear": "2011"
+    },
+    {
+      "Qualification": "B.Com (Accounts and Finance)",
+      "CompletionYear": "2005"
+    },
+    {
+      "Qualification": "HSC",
+      "CompletionYear": "2002"
+    },
+    {
+      "Qualification": "SSC",
+      "CompletionYear": "2000"
+    }
+  ],
+  "Experience": [
+    {
+      "Title": "Manager Accounts & Finance",
+      "Company Name": "Neural Integrated Systems Pvt. Ltd",
+      "Starting Year": "July 2019",
+      "Ending Year": "Present",
+      "Ongoing": true
+    },
+    {
+      "Title": "Manager Accounts & Finance",
+      "Company Name": "Neural Integrated Systems Pvt. Ltd",
+      "Starting Year": "May 2012",
+      "Ending Year": "April 2015",
+      "Ongoing": false
+    },
+    {
+      "Title": "Senior Accountant",
+      "Company Name": "Dhruvi Foods and Beverages Ltd",
+      "Starting Year": "December 2011",
+      "Ending Year": "April 2012",
+      "Ongoing": false
+    },
+    {
+      "Title": "Accountant",
+      "Company Name": "Ravindra Watwe & Associates",
+      "Starting Year": "March 2010",
+      "Ending Year": "April 2011",
+      "Ongoing": false
+    },
+    {
+      "Title": "Assistant Accountant",
+      "Company Name": "Children Future India",
+      "Starting Year": "January 2008",
+      "Ending Year": "April 2009",
+      "Ongoing": false
+    },
+    {
+      "Title": "Assistant Accountant",
+      "Company Name": "Tax consultancy firm",
+      "Starting Year": "June 2007",
+      "Ending Year": "December 2007",
+      "Ongoing": false
+    }
+  ]
+}
+***
+{
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
+  "City": "San Francisco",
+  "State": "California",
+  "Country": "United States",
+  "YoE": 13,
+  "Tech Skills": [
+    "AWS",
+    "Javascript",
+    "TypeScript",
+    "NodeJS",
+    "ReactJS"
+  ],
+  "Soft Skills": [
+    "Team Management",
+    "Technical Leadership",
+    "Hiring",
+    "Sprint Planning",
+    "Scrum"
+  ],
+  "Recommended Roles": [
+    "Software Engineering Manager",
+    "Full Stack Engineer",
+    "Technical Lead"
+  ],
+  "Certifications": [],
+  "Education": [
+    {
+      "Qualification": "Masters in Computer Science",
+      "CompletionYear": "December 2010"
+    },
+    {
+      "Qualification": "Bachelors in Computer Engineering",
+      "CompletionYear": "July 2008"
+    }
+  ],
+  "Experience": [
+    {
+      "Title": "Software Development Manager",
+      "Company Name": "Amazon Web Services",
+      "Starting Year": "Feb' 2022",
+      "Ending Year": null,
+      "Ongoing": true
+    },
+    {
+      "Title": "Engineering Manager",
+      "Company Name": "Zillow Premier Agent",
+      "Starting Year": "Feb' 2020",
+      "Ending Year": "Feb' 2022",
+      "Ongoing": false
+    },
+    {
+      "Title": "Senior Software Engineer - Full Stack",
+      "Company Name": "Zillow Premier Agent",
+      "Starting Year": "Jun' 2018",
+      "Ending Year": "Feb' 2020",
+      "Ongoing": false
+    },
+    {
+      "Title": "Software Engineer - Full Stack",
+      "Company Name": "Spruce Finance",
+      "Starting Year": "June' 2013",
+      "Ending Year": "May 2018",
+      "Ongoing": false
+    },
+    {
+      "Title": "Founder",
+      "Company Name": "Beep",
+      "Starting Year": "Mar’ 2017",
+      "Ending Year": "Jun' 2019",
+      "Ongoing": false
+    },
+    {
+      "Title": "Founding Engineer",
+      "Company Name": "Izelis corp",
+      "Starting Year": "Mar’ 2011",
+      "Ending Year": "Feb' 2012",
+      "Ongoing": false
+    },
+    {
+      "Title": "Software Engineer - Platform",
+      "Company Name": "Gaia Interactive",
+      "Starting Year": "Feb’ 2012",
+      "Ending Year": "Jun' 2013",
+      "Ongoing": false
+    }
+  ]
+}
+***
+{
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
+  "City": "San Francisco",
+  "State": "CA",
+  "Country": "USA",
+  "YoE": 10,
+  "Tech Skills": ["Cardiopulmonary Physical Therapy", "Orthopedic Physical Therapy", "Clinical Solutions", "Manual Therapy", "Electrotherapy"],
+  "Soft Skills": ["Team Player", "Management", "Communication", "Leadership", "Multidisciplinary Collaboration"],
+  "Recommended Roles": ["Cardiopulmonary Physical Therapist", "Orthopedic Physical Therapist", "Rehabilitation Program Director"],
+  "Certifications": ["CPR certified", "Spine, Elbow & Ankle Manipulation", "Diploma in Yoga Therapy", "Balance training and Swiss ball Thera"],
+  "Education": [
+    {
+      "Qualification": "Doctorate of Physical Therapy",
+      "CompletionYear": "2021",
+      "Institute": "Arcadia University, Pennsylvania"
+    },
+    {
+      "Qualification": "MSc Kinesiology",
+      "CompletionYear": "2011",
+      "Institute": "San Francisco State University, San Francisco"
+    },
+    {
+      "Qualification": "BSc Physiotherapy",
+      "CompletionYear": "2008",
+      "Institute": "Laxmi Memorial College, India"
+    }
+  ],
+  "Experience": [
+    {
+      "Title": "Rehabilitation Program Director",
+      "CompanyName": "Kentfield Hospital",
+      "StartingYear": "2017",
+      "Ongoing": true
+    },
+    {
+      "Title": "Physical therapist",
+      "CompanyName": "Golden Gate Skilled Nursing and Rehab",
+      "StartingYear": "2015",
+      "EndingYear": "2017"
+    },
+    {
+      "Title": "Physical therapist",
+      "CompanyName": "Isabella Geriatric Center",
+      "StartingYear": "2014",
+      "EndingYear": "2015"
+    },
+    {
+      "Title": "Physical therapist",
+      "CompanyName": "New Vanderbilt Nursing Home",
+      "StartingYear": "2012",
+      "EndingYear": "2014"
+    },
+    {
+      "Title": "Physical therapist",
+      "CompanyName": "Jamaica Physical Therapy Clinic",
+      "StartingYear": "2012",
+      "EndingYear": "2012"
+    }
+  ]
+}
+***
+{
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
+  "YoE": 12,
+  "Tech Skills": [
+    "Business Development",
+    "Account Management",
+    "Revenue Maximization",
+    "Marketing Strategy",
+    "Advertising"
+  ],
+  "Soft Skills": [
+    "Client Relationship Management",
+    "Negotiation",
+    "Strategic Thinking",
+    "Leadership",
+    "Communication"
+  ],
+  "Recommended Roles": [
+    "Business Development Manager",
+    "Key Account Manager",
+    "Senior Marketing Manager"
+  ],
+  "Education": [
+    {
+      "Qualification": "MMS, Marketing Management",
+      "CompletionYear": "2011",
+      "Institute": "VIT (Wadala), University of Mumbai"
+    },
+    {
+      "Qualification": "B.E., Engineering",
+      "CompletionYear": "2008",
+      "Institute": "Vivekanand Education Society’s Institute of Technology"
+    },
+    {
+      "Qualification": "H.S.C",
+      "CompletionYear": "N/A",
+      "Institute": "St. John the Baptist Junior College, University of Maharashtra"
+    },
+    {
+      "Qualification": "SSC",
+      "CompletionYear": "N/A",
+      "Institute": "St. John the Baptist High School"
+    }
+  ],
+  "Experience": [
+    {
+      "Title": "Biz Dev Manager",
+      "CompanyName": "Amazon Development Centre India",
+      "StartingYear": "July '22",
+      "EndingYear": "Present",
+      "Ongoing": true
+    },
+    {
+      "Title": "Senior Manager (KAM, FTA Genre)",
+      "CompanyName": "Zee Entertainment Enterprise Ltd.",
+      "StartingYear": "May '19",
+      "EndingYear": "March '20",
+      "Ongoing": false
+    },
+    {
+      "Title": "Senior Manager (Zee Marathi)",
+      "CompanyName": "Zee Entertainment Enterprise Ltd.",
+      "StartingYear": "April '21",
+      "EndingYear": "June '22",
+      "Ongoing": false
+    },
+    {
+      "Title": "Sr. Executive (WEST FMCG accounts)",
+      "CompanyName": "Star India Ltd.",
+      "StartingYear": "October '16",
+      "EndingYear": "April '19",
+      "Ongoing": false
+    },
+    {
+      "Title": "Deputy Manager",
+      "CompanyName": "Next Radio Ltd. (94.3 Radio One)",
+      "StartingYear": "Apr '12",
+      "EndingYear": "Aug '14",
+      "Ongoing": false
+    },
+    {
+      "Title": "Sr. Officer",
+      "CompanyName": "Optimal Media Solutions (A Times Group Company)",
+      "StartingYear": "Aug '14",
+      "EndingYear": "Sept '16",
+      "Ongoing": false
+    },
+    {
+      "Title": "Marketing Exec.",
+      "CompanyName": "KAL Envirotek",
+      "StartingYear": "Sept '11",
+      "EndingYear": "Apr '12",
+      "Ongoing": false
+    }
+  ]
+}
+***
+{
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
+  "City": "Mumbai",
+  "State": "Maharashtra",
+  "Country": "India",
+  "YoE": 14,
+  "Tech Skills": [
+    "Delphi 6",
+    "C#",
+    "Elixir",
+    "Azure DevOps",
+    "Javascript"
+  ],
+  "Soft Skills": [
+    "Team player",
+    "Problem solving",
+    "Communication",
+    "Leadership",
+    "Agile/Scrum"
+  ],
+  "Recommended Roles": [
+    "Solution Architect",
+    "Technical Specialist",
+    "Manager"
+  ],
+  "Certifications": [],
+  "Education": [
+    {
+      "Qualification": "Bachelor's Degree in Information Technology (Data Warehousing and Mining)",
+      "CompletionYear": "2008",
+      "Institute": "Konkan Gyanpeeth College Of Engineering"
+    },
+    {
+      "Qualification": "Master in Information Technology",
+      "CompletionYear": "Ongoing",
+      "Institute": "Distance Open Learning (Mumbai University)"
+    }
+  ],
+  "Experience": [
+    {
+      "Title": "Solution Architect",
+      "CompanyName": "Maersk Line India Pvt Ltd.",
+      "StartingYear": "2022",
+      "EndingYear": "Present",
+      "Ongoing": true
+    },
+    {
+      "Title": "Technical Specialist",
+      "CompanyName": "CitiusTech Pvt Ltd.",
+      "StartingYear": "2020",
+      "EndingYear": "2022",
+      "Ongoing": false
+    },
+    {
+      "Title": "Manager",
+      "CompanyName": "Motilal Oswal Financial Services",
+      "StartingYear": "2016",
+      "EndingYear": "2020",
+      "Ongoing": false
+    },
+    {
+      "Title": "Software Developer",
+      "CompanyName": "DEIF India Pvt Ltd.",
+      "StartingYear": "2014",
+      "EndingYear": "2016",
+      "Ongoing": false
+    },
+    {
+      "Title": "Technical Lead",
+      "CompanyName": "CitiusTech Pvt Ltd.",
+      "StartingYear": "2014",
+      "EndingYear": "2014",
+      "Ongoing": false
+    },
+    {
+      "Title": "Software Consultant",
+      "CompanyName": "LatLong",
+      "StartingYear": "2011",
+      "EndingYear": "2013",
+      "Ongoing": false
+    },
+    {
+      "Title": "Senior Software Developer",
+      "CompanyName": "Reliable Software Systems Pvt Ltd.",
+      "StartingYear": "2010",
+      "EndingYear": "2014",
+      "Ongoing": false
+    },
+    {
+      "Title": "Assistant System Executive",
+      "CompanyName": "IMRB International (MindTech Systems)",
+      "StartingYear": "2008",
+      "EndingYear": "2010",
+      "Ongoing": false
+    }
+  ]
+}
+***
+{
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
+  "City": null,
+  "State": null,
+  "Country": null,
+  "YoE": 11,
+  "Tech Skills": [
+    "C#",
+    ".NET",
+    ".NET core",
+    "ASP.Net MVC",
+    "Angular 9"
+  ],
+  "Soft Skills": [
+    "Good Communication",
+    "Interpersonal Skills",
+    "Flexibility",
+    "Self-Motivation",
+    "Team Player"
+  ],
+  "Recommended Roles": [
+    "Sr. Technical lead",
+    "Sr. Manager",
+    "Sr. Software Engineer"
+  ],
+  "Certifications": [],
+  "Education": [
+    {
+      "Qualification": "B. E. Computer Engineering",
+      "CompletionYear": "2011"
+    },
+    {
+      "Qualification": "Diploma in Computer Technology",
+      "CompletionYear": "2008"
+    }
+  ],
+  "Experience": [
+    {
+      "Title": "Sr. Technical lead",
+      "CompanyName": "Synechron (Previously Attra Infotech)",
+      "StartingYear": "Oct 2021",
+      "EndingYear": null,
+      "Ongoing": true
+    },
+    {
+      "Title": "Sr. Manager",
+      "CompanyName": "Morgan Stanley Advantage Services Ltd.",
+      "StartingYear": "June 2018",
+      "EndingYear": "April 2021",
+      "Ongoing": false
+    },
+    {
+      "Title": "Sr. Software Engineer",
+      "CompanyName": "Mphasis Ltd., Mumbai.",
+      "StartingYear": "March 2017",
+      "EndingYear": "June 2018",
+      "Ongoing": false
+    },
+    {
+      "Title": "Technical Lead",
+      "CompanyName": "Pegasus InfoCorp Pvt. Ltd.",
+      "StartingYear": "April 2016",
+      "EndingYear": "February 2017",
+      "Ongoing": false
+    },
+    {
+      "Title": "Software Engineer",
+      "CompanyName": "GEP Solutions Private Ltd.",
+      "StartingYear": "December 2014",
+      "EndingYear": "April 2016",
+      "Ongoing": false
+    },
+    {
+      "Title": "Software Developer",
+      "CompanyName": "Iris Business Services Ltd.",
+      "StartingYear": "September 2011",
+      "EndingYear": "September 2014",
+      "Ongoing": false
+    }
+  ]
+}
+***
+{
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
+  "City": "Navi Mumbai",
+  "Country": "India",
+  "YoE": 17,
+  "Tech Skills": [
+    "C#.Net",
+    "VB.Net",
+    "jQuery",
+    "JavaScript",
+    "HTML5"
+  ],
+  "Soft Skills": [
+    "Organizational",
+    "Communication",
+    "Leadership",
+    "Time Management",
+    "Problem Solving"
+  ],
+  "Recommended Roles": [
+    "Technical Architect",
+    "Senior Consultant",
+    "Technical Lead"
+  ],
+  "Certifications": [],
+  "Education": [
+    {
+      "Qualification": "Bachelor degree in Engineering",
+      "CompletionYear": "N/A"
+    }
+  ],
+  "Experience": [
+    {
+      "Title": "Technical Architect",
+      "Company Name": "Hexaware Technologies",
+      "Starting Year": "N/A",
+      "Ending Year": "Present",
+      "Ongoing": true
+    },
+    {
+      "Title": "Senior Consultant",
+      "Company Name": "Capgemini",
+      "Starting Year": "N/A",
+      "Ending Year": "N/A",
+      "Ongoing": false
+    },
+    {
+      "Title": "Technical Lead",
+      "Company Name": "Reliable Software Pvt. Ltd.",
+      "Starting Year": "N/A",
+      "Ending Year": "N/A",
+      "Ongoing": false
+    },
+    {
+      "Title": "Technology Specialist",
+      "Company Name": "PMAM IT Services Pvt. Ltd.",
+      "Starting Year": "N/A",
+      "Ending Year": "N/A",
+      "Ongoing": false
+    },
+    {
+      "Title": "Software Eng.",
+      "Company Name": "ShawMan Software Pvt. Ltd.",
+      "Starting Year": "N/A",
+      "Ending Year": "N/A",
+      "Ongoing": false
+    }
+  ]
+}
+***
+{
+  "Name": "First Last",
+  "Email": "first.last@example.com",
+  "Phone": "+91 1234567890",
   "Tech Skills": [
     "Go",
     "NodeJS",
@@ -13,7 +907,13 @@
     "Xcode",
     "ObjC"
   ],
-  "Soft Skills": [],
+  "Soft Skills": [
+    "Leadership",
+    "Problem-solving",
+    "Teamwork",
+    "Communication",
+    "Adaptability"
+  ],
   "Recommended Roles": [
     "Senior Software Engineer",
     "Backend Developer",
@@ -35,416 +935,35 @@
       "CompletionYear": "2002",
       "Institute": "St. John The Baptist High School"
     }
-  ]
-}
-***
-{
-  "Name": "Person",
-  "Email": "someemail@example.com",
-  "Phone": "+91-1234567890",
-  "City": "",
-  "State": "",
-  "Country": "",
-  "YoE": 7,
-  "Tech Skills": [
-    "React JS",
-    "React Native",
-    "TypeScript",
-    "Next JS",
-    "Graphql"
   ],
-  "Soft Skills": [
-    "Leadership",
-    "Collaboration",
-    "Problem-solving",
-    "Communication",
-    "Creativity"
-  ],
-  "Recommended Roles": [
-    "Senior Software Engineer",
-    "Product Engineer",
-    "Lead Front End Developer"
-  ],
-  "Education": [
+  "Experience": [
     {
-      "Institute": "Dehradun Institute of Technology, Dehradun",
-      "Qualification": "Bachelor of Technology",
-      "CompletionYear": "May 2016"
-    }
-  ]
-}
-***
-{
-  "Name": "Person",
-  "Email": "someemail@example.com",
-  "Phone": "+91-1234567890",
-  "City": "San Francisco",
-  "State": "California",
-  "Country": "United States",
-  "YoE": 10,
-  "Tech Skills": [
-    "AWS",
-    "JavaScript",
-    "NodeJS",
-    "ReactJS",
-    "Java"
-  ],
-  "Soft Skills": [
-    "Team Management",
-    "Technical Leadership",
-    "Hiring",
-    "Sprint Planning",
-    "Scrum"
-  ],
-  "Recommended Roles": [
-    "Software Engineering Manager",
-    "Engineering Manager",
-    "Senior Software Engineer"
-  ],
-  "Education": [
-    {
-      "Qualification": "Masters in Computer Science",
-      "CompletionYear": "December 2010",
-      "Institute": "San Francisco State University"
+      "Title": "Senior Software Engineer",
+      "Company Name": "Originate",
+      "Starting Year": "2013",
+      "Ending Year": "Present",
+      "Ongoing": true
     },
     {
-      "Qualification": "Bachelors in Computer Engineering",
-      "CompletionYear": "July 2008",
-      "Institute": "University of Mumbai, India"
-    }
-  ]
-}
-***
-{
-  "Name": "Person",
-  "Email": "someemail@example.com",
-  "Phone": "+91-1234567890",
-  "City": "Mumbai",
-  "State": "Maharashtra",
-  "Country": "India",
-  "YoE": 14,
-  "Tech Skills": [
-    "Delphi",
-    "C#",
-    "Elixir",
-    "Azure DevOps",
-    "JavaScript"
-  ],
-  "Soft Skills": [
-    "Team player",
-    "Problem-solving",
-    "Communication",
-    "Leadership",
-    "Time management"
-  ],
-  "Recommended Roles": [
-    "Software Engineer",
-    "Solution Architect",
-    "Technical Specialist"
-  ],
-  "Education": [
-    {
-      "Qualification": "Bachelor's Degree in Information Technology (Data Warehousing and Mining)",
-      "CompletionYear": "2008",
-      "Institute": "Konkan Gyanpeeth College Of Engineering"
+      "Title": "Freelancer",
+      "Company Name": "N/A",
+      "Starting Year": "2012",
+      "Ending Year": "2013",
+      "Ongoing": false
     },
     {
-      "Qualification": "Master in Information Technology",
-      "CompletionYear": "Ongoing",
-      "Institute": "Distance Open Learning (Mumbai University)"
-    }
-  ]
-}
-***
-{
-  "Name": "Person",
-  "Email": "someemail@example.com",
-  "Phone": "+91-1234567890",
-  "City": "Mumbai",
-  "State": "Maharashtra",
-  "Country": "India",
-  "YoE": 11,
-  "Tech Skills": [
-    "C#",
-    ".NET",
-    "ASP.Net MVC",
-    "Angular 9",
-    "Web API"
-  ],
-  "Soft Skills": [
-    "Good Communication",
-    "Interpersonal Skills",
-    "Flexible",
-    "Self-Motivated",
-    "Team Player"
-  ],
-  "Recommended Roles": [
-    "Sr. Technical Lead",
-    "Sr. Manager",
-    "Sr. Software Engineer"
-  ],
-  "Education": [
-    {
-      "Qualification": "B. E. Computer Engineering",
-      "CompletionYear": "June 2011",
-      "Institute": "Ramrao Adik Institute of Technology (R.A.I.T)",
-      "City": "Nerul",
-      "State": "Navi Mumbai",
-      "Country": "India"
+      "Title": "Senior Game Programmer",
+      "Company Name": "Kreeda Games India",
+      "Starting Year": "2010",
+      "Ending Year": "2012",
+      "Ongoing": false
     },
     {
-      "Qualification": "Diploma in Computer Technology",
-      "CompletionYear": "June 2008",
-      "Institute": "Shreeram Polytechnic",
-      "City": "Airoli",
-      "State": "Navi Mumbai",
-      "Country": "India"
-    }
-  ]
-}
-***
-{
-  "Name": "Person",
-  "Email": "someemail@example.com",
-  "Phone": "+91-1234567890",
-  "City": "",
-  "State": "",
-  "Country": "",
-  "YoE": 14,
-  "Tech Skills": [
-    "Account Management",
-    "Business Development",
-    "Market Analysis",
-    "Client Relationship Management",
-    "Advertising Strategies"
-  ],
-  "Soft Skills": [
-    "Communication",
-    "Leadership",
-    "Negotiation",
-    "Team Management",
-    "Problem Solving"
-  ],
-  "Recommended Roles": [
-    "Business Development Manager",
-    "Key Accounts Manager",
-    "Senior Manager, Marketing"
-  ],
-  "Education": [
-    {
-      "Qualification": "MMS in Marketing Management",
-      "Institute": "VIT (Wadala)",
-      "CompletionYear": "2011"
-    },
-    {
-      "Qualification": "B.E. in Engineering",
-      "Institute": "Vivekanand Education Society’s Institute of Technology",
-      "CompletionYear": "2008"
-    },
-    {
-      "Qualification": "H.S.C",
-      "Institute": "St. John the Baptist Junior College",
-      "CompletionYear": ""
-    },
-    {
-      "Qualification": "SSC",
-      "Institute": "St. John the Baptist High School",
-      "CompletionYear": ""
-    }
-  ]
-}
-***
-{
-  "Name": "Person",
-  "Email": "someemail@example.com",
-  "Phone": "+91-1234567890",
-  "City": "Berkeley",
-  "State": "California",
-  "Country": "United States",
-  "YoE": 10,
-  "Tech Skills": [
-    "Evaluation and assessment",
-    "Therapeutic physical therapy interventions",
-    "Documentation in EMR",
-    "Skilled therapeutic exercises",
-    "Electrotherapy treatments"
-  ],
-  "Soft Skills": [
-    "Team player",
-    "Management",
-    "Communication",
-    "Flexibility",
-    "Multidisciplinary collaboration"
-  ],
-  "Recommended Roles": [
-    "Cardiopulmonary Physical Therapist",
-    "Orthopedic Physical Therapist",
-    "Rehabilitation Program Director"
-  ],
-  "Certifications": [
-    "CPR certified",
-    "Spine, Elbow & Ankle Manipulation, C Institute, India",
-    "Diploma in Yoga Therapy",
-    "Balance training and Swiss ball Thera TheraAcademy"
-  ],
-  "Education": [
-    {
-      "Qualification": "Doctorate of Physical Therapy",
-      "CompletionYear": "2021",
-      "Institute": "Arcadia University, Pennsylvania"
-    },
-    {
-      "Qualification": "MSc Kinesiology",
-      "CompletionYear": "2011",
-      "Institute": "San Francisco State University, San Francisco"
-    },
-    {
-      "Qualification": "BSc Physiotherapy",
-      "CompletionYear": "2008",
-      "Institute": "Laxmi Memorial College, India"
-    }
-  ]
-}
-***
-{
-  "Name": "Person",
-  "Email": "someemail@example.com",
-  "Phone": "+91-1234567890",
-  "City": "Thane",
-  "State": "Maharashtra",
-  "Country": "India",
-  "YoE": 10,
-  "Tech Skills": [
-    "AutoCAD 2D",
-    "MS Office",
-    "SketchUp 3D",
-    "Photoshop",
-    "Revit"
-  ],
-  "Soft Skills": [
-    "Communication",
-    "Project Management",
-    "Team Collaboration",
-    "Problem Solving",
-    "Attention to Detail"
-  ],
-  "Recommended Roles": [
-    "Senior Architect",
-    "Junior Architect",
-    "Intern"
-  ],
-  "Education": [
-    {
-      "Qualification": "Bachelor of Architecture",
-      "Institute": "Bharati Vidyapeeth College Of Architecture",
-      "CompletionYear": "2012"
-    },
-    {
-      "Qualification": "Higher Secondary Certificate",
-      "Institute": "South Indian Education Society",
-      "CompletionYear": "2004"
-    },
-    {
-      "Qualification": "Secondary School Certificate",
-      "Institute": "St.John The Baptist High School",
-      "CompletionYear": "2002"
-    }
-  ]
-}
-***
-{
-  "Name": "Person",
-  "Email": "someemail@example.com",
-  "Phone": "+91-1234567890",
-  "City": "Navi Mumbai",
-  "State": "Maharashtra",
-  "Country": "India",
-  "YoE": 10,
-  "Tech Skills": [
-    "Financial Accounting",
-    "Taxation",
-    "Planning",
-    "Reporting",
-    "ERP"
-  ],
-  "Soft Skills": [
-    "Strategic Thinking",
-    "Problem Solving",
-    "Data Collection",
-    "Communication",
-    "Analytical Skills"
-  ],
-  "Recommended Roles": [
-    "Financial Accountant",
-    "Tax Consultant",
-    "ERP Specialist"
-  ],
-  "Education": [
-    {
-      "Qualification": "CMA",
-      "Institute": "ICWAI",
-      "CompletionYear": "2010"
-    },
-    {
-      "Qualification": "M.Com (Costing)",
-      "Institute": "Pune University",
-      "CompletionYear": "2011"
-    },
-    {
-      "Qualification": "B.Com (Accounts and Finance)",
-      "Institute": "Mumbai University",
-      "CompletionYear": "2005"
-    }
-  ]
-}
-***
-{
-  "Name": "Person",
-  "Email": "someemail@example.com",
-  "Phone": "+91-1234567890",
-  "City": "Bangalore",
-  "State": "Karnataka",
-  "Country": "India",
-  "YoE": 11,
-  "Tech Skills": [
-    "Brand Development",
-    "Marketing Strategy",
-    "Product Launch",
-    "Digital Marketing",
-    "Content Development"
-  ],
-  "Soft Skills": [
-    "Leadership",
-    "Team Management",
-    "Strategic Thinking",
-    "Communication",
-    "Analytical Skills"
-  ],
-  "Recommended Roles": [
-    "Chief Marketing Officer",
-    "Brand Manager",
-    "Senior Marketing Manager"
-  ],
-  "Education": [
-    {
-      "Qualification": "PGDM(C)",
-      "CompletionYear": "2013",
-      "Institute": "Mudra Institute of Communications, Ahmedabad"
-    },
-    {
-      "Qualification": "B.E. (Electronics)",
-      "CompletionYear": "2009",
-      "Institute": "Mumbai University"
-    },
-    {
-      "Qualification": "Class XII (Maharashtra State Board)",
-      "CompletionYear": "2004",
-      "Institute": "S.I.E.S. College of Arts, Science and Commerce, Mumbai"
-    },
-    {
-      "Qualification": "Class X (Maharashtra State Board)",
-      "CompletionYear": "2002",
-      "Institute": "St. John the Baptist High School, Thane"
+      "Title": "Flash Programmer",
+      "Company Name": "Kreeda Games India",
+      "Starting Year": "2008",
+      "Ending Year": "2010",
+      "Ongoing": false
     }
   ]
 }
