@@ -291,7 +291,7 @@ func Test_processFileUploadUsingAi(t *testing.T) {
 			txMock:         &storage.DatabaseTransactionMock{},
 			txShouldCommit: false,
 			errorExpected:  true,
-			errorString:    "unable to parse response: invalid character 'w' looking for beginning of value",
+			errorString:    "unable to parse persona json: invalid character 'w' looking for beginning of value",
 		},
 		{
 			name:                   "errors if unable to create candidate",

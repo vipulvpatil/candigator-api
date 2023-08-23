@@ -56,15 +56,24 @@ func getPersonaDataFromOpenAiResponse(response string) (*model.Persona, error) {
 		return nil, errors.New("needs a valid resume to parse")
 	}
 
-	var persona model.Persona
-
-	err := json.Unmarshal([]byte(response), &persona)
+	persona, err := ParsePersonaFromJson(response)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to parse response")
+		return nil, err
 	}
 
 	persona.BuilderVersion = BUILDER_VERSION
 	persona.BuiltBy = "AI"
+
+	return persona, nil
+}
+
+func ParsePersonaFromJson(personaJson string) (*model.Persona, error) {
+	var persona model.Persona
+
+	err := json.Unmarshal([]byte(personaJson), &persona)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to parse persona json")
+	}
 
 	return &persona, nil
 }

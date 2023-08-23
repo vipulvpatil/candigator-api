@@ -5,6 +5,7 @@ import "github.com/vipulvpatil/candidate-tracker-go/internal/model"
 type CandidateAccessorConfigurableMock struct {
 	CreateCandidateWithAiGeneratedPersonaForTeamUsingTxInternal func(persona *model.Persona, team *model.Team, tx DatabaseTransaction) error
 	GetCandidatesForTeamInternal                                func(team *model.Team) ([]*model.Candidate, error)
+	UpdateCandidateForTeamInternal                              func(id string, persona *model.Persona, team *model.Team) error
 }
 
 func (c *CandidateAccessorConfigurableMock) CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(persona *model.Persona, team *model.Team, tx DatabaseTransaction) error {
@@ -13,4 +14,8 @@ func (c *CandidateAccessorConfigurableMock) CreateCandidateWithAiGeneratedPerson
 
 func (c *CandidateAccessorConfigurableMock) GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, error) {
 	return c.GetCandidatesForTeamInternal(team)
+}
+
+func (c *CandidateAccessorConfigurableMock) UpdateCandidateForTeam(id string, persona *model.Persona, team *model.Team) error {
+	return c.UpdateCandidateForTeamInternal(id, persona, team)
 }

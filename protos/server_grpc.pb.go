@@ -28,6 +28,7 @@ type CandidateTrackerGoClient interface {
 	UploadFiles(ctx context.Context, in *UploadFilesRequest, opts ...grpc.CallOption) (*UploadFilesResponse, error)
 	CompleteFileUploads(ctx context.Context, in *CompleteFileUploadsRequest, opts ...grpc.CallOption) (*CompleteFileUploadsResponse, error)
 	GetCandidates(ctx context.Context, in *GetCandidatesRequest, opts ...grpc.CallOption) (*GetCandidatesResponse, error)
+	UpdateCandidate(ctx context.Context, in *UpdateCandidateRequest, opts ...grpc.CallOption) (*UpdateCandidateResponse, error)
 }
 
 type candidateTrackerGoClient struct {
@@ -92,6 +93,15 @@ func (c *candidateTrackerGoClient) GetCandidates(ctx context.Context, in *GetCan
 	return out, nil
 }
 
+func (c *candidateTrackerGoClient) UpdateCandidate(ctx context.Context, in *UpdateCandidateRequest, opts ...grpc.CallOption) (*UpdateCandidateResponse, error) {
+	out := new(UpdateCandidateResponse)
+	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/UpdateCandidate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CandidateTrackerGoServer is the server API for CandidateTrackerGo service.
 // All implementations must embed UnimplementedCandidateTrackerGoServer
 // for forward compatibility
@@ -102,6 +112,7 @@ type CandidateTrackerGoServer interface {
 	UploadFiles(context.Context, *UploadFilesRequest) (*UploadFilesResponse, error)
 	CompleteFileUploads(context.Context, *CompleteFileUploadsRequest) (*CompleteFileUploadsResponse, error)
 	GetCandidates(context.Context, *GetCandidatesRequest) (*GetCandidatesResponse, error)
+	UpdateCandidate(context.Context, *UpdateCandidateRequest) (*UpdateCandidateResponse, error)
 	mustEmbedUnimplementedCandidateTrackerGoServer()
 }
 
@@ -126,6 +137,9 @@ func (UnimplementedCandidateTrackerGoServer) CompleteFileUploads(context.Context
 }
 func (UnimplementedCandidateTrackerGoServer) GetCandidates(context.Context, *GetCandidatesRequest) (*GetCandidatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCandidates not implemented")
+}
+func (UnimplementedCandidateTrackerGoServer) UpdateCandidate(context.Context, *UpdateCandidateRequest) (*UpdateCandidateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCandidate not implemented")
 }
 func (UnimplementedCandidateTrackerGoServer) mustEmbedUnimplementedCandidateTrackerGoServer() {}
 
@@ -248,6 +262,24 @@ func _CandidateTrackerGo_GetCandidates_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CandidateTrackerGo_UpdateCandidate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCandidateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CandidateTrackerGoServer).UpdateCandidate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protos.CandidateTrackerGo/UpdateCandidate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CandidateTrackerGoServer).UpdateCandidate(ctx, req.(*UpdateCandidateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CandidateTrackerGo_ServiceDesc is the grpc.ServiceDesc for CandidateTrackerGo service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -278,6 +310,10 @@ var CandidateTrackerGo_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCandidates",
 			Handler:    _CandidateTrackerGo_GetCandidates_Handler,
+		},
+		{
+			MethodName: "UpdateCandidate",
+			Handler:    _CandidateTrackerGo_UpdateCandidate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
