@@ -110,7 +110,49 @@ func (s *Storage) GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, er
 }
 
 func (s *Storage) GetCandidateForTeam(id string, team *model.Team) (*model.Candidate, error) {
-	return nil, nil
+	if utilities.IsBlank(id) {
+		return nil, errors.New("id cannot be blank")
+	}
+
+	if team == nil || utilities.IsBlank(team.Id()) {
+		return nil, errors.New("team cannot be blank")
+	}
+
+	row := s.db.QueryRow(
+		`SELECT ai_generated_persona, manually_created_persona, file_upload_id
+		FROM public."candidates"
+		WHERE  id = $1 AND team_id = $2 ORDER BY created_at ASC, id ASC`,
+		id, team.Id(),
+	)
+
+	var aiGeneratedPersona, manuallyCreatedPersona model.Persona
+	var fileUploadId sql.NullString
+
+	err := row.Scan(&aiGeneratedPersona, &manuallyCreatedPersona, &fileUploadId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.Errorf("no candidate for id %s", id)
+		}
+		return nil, errors.Errorf("getting candidate for id %s: %v", id, err)
+	}
+
+	var fileUploadIdString string
+	if fileUploadId.Valid {
+		fileUploadIdString = fileUploadId.String
+	}
+
+	candidate, err := model.NewCandidate(model.CandidateOptions{
+		Id:                     id,
+		AiGeneratedPersona:     &aiGeneratedPersona,
+		ManuallyCreatedPersona: &manuallyCreatedPersona,
+		Team:                   team,
+		FileUploadId:           fileUploadIdString,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return candidate, nil
 }
 
 func (s *Storage) UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, persona *model.Persona, team *model.Team) error {

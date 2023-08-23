@@ -206,6 +206,175 @@ func Test_GetCandidates(t *testing.T) {
 	}
 }
 
+func Test_GetCandidate(t *testing.T) {
+	team, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id1",
+		Name: "test@example.com",
+	})
+	userWithTeam, _ := model.NewUser(model.UserOptions{
+		Id:    "user_id1",
+		Email: "test@example.com",
+		Team:  team,
+	})
+
+	candidate1, _ := model.NewCandidate(model.CandidateOptions{
+		Id: "c_id1",
+		AiGeneratedPersona: &model.Persona{
+			Name:       "ai persona 1",
+			Email:      "email_1",
+			Phone:      "phone_1",
+			City:       "city_1",
+			State:      "state_1",
+			Country:    "country_1",
+			YoE:        5,
+			TechSkills: []string{"tech skill 1", "tech skill 2", "tech skill 3"},
+		},
+		ManuallyCreatedPersona: &model.Persona{
+			Name:       "manual persona 1",
+			Email:      "email_1",
+			Phone:      "phone_1",
+			City:       "city_1",
+			State:      "state_1",
+			Country:    "country_1",
+			YoE:        5,
+			TechSkills: []string{"tech skill 1", "tech skill 2", "tech skill 3"},
+		},
+		Team:         team,
+		FileUploadId: "fp_id1",
+	})
+
+	tests := []struct {
+		name                  string
+		ctx                   context.Context
+		input                 *pb.GetCandidateRequest
+		output                *pb.GetCandidateResponse
+		teamHydratorMock      storage.TeamHydrator
+		candidateAccessorMock storage.CandidateAccessor
+		errorExpected         bool
+		errorString           string
+	}{
+		{
+			name:                  "errors if id is blank",
+			ctx:                   context.Background(),
+			input:                 &pb.GetCandidateRequest{},
+			output:                &pb.GetCandidateResponse{},
+			teamHydratorMock:      nil,
+			candidateAccessorMock: nil,
+			errorExpected:         true,
+			errorString:           "id cannot be blank",
+		},
+		{
+			name: "errors if no user in context",
+			ctx:  context.Background(),
+			input: &pb.GetCandidateRequest{
+				Id: "c_id1",
+			},
+			output:                &pb.GetCandidateResponse{},
+			teamHydratorMock:      nil,
+			candidateAccessorMock: nil,
+			errorExpected:         true,
+			errorString:           "rpc error: code = Unauthenticated desc = retrieving user data failed",
+		},
+		{
+			name: "errors if unable to hydrate team",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.GetCandidateRequest{
+				Id: "c_id1",
+			},
+			output:                &pb.GetCandidateResponse{},
+			teamHydratorMock:      &storage.TeamHydratorMockFailure{},
+			candidateAccessorMock: nil,
+			errorExpected:         true,
+			errorString:           "unable to hydrate team",
+		},
+		{
+			name: "returns error if database errors when getting candidates",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.GetCandidateRequest{
+				Id: "c_id1",
+			},
+			output:           nil,
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			candidateAccessorMock: &storage.CandidateAccessorConfigurableMock{
+				GetCandidateForTeamInternal: func(id string, team *model.Team) (*model.Candidate, error) {
+					return nil, errors.New("dbError when querying")
+				},
+			},
+			errorExpected: true,
+			errorString:   "dbError when querying",
+		},
+		{
+			name: "runs successfully",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.GetCandidateRequest{
+				Id: "c_id1",
+			},
+			output: &pb.GetCandidateResponse{
+				Candidate: &pb.Candidate{
+					Id:                     "c_id1",
+					AiGeneratedPersona:     "{\"Name\":\"ai persona 1\",\"Email\":\"email_1\",\"Phone\":\"phone_1\",\"City\":\"city_1\",\"State\":\"state_1\",\"Country\":\"country_1\",\"YoE\":5,\"Tech Skills\":[\"tech skill 1\",\"tech skill 2\",\"tech skill 3\"]}",
+					ManuallyCreatedPersona: "{\"Name\":\"manual persona 1\",\"Email\":\"email_1\",\"Phone\":\"phone_1\",\"City\":\"city_1\",\"State\":\"state_1\",\"Country\":\"country_1\",\"YoE\":5,\"Tech Skills\":[\"tech skill 1\",\"tech skill 2\",\"tech skill 3\"]}",
+					FileUploadId:           "fp_id1",
+				},
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			candidateAccessorMock: &storage.CandidateAccessorConfigurableMock{
+				GetCandidateForTeamInternal: func(id string, team *model.Team) (*model.Candidate, error) {
+					return candidate1, nil
+				},
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server, _ := NewServer(ServerDependencies{
+				Storage: storage.NewStorageAccessorMock(
+					storage.WithTeamHydratorMock(tt.teamHydratorMock),
+					storage.WithCandidateAccessorMock(tt.candidateAccessorMock),
+				),
+				Logger: &utilities.NullLogger{},
+			})
+
+			response, err := server.GetCandidate(
+				tt.ctx,
+				tt.input,
+			)
+			if !tt.errorExpected {
+				assert.Empty(t, tt.errorString)
+				assert.NoError(t, err)
+				assert.EqualValues(t, tt.output, response)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+		})
+	}
+}
+
 func Test_UpdateCandidate(t *testing.T) {
 	team, _ := model.NewTeam(model.TeamOptions{
 		Id:   "team_id1",
