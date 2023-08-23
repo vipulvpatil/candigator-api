@@ -62,7 +62,7 @@ func (s *CandidateTrackerGoService) UpdateCandidate(ctx context.Context, req *pb
 	}
 	persona.BuiltBy = "HUMAN"
 
-	err = s.storage.UpdateCandidateForTeam(candidateId, persona, team)
+	err = s.storage.UpdateCandidateWithManuallyCreatedPersonaForTeam(candidateId, persona, team)
 	if err != nil {
 		return nil, err
 	}

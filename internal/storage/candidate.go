@@ -12,7 +12,7 @@ import (
 type CandidateAccessor interface {
 	CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(persona *model.Persona, team *model.Team, tx DatabaseTransaction) error
 	GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, error)
-	UpdateCandidateForTeam(id string, persona *model.Persona, team *model.Team) error
+	UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, persona *model.Persona, team *model.Team) error
 }
 
 func (s *Storage) CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(persona *model.Persona, team *model.Team, tx DatabaseTransaction) error {
@@ -108,6 +108,64 @@ func (s *Storage) GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, er
 	return candidates, nil
 }
 
-func (s *Storage) UpdateCandidateForTeam(id string, persona *model.Persona, team *model.Team) error {
+func (s *Storage) UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, persona *model.Persona, team *model.Team) error {
+	if team == nil || utilities.IsBlank(team.Id()) {
+		return errors.New("team cannot be blank")
+	}
+
+	if !persona.IsValid() {
+		return errors.New("cannot create Candidate without a valid persona")
+	}
+
+	if utilities.IsBlank(id) {
+		id = s.IdGenerator.Generate()
+		_, err := model.NewCandidate(model.CandidateOptions{
+			Id:                     id,
+			Team:                   team,
+			ManuallyCreatedPersona: persona,
+		})
+		if err != nil {
+			return err
+		}
+
+		result, err := s.db.Exec(
+			`INSERT INTO public."candidates"
+			("id", "manually_created_persona", "team_id")
+			VALUES
+			($1, $2, $3)`,
+			id, persona, team.Id(),
+		)
+		if err != nil {
+			return utilities.WrapBadError(err, fmt.Sprintf("dbError while inserting Candidate: %s", id))
+		}
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			return utilities.WrapBadError(err, fmt.Sprintf("dbError while inserting Candidate and changing db: %s", id))
+		}
+		if rowsAffected != 1 {
+			return utilities.NewBadError(fmt.Sprintf("Very few or too many rows were affected when inserting Candidate in db. This is highly unexpected. rowsAffected: %d", rowsAffected))
+		}
+	} else {
+		result, err := s.db.Exec(
+			`UPDATE public."candidates" SET "manually_created_persona" = $3 WHERE id = $1 AND team_id = $2`,
+			id,
+			team.Id(),
+			persona,
+		)
+		if err != nil {
+			return utilities.WrapBadError(err, fmt.Sprintf("dbError while updating Candidate: %s", id))
+		}
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			return utilities.WrapBadError(err, fmt.Sprintf("dbError while checking affected row while updating Candidate: %s", id))
+		}
+
+		if rowsAffected != 1 {
+			return utilities.NewBadError(fmt.Sprintf("Very few or too many rows were affected when inserting file_upload in db. This is highly unexpected. rowsAffected: %d", rowsAffected))
+		}
+		return nil
+	}
+
 	return nil
 }

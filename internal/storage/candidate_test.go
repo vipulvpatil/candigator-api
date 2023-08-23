@@ -105,7 +105,7 @@ func Test_CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(t *testing.T) {
 			errorString:   "THIS IS BAD: dbError while inserting Candidate: can_id1: pq: insert or update on table \"candidates\" violates foreign key constraint \"candidates_team_id_fkey\"",
 		},
 		{
-			name: "successfully creates a new file upload",
+			name: "successfully creates a new candidate",
 			input: struct {
 				persona *model.Persona
 				team    *model.Team
@@ -345,6 +345,203 @@ func Test_GetCandidatesForTeam(t *testing.T) {
 			} else {
 				assert.NotEmpty(t, tt.errorString)
 				assert.EqualError(t, err, tt.errorString)
+			}
+		})
+	}
+}
+
+func Test_UpdateCandidateWithManuallyCreatedPersonaForTeam(t *testing.T) {
+	aiGeneratedPersona := model.Persona{Name: "generated_name"}
+	team, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id1",
+		Name: "Team1",
+	})
+	tests := []struct {
+		name  string
+		input struct {
+			id      string
+			persona *model.Persona
+			team    *model.Team
+		}
+		setupSqlStmts   []TestSqlStmts
+		cleanupSqlStmts []TestSqlStmts
+		dbUpdateCheck   func(db *sql.DB) bool
+		errorExpected   bool
+		errorString     string
+	}{
+		{
+			name: "errors when team is nil",
+			input: struct {
+				id      string
+				persona *model.Persona
+				team    *model.Team
+			}{
+				persona: &model.Persona{Name: "user_1"},
+			},
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			dbUpdateCheck:   nil,
+			errorExpected:   true,
+			errorString:     "team cannot be blank",
+		},
+		{
+			name: "errors when persona is invalid",
+			input: struct {
+				id      string
+				persona *model.Persona
+				team    *model.Team
+			}{
+				team: team,
+			},
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			dbUpdateCheck:   nil,
+			errorExpected:   true,
+			errorString:     "cannot create Candidate without a valid persona",
+		},
+		{
+			name: "errors when team does not exist in Database",
+			input: struct {
+				id      string
+				persona *model.Persona
+				team    *model.Team
+			}{
+				persona: &model.Persona{Name: "user_1", BuiltBy: "HUMAN"},
+				team:    team,
+			},
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+						"id", "name"
+					)
+					VALUES (
+						'team_id2', 'Team2'
+					)`,
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id2'`},
+			},
+			dbUpdateCheck: nil,
+			errorExpected: true,
+			errorString:   "THIS IS BAD: dbError while inserting Candidate: can_id1: pq: insert or update on table \"candidates\" violates foreign key constraint \"candidates_team_id_fkey\"",
+		},
+		{
+			name: "successfully creates a new candidate",
+			input: struct {
+				id      string
+				persona *model.Persona
+				team    *model.Team
+			}{
+				persona: &model.Persona{Name: "user_1", BuiltBy: "HUMAN"},
+				team:    team,
+			},
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+								"id", "name"
+							)
+							VALUES (
+								'team_id1', 'Team1'
+							)`,
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+			},
+			dbUpdateCheck: func(db *sql.DB) bool {
+				var id string
+				var persona model.Persona
+				var createdAt time.Time
+				row := db.QueryRow(
+					`SELECT id, manually_created_persona, created_at FROM public."candidates" WHERE team_id = 'team_id1'`,
+				)
+				assert.NoError(t, row.Err())
+				err := row.Scan(&id, &persona, &createdAt)
+				assert.NoError(t, err)
+				assert.Equal(t, "can_id1", id)
+				assert.Equal(t, "user_1", persona.Name)
+				return true
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+		{
+			name: "successfully updates a candidate",
+			input: struct {
+				id      string
+				persona *model.Persona
+				team    *model.Team
+			}{
+				id:      "can_id1",
+				persona: &model.Persona{Name: "user_1", BuiltBy: "HUMAN"},
+				team:    team,
+			},
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+								"id", "name"
+							)
+							VALUES (
+								'team_id1', 'Team1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."candidates" (
+								"id", "ai_generated_persona", "team_id"
+							)
+							VALUES (
+								'can_id1', $1, 'team_id1'
+							)`,
+					Args: []any{&aiGeneratedPersona},
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+			},
+			dbUpdateCheck: func(db *sql.DB) bool {
+				var id string
+				var aiPersona, manualPersona model.Persona
+				var createdAt time.Time
+				row := db.QueryRow(
+					`SELECT id, ai_generated_persona, manually_created_persona, created_at FROM public."candidates" WHERE team_id = 'team_id1'`,
+				)
+				assert.NoError(t, row.Err())
+				err := row.Scan(&id, &aiPersona, &manualPersona, &createdAt)
+				assert.NoError(t, err)
+				assert.Equal(t, "can_id1", id)
+				assert.Equal(t, "generated_name", aiPersona.Name)
+				assert.Equal(t, "user_1", manualPersona.Name)
+				return true
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s, _ := NewDbStorage(
+				StorageOptions{
+					Db:          testDb,
+					IdGenerator: &utilities.IdGeneratorMockConstant{Id: "can_id1"},
+				},
+			)
+
+			runSqlOnDb(t, s.db, tt.setupSqlStmts)
+			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
+			err := s.UpdateCandidateWithManuallyCreatedPersonaForTeam(
+				tt.input.id, tt.input.persona, tt.input.team,
+			)
+
+			if !tt.errorExpected {
+				assert.NoError(t, err)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+			if tt.dbUpdateCheck != nil {
+				assert.True(t, tt.dbUpdateCheck(s.db))
 			}
 		})
 	}
