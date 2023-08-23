@@ -510,14 +510,14 @@ func Test_CompleteFileUploads(t *testing.T) {
 						PresignedUrl:     "",
 						Status:           "",
 						ProcessingStatus: "",
-						Error:            "unable to get fileUpload",
+						Error:            "unable to get fileUpload: no file upload for id: fp_id1",
 					},
 				},
 			},
 			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
 			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
 				GetFileUploadInternal: func(id string) (*model.FileUpload, error) {
-					return nil, nil
+					return nil, errors.New("no file upload for id: fp_id1")
 				},
 			},
 			fileStorerMock: nil,

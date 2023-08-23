@@ -41,13 +41,13 @@ func Test_GetFileUpload(t *testing.T) {
 			errorString:     "id cannot be blank",
 		},
 		{
-			name:            "does not error if fileUpload does not exist in Database",
+			name:            "errors if fileUpload does not exist in Database",
 			input:           "fp_id1",
 			output:          nil,
 			setupSqlStmts:   nil,
 			cleanupSqlStmts: nil,
-			errorExpected:   false,
-			errorString:     "",
+			errorExpected:   true,
+			errorString:     "no file upload for id fp_id1",
 		},
 		{
 			name:   "successfully gets file upload",
@@ -133,13 +133,13 @@ func Test_GetFileUploadUsingTx(t *testing.T) {
 			errorString:     "id cannot be blank",
 		},
 		{
-			name:            "does not error if fileUpload does not exist in Database",
+			name:            "errors if fileUpload does not exist in Database",
 			input:           "fp_id1",
 			output:          nil,
 			setupSqlStmts:   nil,
 			cleanupSqlStmts: nil,
-			errorExpected:   false,
-			errorString:     "",
+			errorExpected:   true,
+			errorString:     "no file upload for id fp_id1",
 		},
 		{
 			name:   "successfully gets file upload",

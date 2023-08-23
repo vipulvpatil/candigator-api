@@ -64,7 +64,7 @@ func getFileUploadUsingCustomDbHandler(customDb customDbHandler, id string, excl
 	err := row.Scan(&name, &status, &presignedUrl, &processingStatus, &teamId, &teamName)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil
+			return nil, errors.Errorf("no file upload for id %s", id)
 		}
 		return nil, errors.Errorf("getting file upload for id %s: %v", id, err)
 	}
