@@ -12,6 +12,7 @@ import (
 type CandidateAccessor interface {
 	CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(persona *model.Persona, team *model.Team, tx DatabaseTransaction) error
 	GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, error)
+	GetCandidateForTeam(id string, team *model.Team) (*model.Candidate, error)
 	UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, persona *model.Persona, team *model.Team) error
 }
 
@@ -106,6 +107,10 @@ func (s *Storage) GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, er
 		return nil, utilities.WrapBadError(err, "failed to correctly go through candidates rows")
 	}
 	return candidates, nil
+}
+
+func (s *Storage) GetCandidateForTeam(id string, team *model.Team) (*model.Candidate, error) {
+	return nil, nil
 }
 
 func (s *Storage) UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, persona *model.Persona, team *model.Team) error {

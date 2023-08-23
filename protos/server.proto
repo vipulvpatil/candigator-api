@@ -78,6 +78,15 @@ message GetCandidatesResponse {
   repeated Candidate candidates = 1;
 }
 
+message GetCandidateRequest {
+  string userEmail = 1;
+  string id = 2;
+}
+
+message GetCandidateResponse {
+  Candidate candidate = 1;
+}
+
 message UpdateCandidateRequest {
   string userEmail = 1;
   string id = 2;
@@ -93,5 +102,6 @@ service CandidateTrackerGo {
   rpc UploadFiles(UploadFilesRequest) returns (UploadFilesResponse) {}
   rpc CompleteFileUploads(CompleteFileUploadsRequest) returns (CompleteFileUploadsResponse) {}
   rpc GetCandidates(GetCandidatesRequest) returns (GetCandidatesResponse) {}
+  rpc GetCandidate(GetCandidateRequest) returns (GetCandidateResponse) {}
   rpc UpdateCandidate(UpdateCandidateRequest) returns (UpdateCandidateResponse) {}
 }
