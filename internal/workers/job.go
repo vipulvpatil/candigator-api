@@ -25,6 +25,10 @@ func (j *jobContext) processFileUpload(job *work.Job) error {
 	err = processFileUploadUsingAi(fileUpload)
 	if err != nil {
 		logger.LogError(err)
+		skippedErr := workerStorage.UpdateFileUploadWithProcessingStatus(fileUpload.Id(), "FAILED")
+		if skippedErr != nil {
+			logger.LogError(skippedErr)
+		}
 		return err
 	}
 

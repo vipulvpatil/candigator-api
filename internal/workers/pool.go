@@ -28,7 +28,11 @@ type PoolDependencies struct {
 func NewPool(deps PoolDependencies) *work.WorkerPool {
 	pool := work.NewWorkerPool(jobContext{}, 10, deps.Namespace, deps.RedisPool)
 
-	pool.Job(PROCESS_FILE_UPLOAD, (*jobContext).processFileUpload)
+	pool.JobWithOptions(
+		PROCESS_FILE_UPLOAD,
+		work.JobOptions{MaxFails: 1},
+		(*jobContext).processFileUpload,
+	)
 
 	// TODO: Not sure if this is the best way to do this. But using Package variables for all dependencies required inside any of the jobs.
 	workerStorage = deps.Storage
