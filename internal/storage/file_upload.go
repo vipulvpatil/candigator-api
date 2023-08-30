@@ -20,6 +20,7 @@ type FileUploadAccessor interface {
 	UpdateFileUploadWithStatus(id, status string) error
 	UpdateFileUploadWithProcessingStatus(id, processingStatus string) error
 	UpdateFileUploadWithProcessingStatusUsingTx(id, processingStatus string, tx DatabaseTransaction) error
+	DeleteFileUploadForTeam(id string, team *model.Team) error
 }
 
 func (s *Storage) GetFileUpload(id string) (*model.FileUpload, error) {
@@ -310,6 +311,32 @@ func updateFileUploadWithProcessingStatusUsingCustomDbHandler(customDb customDbH
 
 	if rowsAffected != 1 {
 		return utilities.NewBadError(fmt.Sprintf("Very few or too many rows were affected when inserting file_upload in db. This is highly unexpected. rowsAffected: %d", rowsAffected))
+	}
+	return nil
+}
+
+func (s *Storage) DeleteFileUploadForTeam(id string, team *model.Team) error {
+	if utilities.IsBlank(id) {
+		return errors.New("id cannot be blank")
+	}
+
+	if team == nil {
+		return errors.New("team cannot be nil")
+	}
+
+	result, err := s.db.Exec(
+		`DELETE FROM public."file_uploads"
+		WHERE id = $1 AND team_id = $2`, id, team.Id(),
+	)
+	if err != nil {
+		return utilities.WrapBadError(err, fmt.Sprintf("dbError while deleting file_upload: %s", id))
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return utilities.WrapBadError(err, fmt.Sprintf("dbError while deleting file_upload and changing db: %s", id))
+	}
+	if rowsAffected != 1 {
+		return utilities.NewBadError(fmt.Sprintf("Very few or too many rows were affected when deleting file_upload in db. This is highly unexpected. rowsAffected: %d", rowsAffected))
 	}
 	return nil
 }

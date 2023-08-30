@@ -1180,3 +1180,210 @@ func Test_UpdateFileUploadWithProcessingStatusUsingTx(t *testing.T) {
 		})
 	}
 }
+
+func Test_DeleteFileUploadForTeam(t *testing.T) {
+	team, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id1",
+		Name: "Team1",
+	})
+	team2, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id2",
+		Name: "Team2",
+	})
+	tests := []struct {
+		name  string
+		input struct {
+			id   string
+			team *model.Team
+		}
+		setupSqlStmts   []TestSqlStmts
+		cleanupSqlStmts []TestSqlStmts
+		dbUpdateCheck   func(db *sql.DB) bool
+		errorExpected   bool
+		errorString     string
+	}{
+		{
+			name: "errors when id is empty",
+			input: struct {
+				id   string
+				team *model.Team
+			}{},
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			dbUpdateCheck:   nil,
+			errorExpected:   true,
+			errorString:     "id cannot be blank",
+		},
+		{
+			name: "errors when team is nil",
+			input: struct {
+				id   string
+				team *model.Team
+			}{
+				id: "fp_id1",
+			},
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			dbUpdateCheck:   nil,
+			errorExpected:   true,
+			errorString:     "team cannot be nil",
+		},
+		{
+			name: "errors when team does not exist in Database",
+			input: struct {
+				id   string
+				team *model.Team
+			}{
+				id:   "fp_id1",
+				team: team,
+			},
+			setupSqlStmts:   nil,
+			cleanupSqlStmts: nil,
+			dbUpdateCheck:   nil,
+			errorExpected:   true,
+			errorString:     "THIS IS BAD: Very few or too many rows were affected when deleting file_upload in db. This is highly unexpected. rowsAffected: 0",
+		},
+		{
+			name: "errors when file upload not in db",
+			input: struct {
+				id   string
+				team *model.Team
+			}{
+				id:   "fp_id1",
+				team: team,
+			},
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+								"id", "name"
+							)
+							VALUES (
+								'team_id1', 'Team1'
+							)`,
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+			},
+			dbUpdateCheck: nil,
+			errorExpected: true,
+			errorString:   "THIS IS BAD: Very few or too many rows were affected when deleting file_upload in db. This is highly unexpected. rowsAffected: 0",
+		},
+		{
+			name: "errors when team does not match file upload",
+			input: struct {
+				id   string
+				team *model.Team
+			}{
+				id:   "fp_id1",
+				team: team2,
+			},
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+								"id", "name"
+							)
+							VALUES (
+								'team_id1', 'Team1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id1', 'file1.pdf', 'http://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
+							)`,
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+			},
+			dbUpdateCheck: func(db *sql.DB) bool {
+				var id, name, presignedUrl, status, processingStatus, createdAt string
+				row := db.QueryRow(
+					`SELECT id, name, presigned_url, status, processing_status, created_at FROM public."file_uploads" WHERE id = 'fp_id1'`,
+				)
+				assert.NoError(t, row.Err())
+				err := row.Scan(&id, &name, &presignedUrl, &status, &processingStatus, &createdAt)
+				assert.NoError(t, err)
+				assert.Equal(t, "fp_id1", id)
+				assert.Equal(t, "file1.pdf", name)
+				assert.Equal(t, "http://presigned_url1", presignedUrl)
+				assert.Equal(t, model.FileUploadStatus("INITIATED").String(), status)
+				assert.Equal(t, model.FileUploadProcessingStatus("NOT STARTED").String(), processingStatus)
+				return true
+			},
+			errorExpected: true,
+			errorString:   "THIS IS BAD: Very few or too many rows were affected when deleting file_upload in db. This is highly unexpected. rowsAffected: 0",
+		},
+		{
+			name: "successfully deletes file upload",
+			input: struct {
+				id   string
+				team *model.Team
+			}{
+				id:   "fp_id1",
+				team: team,
+			},
+			setupSqlStmts: []TestSqlStmts{
+				{
+					Query: `INSERT INTO public."teams" (
+								"id", "name"
+							)
+							VALUES (
+								'team_id1', 'Team1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id1', 'file1.pdf', 'http://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
+							)`,
+				},
+			},
+			cleanupSqlStmts: []TestSqlStmts{
+				{Query: `DELETE FROM public."teams" WHERE id = 'team_id1'`},
+			},
+			dbUpdateCheck: func(db *sql.DB) bool {
+				var id string
+				row := db.QueryRow(
+					`SELECT id FROM public."file_uploads" WHERE id = 'fp_id1'`,
+				)
+				assert.NoError(t, row.Err())
+				err := row.Scan(&id)
+				assert.EqualError(t, err, "sql: no rows in result set")
+				assert.Equal(t, "", id)
+				return true
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s, _ := NewDbStorage(
+				StorageOptions{
+					Db:          testDb,
+					IdGenerator: &utilities.IdGeneratorMockConstant{Id: "fp_id1"},
+				},
+			)
+
+			runSqlOnDb(t, s.db, tt.setupSqlStmts)
+			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
+			err := s.DeleteFileUploadForTeam(tt.input.id, tt.input.team)
+			if !tt.errorExpected {
+				assert.NoError(t, err)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+			if tt.dbUpdateCheck != nil {
+				assert.True(t, tt.dbUpdateCheck(s.db))
+			}
+		})
+	}
+}
