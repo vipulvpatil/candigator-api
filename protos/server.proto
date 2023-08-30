@@ -72,6 +72,13 @@ message GetFileUploadResponse {
   FileUpload fileUpload = 1;
 }
 
+message DeleteFileUploadRequest {
+  string userEmail = 1;
+  string id = 2;
+}
+
+message DeleteFileUploadResponse {}
+
 message Candidate {
   string id = 1;
 	string aiGeneratedPersona = 2;
@@ -111,6 +118,7 @@ service CandidateTrackerGo {
   rpc GetFileUploads(GetFileUploadsRequest) returns (GetFileUploadsResponse) {}
   rpc UploadFiles(UploadFilesRequest) returns (UploadFilesResponse) {}
   rpc CompleteFileUploads(CompleteFileUploadsRequest) returns (CompleteFileUploadsResponse) {}
+  rpc DeleteFileUpload(DeleteFileUploadRequest) returns (DeleteFileUploadResponse) {}
   rpc GetCandidates(GetCandidatesRequest) returns (GetCandidatesResponse) {}
   rpc GetCandidate(GetCandidateRequest) returns (GetCandidateResponse) {}
   rpc UpdateCandidate(UpdateCandidateRequest) returns (UpdateCandidateResponse) {}

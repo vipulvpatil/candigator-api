@@ -411,7 +411,6 @@ func Test_CompleteFileUploads(t *testing.T) {
 		output                 *pb.CompleteFileUploadsResponse
 		teamHydratorMock       storage.TeamHydrator
 		fileUploadAccessorMock storage.FileUploadAccessor
-		fileStorerMock         filestorage.FileStorer
 		errorExpected          bool
 		errorString            string
 	}{
@@ -422,7 +421,6 @@ func Test_CompleteFileUploads(t *testing.T) {
 			output:                 &pb.CompleteFileUploadsResponse{},
 			teamHydratorMock:       nil,
 			fileUploadAccessorMock: nil,
-			fileStorerMock:         nil,
 			errorExpected:          true,
 			errorString:            "rpc error: code = Unauthenticated desc = retrieving user data failed",
 		},
@@ -440,7 +438,6 @@ func Test_CompleteFileUploads(t *testing.T) {
 			output:                 &pb.CompleteFileUploadsResponse{},
 			teamHydratorMock:       &storage.TeamHydratorMockFailure{},
 			fileUploadAccessorMock: nil,
-			fileStorerMock:         nil,
 			errorExpected:          true,
 			errorString:            "unable to hydrate team",
 		},
@@ -480,9 +477,8 @@ func Test_CompleteFileUploads(t *testing.T) {
 					return nil, errors.New("dbError when querying")
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  false,
-			errorString:    "",
+			errorExpected: false,
+			errorString:   "",
 		},
 		{
 			name: "returns response with error if fileUpload not in database",
@@ -520,9 +516,8 @@ func Test_CompleteFileUploads(t *testing.T) {
 					return nil, errors.New("no file upload for id: fp_id1")
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  false,
-			errorString:    "",
+			errorExpected: false,
+			errorString:   "",
 		},
 		{
 			name: "returns response with error if fileUpload in database is already completed",
@@ -560,9 +555,8 @@ func Test_CompleteFileUploads(t *testing.T) {
 					return completedFileUpload, nil
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  false,
-			errorString:    "",
+			errorExpected: false,
+			errorString:   "",
 		},
 		{
 			name: "returns response with error if fileUpload belongs to different team",
@@ -600,9 +594,8 @@ func Test_CompleteFileUploads(t *testing.T) {
 					return anotherFileUpload, nil
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  false,
-			errorString:    "",
+			errorExpected: false,
+			errorString:   "",
 		},
 		{
 			name: "returns response with error if new status is invalid",
@@ -640,9 +633,8 @@ func Test_CompleteFileUploads(t *testing.T) {
 					return initiatedFileUpload, nil
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  false,
-			errorString:    "",
+			errorExpected: false,
+			errorString:   "",
 		},
 		{
 			name: "returns response with error if updating fails in database",
@@ -683,9 +675,8 @@ func Test_CompleteFileUploads(t *testing.T) {
 					return errors.New("dbError while updating")
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  false,
-			errorString:    "",
+			errorExpected: false,
+			errorString:   "",
 		},
 		{
 			name: "runs successfully with  partial errors",
@@ -746,9 +737,8 @@ func Test_CompleteFileUploads(t *testing.T) {
 					}
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  false,
-			errorString:    "",
+			errorExpected: false,
+			errorString:   "",
 		},
 	}
 
@@ -759,8 +749,7 @@ func Test_CompleteFileUploads(t *testing.T) {
 					storage.WithTeamHydratorMock(tt.teamHydratorMock),
 					storage.WithFileUploadAccessorMock(tt.fileUploadAccessorMock),
 				),
-				Logger:     &utilities.NullLogger{},
-				FileStorer: tt.fileStorerMock,
+				Logger: &utilities.NullLogger{},
 			})
 
 			response, err := server.CompleteFileUploads(
@@ -817,7 +806,6 @@ func Test_GetFileUpload(t *testing.T) {
 		output                 *pb.GetFileUploadResponse
 		teamHydratorMock       storage.TeamHydrator
 		fileUploadAccessorMock storage.FileUploadAccessor
-		fileStorerMock         filestorage.FileStorer
 		errorExpected          bool
 		errorString            string
 	}{
@@ -828,7 +816,6 @@ func Test_GetFileUpload(t *testing.T) {
 			output:                 &pb.GetFileUploadResponse{},
 			teamHydratorMock:       nil,
 			fileUploadAccessorMock: nil,
-			fileStorerMock:         nil,
 			errorExpected:          true,
 			errorString:            "rpc error: code = Unauthenticated desc = retrieving user data failed",
 		},
@@ -846,7 +833,6 @@ func Test_GetFileUpload(t *testing.T) {
 			output:                 &pb.GetFileUploadResponse{},
 			teamHydratorMock:       &storage.TeamHydratorMockFailure{},
 			fileUploadAccessorMock: nil,
-			fileStorerMock:         nil,
 			errorExpected:          true,
 			errorString:            "unable to hydrate team",
 		},
@@ -868,9 +854,8 @@ func Test_GetFileUpload(t *testing.T) {
 					return nil, errors.New("dbError when querying")
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  true,
-			errorString:    "dbError when querying",
+			errorExpected: true,
+			errorString:   "dbError when querying",
 		},
 		{
 			name: "returns error if fileUpload does not match requester's team",
@@ -890,9 +875,8 @@ func Test_GetFileUpload(t *testing.T) {
 					return fileUpload2, nil
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  true,
-			errorString:    "File Upload not found",
+			errorExpected: true,
+			errorString:   "File Upload not found",
 		},
 		{
 			name: "runs successfully even with partial errors",
@@ -921,9 +905,8 @@ func Test_GetFileUpload(t *testing.T) {
 					return fileUpload1, nil
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  false,
-			errorString:    "",
+			errorExpected: false,
+			errorString:   "",
 		},
 	}
 
@@ -934,8 +917,7 @@ func Test_GetFileUpload(t *testing.T) {
 					storage.WithTeamHydratorMock(tt.teamHydratorMock),
 					storage.WithFileUploadAccessorMock(tt.fileUploadAccessorMock),
 				),
-				Logger:     &utilities.NullLogger{},
-				FileStorer: tt.fileStorerMock,
+				Logger: &utilities.NullLogger{},
 			})
 
 			response, err := server.GetFileUpload(
@@ -995,7 +977,6 @@ func Test_GetFileUploads(t *testing.T) {
 		output                 *pb.GetFileUploadsResponse
 		teamHydratorMock       storage.TeamHydrator
 		fileUploadAccessorMock storage.FileUploadAccessor
-		fileStorerMock         filestorage.FileStorer
 		errorExpected          bool
 		errorString            string
 	}{
@@ -1006,7 +987,6 @@ func Test_GetFileUploads(t *testing.T) {
 			output:                 &pb.GetFileUploadsResponse{},
 			teamHydratorMock:       nil,
 			fileUploadAccessorMock: nil,
-			fileStorerMock:         nil,
 			errorExpected:          true,
 			errorString:            "rpc error: code = Unauthenticated desc = retrieving user data failed",
 		},
@@ -1024,7 +1004,6 @@ func Test_GetFileUploads(t *testing.T) {
 			output:                 &pb.GetFileUploadsResponse{},
 			teamHydratorMock:       &storage.TeamHydratorMockFailure{},
 			fileUploadAccessorMock: nil,
-			fileStorerMock:         nil,
 			errorExpected:          true,
 			errorString:            "unable to hydrate team",
 		},
@@ -1046,9 +1025,8 @@ func Test_GetFileUploads(t *testing.T) {
 					return nil, errors.New("dbError when querying")
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  true,
-			errorString:    "dbError when querying",
+			errorExpected: true,
+			errorString:   "dbError when querying",
 		},
 		{
 			name: "runs successfully even with partial errors",
@@ -1097,9 +1075,8 @@ func Test_GetFileUploads(t *testing.T) {
 					}, nil
 				},
 			},
-			fileStorerMock: nil,
-			errorExpected:  false,
-			errorString:    "",
+			errorExpected: false,
+			errorString:   "",
 		},
 	}
 
@@ -1110,8 +1087,7 @@ func Test_GetFileUploads(t *testing.T) {
 					storage.WithTeamHydratorMock(tt.teamHydratorMock),
 					storage.WithFileUploadAccessorMock(tt.fileUploadAccessorMock),
 				),
-				Logger:     &utilities.NullLogger{},
-				FileStorer: tt.fileStorerMock,
+				Logger: &utilities.NullLogger{},
 			})
 
 			response, err := server.GetFileUploads(
@@ -1258,6 +1234,123 @@ func Test_GetUnprocessedFileUploadsCount(t *testing.T) {
 			})
 
 			response, err := server.GetUnprocessedFileUploadsCount(
+				tt.ctx,
+				tt.input,
+			)
+			if !tt.errorExpected {
+				assert.Empty(t, tt.errorString)
+				assert.NoError(t, err)
+				assert.EqualValues(t, tt.output, response)
+			} else {
+				assert.NotEmpty(t, tt.errorString)
+				assert.EqualError(t, err, tt.errorString)
+			}
+		})
+	}
+}
+
+func Test_DeleteFileUpload(t *testing.T) {
+	team, _ := model.NewTeam(model.TeamOptions{
+		Id:   "team_id1",
+		Name: "test@example.com",
+	})
+	userWithTeam, _ := model.NewUser(model.UserOptions{
+		Id:    "user_id1",
+		Email: "test@example.com",
+		Team:  team,
+	})
+	tests := []struct {
+		name                   string
+		ctx                    context.Context
+		input                  *pb.DeleteFileUploadRequest
+		output                 *pb.DeleteFileUploadResponse
+		teamHydratorMock       storage.TeamHydrator
+		fileUploadAccessorMock storage.FileUploadAccessor
+		errorExpected          bool
+		errorString            string
+	}{
+		{
+			name:                   "errors if no user in context",
+			ctx:                    context.Background(),
+			input:                  &pb.DeleteFileUploadRequest{},
+			output:                 &pb.DeleteFileUploadResponse{},
+			teamHydratorMock:       nil,
+			fileUploadAccessorMock: nil,
+			errorExpected:          true,
+			errorString:            "rpc error: code = Unauthenticated desc = retrieving user data failed",
+		},
+		{
+			name: "errors if unable to hydrate team",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input:                  &pb.DeleteFileUploadRequest{},
+			output:                 &pb.DeleteFileUploadResponse{},
+			teamHydratorMock:       &storage.TeamHydratorMockFailure{},
+			fileUploadAccessorMock: nil,
+			errorExpected:          true,
+			errorString:            "unable to hydrate team",
+		},
+		{
+			name: "returns error if database errors when deleting fileUpload",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input:            &pb.DeleteFileUploadRequest{},
+			output:           nil,
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				DeleteFileUploadForTeamInteral: func(id string, team *model.Team) error {
+					return errors.New("dbError when deleting")
+				},
+			},
+			errorExpected: true,
+			errorString:   "dbError when deleting",
+		},
+		{
+			name: "runs successfully even with partial errors",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input:            &pb.DeleteFileUploadRequest{},
+			output:           &pb.DeleteFileUploadResponse{},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				DeleteFileUploadForTeamInteral: func(id string, team *model.Team) error {
+					return nil
+				},
+			},
+			errorExpected: false,
+			errorString:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server, _ := NewServer(ServerDependencies{
+				Storage: storage.NewStorageAccessorMock(
+					storage.WithTeamHydratorMock(tt.teamHydratorMock),
+					storage.WithFileUploadAccessorMock(tt.fileUploadAccessorMock),
+				),
+				Logger: &utilities.NullLogger{},
+			})
+
+			response, err := server.DeleteFileUpload(
 				tt.ctx,
 				tt.input,
 			)

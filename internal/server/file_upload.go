@@ -210,6 +210,27 @@ func (s *CandidateTrackerGoService) getUpdatedFileUploadForTeam(fileUploadUpdate
 	return &fileUploadResponse
 }
 
+func (s *CandidateTrackerGoService) DeleteFileUpload(ctx context.Context, req *pb.DeleteFileUploadRequest) (*pb.DeleteFileUploadResponse, error) {
+	user, err := getUserFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	userWithTeam, err := s.storage.HydrateTeam(user)
+	if err != nil {
+		return nil, err
+	}
+
+	team := userWithTeam.Team()
+
+	err = s.storage.DeleteFileUploadForTeam(req.GetId(), team)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.DeleteFileUploadResponse{}, nil
+}
+
 func fileUploadResponseWithError(fileUploadResponse *pb.FileUpload, err error) *pb.FileUpload {
 	fileUploadResponse.Error = err.Error()
 	return fileUploadResponse

@@ -28,6 +28,7 @@ type CandidateTrackerGoClient interface {
 	GetFileUploads(ctx context.Context, in *GetFileUploadsRequest, opts ...grpc.CallOption) (*GetFileUploadsResponse, error)
 	UploadFiles(ctx context.Context, in *UploadFilesRequest, opts ...grpc.CallOption) (*UploadFilesResponse, error)
 	CompleteFileUploads(ctx context.Context, in *CompleteFileUploadsRequest, opts ...grpc.CallOption) (*CompleteFileUploadsResponse, error)
+	DeleteFileUpload(ctx context.Context, in *DeleteFileUploadRequest, opts ...grpc.CallOption) (*DeleteFileUploadResponse, error)
 	GetCandidates(ctx context.Context, in *GetCandidatesRequest, opts ...grpc.CallOption) (*GetCandidatesResponse, error)
 	GetCandidate(ctx context.Context, in *GetCandidateRequest, opts ...grpc.CallOption) (*GetCandidateResponse, error)
 	UpdateCandidate(ctx context.Context, in *UpdateCandidateRequest, opts ...grpc.CallOption) (*UpdateCandidateResponse, error)
@@ -95,6 +96,15 @@ func (c *candidateTrackerGoClient) CompleteFileUploads(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *candidateTrackerGoClient) DeleteFileUpload(ctx context.Context, in *DeleteFileUploadRequest, opts ...grpc.CallOption) (*DeleteFileUploadResponse, error) {
+	out := new(DeleteFileUploadResponse)
+	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/DeleteFileUpload", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *candidateTrackerGoClient) GetCandidates(ctx context.Context, in *GetCandidatesRequest, opts ...grpc.CallOption) (*GetCandidatesResponse, error) {
 	out := new(GetCandidatesResponse)
 	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/GetCandidates", in, out, opts...)
@@ -132,6 +142,7 @@ type CandidateTrackerGoServer interface {
 	GetFileUploads(context.Context, *GetFileUploadsRequest) (*GetFileUploadsResponse, error)
 	UploadFiles(context.Context, *UploadFilesRequest) (*UploadFilesResponse, error)
 	CompleteFileUploads(context.Context, *CompleteFileUploadsRequest) (*CompleteFileUploadsResponse, error)
+	DeleteFileUpload(context.Context, *DeleteFileUploadRequest) (*DeleteFileUploadResponse, error)
 	GetCandidates(context.Context, *GetCandidatesRequest) (*GetCandidatesResponse, error)
 	GetCandidate(context.Context, *GetCandidateRequest) (*GetCandidateResponse, error)
 	UpdateCandidate(context.Context, *UpdateCandidateRequest) (*UpdateCandidateResponse, error)
@@ -159,6 +170,9 @@ func (UnimplementedCandidateTrackerGoServer) UploadFiles(context.Context, *Uploa
 }
 func (UnimplementedCandidateTrackerGoServer) CompleteFileUploads(context.Context, *CompleteFileUploadsRequest) (*CompleteFileUploadsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CompleteFileUploads not implemented")
+}
+func (UnimplementedCandidateTrackerGoServer) DeleteFileUpload(context.Context, *DeleteFileUploadRequest) (*DeleteFileUploadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFileUpload not implemented")
 }
 func (UnimplementedCandidateTrackerGoServer) GetCandidates(context.Context, *GetCandidatesRequest) (*GetCandidatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCandidates not implemented")
@@ -290,6 +304,24 @@ func _CandidateTrackerGo_CompleteFileUploads_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CandidateTrackerGo_DeleteFileUpload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteFileUploadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CandidateTrackerGoServer).DeleteFileUpload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protos.CandidateTrackerGo/DeleteFileUpload",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CandidateTrackerGoServer).DeleteFileUpload(ctx, req.(*DeleteFileUploadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CandidateTrackerGo_GetCandidates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCandidatesRequest)
 	if err := dec(in); err != nil {
@@ -374,6 +406,10 @@ var CandidateTrackerGo_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CompleteFileUploads",
 			Handler:    _CandidateTrackerGo_CompleteFileUploads_Handler,
+		},
+		{
+			MethodName: "DeleteFileUpload",
+			Handler:    _CandidateTrackerGo_DeleteFileUpload_Handler,
 		},
 		{
 			MethodName: "GetCandidates",
