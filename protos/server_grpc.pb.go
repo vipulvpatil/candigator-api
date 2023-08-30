@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type CandidateTrackerGoClient interface {
 	CheckConnection(ctx context.Context, in *CheckConnectionRequest, opts ...grpc.CallOption) (*CheckConnectionResponse, error)
 	GetUnprocessedFileUploadsCount(ctx context.Context, in *GetUnprocessedFileUploadsCountRequest, opts ...grpc.CallOption) (*GetUnprocessedFileUploadsCountResponse, error)
+	GetFileUpload(ctx context.Context, in *GetFileUploadRequest, opts ...grpc.CallOption) (*GetFileUploadResponse, error)
 	GetFileUploads(ctx context.Context, in *GetFileUploadsRequest, opts ...grpc.CallOption) (*GetFileUploadsResponse, error)
 	UploadFiles(ctx context.Context, in *UploadFilesRequest, opts ...grpc.CallOption) (*UploadFilesResponse, error)
 	CompleteFileUploads(ctx context.Context, in *CompleteFileUploadsRequest, opts ...grpc.CallOption) (*CompleteFileUploadsResponse, error)
@@ -52,6 +53,15 @@ func (c *candidateTrackerGoClient) CheckConnection(ctx context.Context, in *Chec
 func (c *candidateTrackerGoClient) GetUnprocessedFileUploadsCount(ctx context.Context, in *GetUnprocessedFileUploadsCountRequest, opts ...grpc.CallOption) (*GetUnprocessedFileUploadsCountResponse, error) {
 	out := new(GetUnprocessedFileUploadsCountResponse)
 	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/GetUnprocessedFileUploadsCount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *candidateTrackerGoClient) GetFileUpload(ctx context.Context, in *GetFileUploadRequest, opts ...grpc.CallOption) (*GetFileUploadResponse, error) {
+	out := new(GetFileUploadResponse)
+	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/GetFileUpload", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +128,7 @@ func (c *candidateTrackerGoClient) UpdateCandidate(ctx context.Context, in *Upda
 type CandidateTrackerGoServer interface {
 	CheckConnection(context.Context, *CheckConnectionRequest) (*CheckConnectionResponse, error)
 	GetUnprocessedFileUploadsCount(context.Context, *GetUnprocessedFileUploadsCountRequest) (*GetUnprocessedFileUploadsCountResponse, error)
+	GetFileUpload(context.Context, *GetFileUploadRequest) (*GetFileUploadResponse, error)
 	GetFileUploads(context.Context, *GetFileUploadsRequest) (*GetFileUploadsResponse, error)
 	UploadFiles(context.Context, *UploadFilesRequest) (*UploadFilesResponse, error)
 	CompleteFileUploads(context.Context, *CompleteFileUploadsRequest) (*CompleteFileUploadsResponse, error)
@@ -136,6 +147,9 @@ func (UnimplementedCandidateTrackerGoServer) CheckConnection(context.Context, *C
 }
 func (UnimplementedCandidateTrackerGoServer) GetUnprocessedFileUploadsCount(context.Context, *GetUnprocessedFileUploadsCountRequest) (*GetUnprocessedFileUploadsCountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUnprocessedFileUploadsCount not implemented")
+}
+func (UnimplementedCandidateTrackerGoServer) GetFileUpload(context.Context, *GetFileUploadRequest) (*GetFileUploadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFileUpload not implemented")
 }
 func (UnimplementedCandidateTrackerGoServer) GetFileUploads(context.Context, *GetFileUploadsRequest) (*GetFileUploadsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFileUploads not implemented")
@@ -200,6 +214,24 @@ func _CandidateTrackerGo_GetUnprocessedFileUploadsCount_Handler(srv interface{},
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CandidateTrackerGoServer).GetUnprocessedFileUploadsCount(ctx, req.(*GetUnprocessedFileUploadsCountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CandidateTrackerGo_GetFileUpload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFileUploadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CandidateTrackerGoServer).GetFileUpload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protos.CandidateTrackerGo/GetFileUpload",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CandidateTrackerGoServer).GetFileUpload(ctx, req.(*GetFileUploadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -326,6 +358,10 @@ var CandidateTrackerGo_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUnprocessedFileUploadsCount",
 			Handler:    _CandidateTrackerGo_GetUnprocessedFileUploadsCount_Handler,
+		},
+		{
+			MethodName: "GetFileUpload",
+			Handler:    _CandidateTrackerGo_GetFileUpload_Handler,
 		},
 		{
 			MethodName: "GetFileUploads",

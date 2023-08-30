@@ -63,6 +63,15 @@ message GetFileUploadsResponse {
   repeated FileUpload fileUploads = 1;
 }
 
+message GetFileUploadRequest {
+  string userEmail = 1;
+  string id = 2;
+}
+
+message GetFileUploadResponse {
+  FileUpload fileUpload = 1;
+}
+
 message Candidate {
   string id = 1;
 	string aiGeneratedPersona = 2;
@@ -98,6 +107,7 @@ message UpdateCandidateResponse {}
 service CandidateTrackerGo {
   rpc CheckConnection(CheckConnectionRequest) returns (CheckConnectionResponse) {}
   rpc GetUnprocessedFileUploadsCount(GetUnprocessedFileUploadsCountRequest) returns (GetUnprocessedFileUploadsCountResponse) {}
+  rpc GetFileUpload(GetFileUploadRequest) returns (GetFileUploadResponse) {}
   rpc GetFileUploads(GetFileUploadsRequest) returns (GetFileUploadsResponse) {}
   rpc UploadFiles(UploadFilesRequest) returns (UploadFilesResponse) {}
   rpc CompleteFileUploads(CompleteFileUploadsRequest) returns (CompleteFileUploadsResponse) {}

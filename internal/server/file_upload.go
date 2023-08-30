@@ -58,6 +58,39 @@ func (s *CandidateTrackerGoService) CompleteFileUploads(ctx context.Context, req
 	}, nil
 }
 
+func (s *CandidateTrackerGoService) GetFileUpload(ctx context.Context, req *pb.GetFileUploadRequest) (*pb.GetFileUploadResponse, error) {
+	user, err := getUserFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	userWithTeam, err := s.storage.HydrateTeam(user)
+	if err != nil {
+		return nil, err
+	}
+
+	team := userWithTeam.Team()
+
+	fileUpload, err := s.storage.GetFileUpload(req.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	if !fileUpload.BelongsToTeam(team) {
+		return nil, errors.New("File Upload not found")
+	}
+
+	return &pb.GetFileUploadResponse{
+		FileUpload: &pb.FileUpload{
+			Id:               fileUpload.Id(),
+			Name:             fileUpload.Name(),
+			PresignedUrl:     fileUpload.PresignedUrl(),
+			Status:           fileUpload.Status(),
+			ProcessingStatus: fileUpload.ProcessingStatus(),
+		},
+	}, nil
+}
+
 func (s *CandidateTrackerGoService) GetFileUploads(ctx context.Context, req *pb.GetFileUploadsRequest) (*pb.GetFileUploadsResponse, error) {
 	user, err := getUserFromContext(ctx)
 	if err != nil {
