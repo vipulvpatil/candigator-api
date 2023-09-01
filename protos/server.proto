@@ -109,7 +109,9 @@ message UpdateCandidateRequest {
 	string manuallyCreatedPersona = 3;
 }
 
-message UpdateCandidateResponse {}
+message UpdateCandidateResponse {
+  string id = 1;
+}
 
 service CandidateTrackerGo {
   rpc CheckConnection(CheckConnectionRequest) returns (CheckConnectionResponse) {}

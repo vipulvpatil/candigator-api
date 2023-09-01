@@ -515,6 +515,7 @@ func Test_UpdateCandidateWithManuallyCreatedPersonaForTeam(t *testing.T) {
 			persona *model.Persona
 			team    *model.Team
 		}
+		output          string
 		setupSqlStmts   []TestSqlStmts
 		cleanupSqlStmts []TestSqlStmts
 		dbUpdateCheck   func(db *sql.DB) bool
@@ -530,6 +531,7 @@ func Test_UpdateCandidateWithManuallyCreatedPersonaForTeam(t *testing.T) {
 			}{
 				persona: &model.Persona{Name: "user_1"},
 			},
+			output:          "",
 			setupSqlStmts:   nil,
 			cleanupSqlStmts: nil,
 			dbUpdateCheck:   nil,
@@ -545,6 +547,7 @@ func Test_UpdateCandidateWithManuallyCreatedPersonaForTeam(t *testing.T) {
 			}{
 				team: team,
 			},
+			output:          "",
 			setupSqlStmts:   nil,
 			cleanupSqlStmts: nil,
 			dbUpdateCheck:   nil,
@@ -561,6 +564,7 @@ func Test_UpdateCandidateWithManuallyCreatedPersonaForTeam(t *testing.T) {
 				persona: &model.Persona{Name: "user_1", BuiltBy: "HUMAN"},
 				team:    team,
 			},
+			output: "",
 			setupSqlStmts: []TestSqlStmts{
 				{
 					Query: `INSERT INTO public."teams" (
@@ -588,6 +592,7 @@ func Test_UpdateCandidateWithManuallyCreatedPersonaForTeam(t *testing.T) {
 				persona: &model.Persona{Name: "user_1", BuiltBy: "HUMAN"},
 				team:    team,
 			},
+			output: "can_id1",
 			setupSqlStmts: []TestSqlStmts{
 				{
 					Query: `INSERT INTO public."teams" (
@@ -629,6 +634,7 @@ func Test_UpdateCandidateWithManuallyCreatedPersonaForTeam(t *testing.T) {
 				persona: &model.Persona{Name: "user_1", BuiltBy: "HUMAN"},
 				team:    team,
 			},
+			output: "can_id1",
 			setupSqlStmts: []TestSqlStmts{
 				{
 					Query: `INSERT INTO public."teams" (
@@ -682,10 +688,11 @@ func Test_UpdateCandidateWithManuallyCreatedPersonaForTeam(t *testing.T) {
 
 			runSqlOnDb(t, s.db, tt.setupSqlStmts)
 			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
-			err := s.UpdateCandidateWithManuallyCreatedPersonaForTeam(
+			id, err := s.UpdateCandidateWithManuallyCreatedPersonaForTeam(
 				tt.input.id, tt.input.persona, tt.input.team,
 			)
 
+			assert.Equal(t, tt.output, id)
 			if !tt.errorExpected {
 				assert.NoError(t, err)
 			} else {

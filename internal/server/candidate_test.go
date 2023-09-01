@@ -456,8 +456,8 @@ func Test_UpdateCandidate(t *testing.T) {
 			output:           nil,
 			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
 			candidateAccessorMock: &storage.CandidateAccessorConfigurableMock{
-				UpdateCandidateWithManuallyCreatedPersonaForTeamInternal: func(id string, persona *model.Persona, team *model.Team) error {
-					return errors.New("dbError when updating")
+				UpdateCandidateWithManuallyCreatedPersonaForTeamInternal: func(id string, persona *model.Persona, team *model.Team) (string, error) {
+					return "", errors.New("dbError when updating")
 				},
 			},
 			errorExpected: true,
@@ -476,11 +476,11 @@ func Test_UpdateCandidate(t *testing.T) {
 			input: &pb.UpdateCandidateRequest{
 				ManuallyCreatedPersona: "{\"Name\":\"manual persona 1\",\"Email\":\"email_1\",\"Phone\":\"phone_1\",\"City\":\"city_1\",\"State\":\"state_1\",\"Country\":\"country_1\",\"YoE\":5,\"Tech Skills\":[\"tech skill 1\",\"tech skill 2\",\"tech skill 3\"]}",
 			},
-			output:           &pb.UpdateCandidateResponse{},
+			output:           &pb.UpdateCandidateResponse{Id: "new_id1"},
 			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
 			candidateAccessorMock: &storage.CandidateAccessorConfigurableMock{
-				UpdateCandidateWithManuallyCreatedPersonaForTeamInternal: func(id string, persona *model.Persona, team *model.Team) error {
-					return nil
+				UpdateCandidateWithManuallyCreatedPersonaForTeamInternal: func(id string, persona *model.Persona, team *model.Team) (string, error) {
+					return "new_id1", nil
 				},
 			},
 			errorExpected: false,

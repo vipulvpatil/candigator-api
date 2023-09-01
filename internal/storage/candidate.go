@@ -13,7 +13,7 @@ type CandidateAccessor interface {
 	CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(persona *model.Persona, team *model.Team, tx DatabaseTransaction) error
 	GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, error)
 	GetCandidateForTeam(id string, team *model.Team) (*model.Candidate, error)
-	UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, persona *model.Persona, team *model.Team) error
+	UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, persona *model.Persona, team *model.Team) (string, error)
 }
 
 func (s *Storage) CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(persona *model.Persona, team *model.Team, tx DatabaseTransaction) error {
@@ -155,13 +155,13 @@ func (s *Storage) GetCandidateForTeam(id string, team *model.Team) (*model.Candi
 	return candidate, nil
 }
 
-func (s *Storage) UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, persona *model.Persona, team *model.Team) error {
+func (s *Storage) UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, persona *model.Persona, team *model.Team) (string, error) {
 	if team == nil || utilities.IsBlank(team.Id()) {
-		return errors.New("team cannot be blank")
+		return "", errors.New("team cannot be blank")
 	}
 
 	if !persona.IsValid() {
-		return errors.New("cannot create Candidate without a valid persona")
+		return "", errors.New("cannot create Candidate without a valid persona")
 	}
 
 	if utilities.IsBlank(id) {
@@ -172,7 +172,7 @@ func (s *Storage) UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, pe
 			ManuallyCreatedPersona: persona,
 		})
 		if err != nil {
-			return err
+			return "", err
 		}
 
 		result, err := s.db.Exec(
@@ -183,14 +183,14 @@ func (s *Storage) UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, pe
 			id, persona, team.Id(),
 		)
 		if err != nil {
-			return utilities.WrapBadError(err, fmt.Sprintf("dbError while inserting Candidate: %s", id))
+			return "", utilities.WrapBadError(err, fmt.Sprintf("dbError while inserting Candidate: %s", id))
 		}
 		rowsAffected, err := result.RowsAffected()
 		if err != nil {
-			return utilities.WrapBadError(err, fmt.Sprintf("dbError while inserting Candidate and changing db: %s", id))
+			return "", utilities.WrapBadError(err, fmt.Sprintf("dbError while inserting Candidate and changing db: %s", id))
 		}
 		if rowsAffected != 1 {
-			return utilities.NewBadError(fmt.Sprintf("Very few or too many rows were affected when inserting Candidate in db. This is highly unexpected. rowsAffected: %d", rowsAffected))
+			return "", utilities.NewBadError(fmt.Sprintf("Very few or too many rows were affected when inserting Candidate in db. This is highly unexpected. rowsAffected: %d", rowsAffected))
 		}
 	} else {
 		result, err := s.db.Exec(
@@ -200,19 +200,18 @@ func (s *Storage) UpdateCandidateWithManuallyCreatedPersonaForTeam(id string, pe
 			persona,
 		)
 		if err != nil {
-			return utilities.WrapBadError(err, fmt.Sprintf("dbError while updating Candidate: %s", id))
+			return "", utilities.WrapBadError(err, fmt.Sprintf("dbError while updating Candidate: %s", id))
 		}
 
 		rowsAffected, err := result.RowsAffected()
 		if err != nil {
-			return utilities.WrapBadError(err, fmt.Sprintf("dbError while checking affected row while updating Candidate: %s", id))
+			return "", utilities.WrapBadError(err, fmt.Sprintf("dbError while checking affected row while updating Candidate: %s", id))
 		}
 
 		if rowsAffected != 1 {
-			return utilities.NewBadError(fmt.Sprintf("Very few or too many rows were affected when inserting file_upload in db. This is highly unexpected. rowsAffected: %d", rowsAffected))
+			return "", utilities.NewBadError(fmt.Sprintf("Very few or too many rows were affected when inserting file_upload in db. This is highly unexpected. rowsAffected: %d", rowsAffected))
 		}
-		return nil
 	}
 
-	return nil
+	return id, nil
 }
