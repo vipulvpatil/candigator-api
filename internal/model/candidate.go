@@ -97,6 +97,10 @@ func (c *Candidate) FileUploadId() string {
 	return c.fileUploadId
 }
 
+func (c *Candidate) UpdatedAt() time.Time {
+	return c.updatedAt
+}
+
 func (c *Candidate) IsEqual(other *Candidate) bool {
 	fmt.Println(c.manuallyCreatedPersona)
 	fmt.Println(other.manuallyCreatedPersona)

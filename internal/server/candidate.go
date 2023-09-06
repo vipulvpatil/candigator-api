@@ -7,6 +7,7 @@ import (
 	"github.com/vipulvpatil/candidate-tracker-go/internal/lib/parser/personabuilder"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/utilities"
 	pb "github.com/vipulvpatil/candidate-tracker-go/protos"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (s *CandidateTrackerGoService) GetCandidates(ctx context.Context, req *pb.GetCandidatesRequest) (*pb.GetCandidatesResponse, error) {
@@ -34,6 +35,7 @@ func (s *CandidateTrackerGoService) GetCandidates(ctx context.Context, req *pb.G
 			AiGeneratedPersona:     candidate.AiGeneratedPersonaAsJsonString(),
 			ManuallyCreatedPersona: candidate.ManuallyCreatedPersonaAsJsonString(),
 			FileUploadId:           candidate.FileUploadId(),
+			UpdatedAt:              timestamppb.New(candidate.UpdatedAt()),
 		}
 		responseData = append(responseData, &candidateResponse)
 	}
@@ -72,6 +74,7 @@ func (s *CandidateTrackerGoService) GetCandidate(ctx context.Context, req *pb.Ge
 			AiGeneratedPersona:     candidate.AiGeneratedPersonaAsJsonString(),
 			ManuallyCreatedPersona: candidate.ManuallyCreatedPersonaAsJsonString(),
 			FileUploadId:           candidate.FileUploadId(),
+			UpdatedAt:              timestamppb.New(candidate.UpdatedAt()),
 		},
 	}, nil
 }

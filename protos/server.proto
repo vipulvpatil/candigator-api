@@ -1,6 +1,8 @@
 syntax = "proto3";
 package protos;
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "github.com/vipulvpatil/candidate-tracker-go/protos";
 
 message CheckConnectionRequest {
@@ -84,6 +86,7 @@ message Candidate {
 	string aiGeneratedPersona = 2;
 	string manuallyCreatedPersona = 3;
 	string fileUploadId = 4;
+  google.protobuf.Timestamp updatedAt = 5;
 }
 
 message GetCandidatesRequest {
