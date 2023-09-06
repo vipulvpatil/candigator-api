@@ -37,7 +37,12 @@ func run(m *testing.M) (code int, err error) {
 	resetTestDatabase(testDb)
 	err = populateTableSchemaIntoTestDatabase(testDb)
 	if err != nil {
-		return -1, fmt.Errorf("could not populate test database: %w", err)
+		return -1, fmt.Errorf("could not populate test database schema: %w", err)
+	}
+
+	err = populateFunctionsAndTriggersIntoTestDatabase(testDb)
+	if err != nil {
+		return -1, fmt.Errorf("could not populate test database functions and triggers: %w", err)
 	}
 
 	defer func() {
@@ -71,6 +76,22 @@ func populateTableSchemaIntoTestDatabase(db *sql.DB) error {
 	}
 
 	fmt.Println("DB schema is setup for testing")
+	return nil
+}
+
+func populateFunctionsAndTriggersIntoTestDatabase(db *sql.DB) error {
+	schemaCreationSql, err := os.ReadFile("./database_trigger_test.sql")
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec(string(schemaCreationSql))
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("DB functions and triggers are setup for testing")
 	return nil
 }
 

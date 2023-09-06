@@ -24,6 +24,7 @@ CREATE TABLE "candidates" (
     "manually_created_persona" JSONB,
     "file_upload_id" TEXT,
     "team_id" TEXT NOT NULL,
+    "updated_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "candidates_pkey" PRIMARY KEY ("id")
 );
@@ -37,6 +38,7 @@ CREATE TABLE "file_uploads" (
     "team_id" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "processing_status" TEXT NOT NULL,
+    "updated_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "file_uploads_pkey" PRIMARY KEY ("id")
 );
