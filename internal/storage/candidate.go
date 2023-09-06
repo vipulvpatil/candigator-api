@@ -3,6 +3,7 @@ package storage
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/model"
@@ -59,7 +60,7 @@ func (s *Storage) GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, er
 	}
 
 	rows, err := s.db.Query(
-		`SELECT id, ai_generated_persona, manually_created_persona, file_upload_id
+		`SELECT id, created_at, updated_at, ai_generated_persona, manually_created_persona, file_upload_id
 		FROM public."candidates"
 		WHERE team_id = $1 ORDER BY created_at ASC, id ASC`,
 		team.Id(),
@@ -73,9 +74,10 @@ func (s *Storage) GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, er
 
 	for rows.Next() {
 		var id string
+		var createdAt, updatedAt time.Time
 		var aiGeneratedPersona, manuallyCreatedPersona model.Persona
 		var fileUploadId sql.NullString
-		err := rows.Scan(&id, &aiGeneratedPersona, &manuallyCreatedPersona, &fileUploadId)
+		err := rows.Scan(&id, &createdAt, &updatedAt, &aiGeneratedPersona, &manuallyCreatedPersona, &fileUploadId)
 
 		if err != nil {
 			return nil, utilities.WrapBadError(err, "failed while scanning rows")
@@ -88,6 +90,8 @@ func (s *Storage) GetCandidatesForTeam(team *model.Team) ([]*model.Candidate, er
 
 		candidate, err := model.NewCandidate(model.CandidateOptions{
 			Id:                     id,
+			CreatedAt:              createdAt,
+			UpdatedAt:              updatedAt,
 			AiGeneratedPersona:     &aiGeneratedPersona,
 			ManuallyCreatedPersona: &manuallyCreatedPersona,
 			Team:                   team,
@@ -119,16 +123,17 @@ func (s *Storage) GetCandidateForTeam(id string, team *model.Team) (*model.Candi
 	}
 
 	row := s.db.QueryRow(
-		`SELECT ai_generated_persona, manually_created_persona, file_upload_id
+		`SELECT created_at, updated_at, ai_generated_persona, manually_created_persona, file_upload_id
 		FROM public."candidates"
 		WHERE  id = $1 AND team_id = $2 ORDER BY created_at ASC, id ASC`,
 		id, team.Id(),
 	)
 
+	var createdAt, updatedAt time.Time
 	var aiGeneratedPersona, manuallyCreatedPersona model.Persona
 	var fileUploadId sql.NullString
 
-	err := row.Scan(&aiGeneratedPersona, &manuallyCreatedPersona, &fileUploadId)
+	err := row.Scan(&createdAt, &updatedAt, &aiGeneratedPersona, &manuallyCreatedPersona, &fileUploadId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.Errorf("no candidate for id %s", id)
@@ -143,6 +148,8 @@ func (s *Storage) GetCandidateForTeam(id string, team *model.Team) (*model.Candi
 
 	candidate, err := model.NewCandidate(model.CandidateOptions{
 		Id:                     id,
+		CreatedAt:              createdAt,
+		UpdatedAt:              updatedAt,
 		AiGeneratedPersona:     &aiGeneratedPersona,
 		ManuallyCreatedPersona: &manuallyCreatedPersona,
 		Team:                   team,

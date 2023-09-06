@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/pkg/errors"
@@ -11,6 +12,7 @@ import (
 type Candidate struct {
 	id                     string
 	createdAt              time.Time
+	updatedAt              time.Time
 	aiGeneratedPersona     *Persona
 	manuallyCreatedPersona *Persona
 	team                   *Team
@@ -20,6 +22,7 @@ type Candidate struct {
 type CandidateOptions struct {
 	Id                     string
 	CreatedAt              time.Time
+	UpdatedAt              time.Time
 	AiGeneratedPersona     *Persona
 	ManuallyCreatedPersona *Persona
 	Team                   *Team
@@ -51,6 +54,7 @@ func NewCandidate(opts CandidateOptions) (*Candidate, error) {
 	candidate := Candidate{
 		id:                     opts.Id,
 		createdAt:              opts.CreatedAt,
+		updatedAt:              opts.UpdatedAt,
 		aiGeneratedPersona:     aiGeneratedPersona,
 		manuallyCreatedPersona: manuallyCreatedPersona,
 		team:                   opts.Team,
@@ -91,4 +95,14 @@ func (c *Candidate) ManuallyCreatedPersonaAsJsonString() string {
 
 func (c *Candidate) FileUploadId() string {
 	return c.fileUploadId
+}
+
+func (c *Candidate) IsEqual(other *Candidate) bool {
+	fmt.Println(c.manuallyCreatedPersona)
+	fmt.Println(other.manuallyCreatedPersona)
+	return c.id == other.id &&
+		c.aiGeneratedPersona.IsEqual(other.aiGeneratedPersona) &&
+		c.manuallyCreatedPersona.IsEqual(other.manuallyCreatedPersona) &&
+		c.team == other.team &&
+		c.fileUploadId == other.fileUploadId
 }

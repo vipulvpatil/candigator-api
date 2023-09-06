@@ -339,7 +339,10 @@ func Test_GetCandidatesForTeam(t *testing.T) {
 			runSqlOnDb(t, s.db, tt.setupSqlStmts)
 			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
 			candidates, err := s.GetCandidatesForTeam(tt.input)
-			assert.Equal(t, tt.output, candidates)
+			assert.Equal(t, len(tt.output), len(candidates))
+			for i := range candidates {
+				assert.True(t, candidates[i].IsEqual(tt.output[i]), "candidate should be same")
+			}
 			if !tt.errorExpected {
 				assert.NoError(t, err)
 			} else {
@@ -490,8 +493,12 @@ func Test_GetCandidateForTeam(t *testing.T) {
 
 			runSqlOnDb(t, s.db, tt.setupSqlStmts)
 			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
-			candidates, err := s.GetCandidateForTeam(tt.input.id, tt.input.team)
-			assert.Equal(t, tt.output, candidates)
+			candidate, err := s.GetCandidateForTeam(tt.input.id, tt.input.team)
+			if candidate != nil {
+				assert.True(t, candidate.IsEqual(tt.output), "candidate should be same")
+			} else {
+				assert.Nil(t, tt.output)
+			}
 			if !tt.errorExpected {
 				assert.NoError(t, err)
 			} else {
