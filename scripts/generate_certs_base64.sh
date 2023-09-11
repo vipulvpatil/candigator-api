@@ -32,11 +32,14 @@ printBase64 () {
 # Delete old certs and keys if any
 rm -rf ./out
 
-caName=CandidateTrackerCA
-serverName=api.candidatetracker.co
+caName=ProspectCA
+serverName=api.prospect.fit
 # for local uncomment the below line
-# serverName=candidatetracker
-clientName=candidatetracker
+# serverName=prospect
+clientName=prospect
+
+echo "Begin cert generation for"
+echo $serverName
 
 # Create the CA
 certstrap init --passphrase "" --common-name $caName
