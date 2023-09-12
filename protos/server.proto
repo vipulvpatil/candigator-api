@@ -13,6 +13,16 @@ message CheckConnectionResponse {
   string connectionStatus = 1;
 }
 
+message GetUserDataRequest {
+  string userEmail = 1;
+}
+
+message GetUserDataResponse {
+  int64 fileCountLimit = 1;
+  int64 currentFileCount = 2;
+  int64 unprocessedFileCount = 3;
+}
+
 message UploadFile {
   string name = 1;
 }
@@ -118,6 +128,7 @@ message UpdateCandidateResponse {
 
 service CandidateTrackerGo {
   rpc CheckConnection(CheckConnectionRequest) returns (CheckConnectionResponse) {}
+  rpc GetUserData(GetUserDataRequest) returns (GetUserDataResponse) {}
   rpc GetUnprocessedFileUploadsCount(GetUnprocessedFileUploadsCountRequest) returns (GetUnprocessedFileUploadsCountResponse) {}
   rpc GetFileUpload(GetFileUploadRequest) returns (GetFileUploadResponse) {}
   rpc GetFileUploads(GetFileUploadsRequest) returns (GetFileUploadsResponse) {}

@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CandidateTrackerGoClient interface {
 	CheckConnection(ctx context.Context, in *CheckConnectionRequest, opts ...grpc.CallOption) (*CheckConnectionResponse, error)
+	GetUserData(ctx context.Context, in *GetUserDataRequest, opts ...grpc.CallOption) (*GetUserDataResponse, error)
 	GetUnprocessedFileUploadsCount(ctx context.Context, in *GetUnprocessedFileUploadsCountRequest, opts ...grpc.CallOption) (*GetUnprocessedFileUploadsCountResponse, error)
 	GetFileUpload(ctx context.Context, in *GetFileUploadRequest, opts ...grpc.CallOption) (*GetFileUploadResponse, error)
 	GetFileUploads(ctx context.Context, in *GetFileUploadsRequest, opts ...grpc.CallOption) (*GetFileUploadsResponse, error)
@@ -45,6 +46,15 @@ func NewCandidateTrackerGoClient(cc grpc.ClientConnInterface) CandidateTrackerGo
 func (c *candidateTrackerGoClient) CheckConnection(ctx context.Context, in *CheckConnectionRequest, opts ...grpc.CallOption) (*CheckConnectionResponse, error) {
 	out := new(CheckConnectionResponse)
 	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/CheckConnection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *candidateTrackerGoClient) GetUserData(ctx context.Context, in *GetUserDataRequest, opts ...grpc.CallOption) (*GetUserDataResponse, error) {
+	out := new(GetUserDataResponse)
+	err := c.cc.Invoke(ctx, "/protos.CandidateTrackerGo/GetUserData", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -137,6 +147,7 @@ func (c *candidateTrackerGoClient) UpdateCandidate(ctx context.Context, in *Upda
 // for forward compatibility
 type CandidateTrackerGoServer interface {
 	CheckConnection(context.Context, *CheckConnectionRequest) (*CheckConnectionResponse, error)
+	GetUserData(context.Context, *GetUserDataRequest) (*GetUserDataResponse, error)
 	GetUnprocessedFileUploadsCount(context.Context, *GetUnprocessedFileUploadsCountRequest) (*GetUnprocessedFileUploadsCountResponse, error)
 	GetFileUpload(context.Context, *GetFileUploadRequest) (*GetFileUploadResponse, error)
 	GetFileUploads(context.Context, *GetFileUploadsRequest) (*GetFileUploadsResponse, error)
@@ -155,6 +166,9 @@ type UnimplementedCandidateTrackerGoServer struct {
 
 func (UnimplementedCandidateTrackerGoServer) CheckConnection(context.Context, *CheckConnectionRequest) (*CheckConnectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckConnection not implemented")
+}
+func (UnimplementedCandidateTrackerGoServer) GetUserData(context.Context, *GetUserDataRequest) (*GetUserDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserData not implemented")
 }
 func (UnimplementedCandidateTrackerGoServer) GetUnprocessedFileUploadsCount(context.Context, *GetUnprocessedFileUploadsCountRequest) (*GetUnprocessedFileUploadsCountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUnprocessedFileUploadsCount not implemented")
@@ -210,6 +224,24 @@ func _CandidateTrackerGo_CheckConnection_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CandidateTrackerGoServer).CheckConnection(ctx, req.(*CheckConnectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CandidateTrackerGo_GetUserData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CandidateTrackerGoServer).GetUserData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protos.CandidateTrackerGo/GetUserData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CandidateTrackerGoServer).GetUserData(ctx, req.(*GetUserDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -386,6 +418,10 @@ var CandidateTrackerGo_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckConnection",
 			Handler:    _CandidateTrackerGo_CheckConnection_Handler,
+		},
+		{
+			MethodName: "GetUserData",
+			Handler:    _CandidateTrackerGo_GetUserData_Handler,
 		},
 		{
 			MethodName: "GetUnprocessedFileUploadsCount",

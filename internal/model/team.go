@@ -47,3 +47,11 @@ func NewTeam(opts TeamOptions) (*Team, error) {
 func (t *Team) Id() string {
 	return t.id
 }
+
+func (t *Team) CurrentFileCount() int {
+	return t.currentFileCount
+}
+
+func (t *Team) FileCountLimit() int {
+	return t.fileCountLimit
+}

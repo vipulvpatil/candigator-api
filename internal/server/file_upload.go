@@ -25,6 +25,7 @@ func (s *CandidateTrackerGoService) UploadFiles(ctx context.Context, req *pb.Upl
 
 	files := req.GetFiles()
 	for _, file := range files {
+		//TODO: NOW: Error here on upload if upload limit reached.
 		fileName := file.Name
 		responseData = append(responseData, s.newFileUploadForTeam(fileName, team))
 	}
