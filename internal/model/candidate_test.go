@@ -7,9 +7,12 @@ import (
 )
 
 func Test_NewCandidate(t *testing.T) {
+	currentFileCount := 1
 	team, _ := NewTeam(TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	tests := []struct {
 		name           string
@@ -90,9 +93,12 @@ func Test_NewCandidate(t *testing.T) {
 }
 
 func Test_Candidate_Id(t *testing.T) {
+	currentFileCount := 1
 	team, _ := NewTeam(TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	t.Run("returns Id", func(t *testing.T) {
 		candidate := &Candidate{
@@ -107,9 +113,12 @@ func Test_Candidate_Id(t *testing.T) {
 	})
 }
 func Test_Candidate_FileUploadId(t *testing.T) {
+	currentFileCount := 1
 	team, _ := NewTeam(TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	t.Run("returns FileUploadId", func(t *testing.T) {
 		candidate := &Candidate{
@@ -125,9 +134,12 @@ func Test_Candidate_FileUploadId(t *testing.T) {
 }
 
 func Test_Candidate_AiGeneratedPersonaAsJsonString(t *testing.T) {
+	currentFileCount := 1
 	team, _ := NewTeam(TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	t.Run("returns AiGeneratedPersonaAsJsonString", func(t *testing.T) {
 		candidate := &Candidate{
@@ -152,9 +164,12 @@ func Test_Candidate_AiGeneratedPersonaAsJsonString(t *testing.T) {
 }
 
 func Test_Candidate_ManuallyCreatedPersonaAsJsonString(t *testing.T) {
+	currentFileCount := 1
 	team, _ := NewTeam(TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	t.Run("returns ManuallyCreatedPersonaAsJsonString", func(t *testing.T) {
 		candidate := &Candidate{

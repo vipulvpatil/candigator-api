@@ -7,6 +7,7 @@ import (
 )
 
 func Test_NewTeam(t *testing.T) {
+	currentFileCount := 1
 	tests := []struct {
 		name           string
 		input          TeamOptions
@@ -31,14 +32,39 @@ func Test_NewTeam(t *testing.T) {
 			errorString:    "cannot create team with an empty name",
 		},
 		{
-			name: "Team gets created successfully",
+			name: "explicit currentFileCount not provided",
 			input: TeamOptions{
 				Id:   "123",
 				Name: "test",
 			},
+			expectedOutput: nil,
+			errorExpected:  true,
+			errorString:    "cannot create team without explicit current file count",
+		},
+		{
+			name: "fileCountLimit is 0",
+			input: TeamOptions{
+				Id:               "123",
+				Name:             "test",
+				CurrentFileCount: &currentFileCount,
+			},
+			expectedOutput: nil,
+			errorExpected:  true,
+			errorString:    "cannot create team with 0 file count limit",
+		},
+		{
+			name: "Team gets created successfully",
+			input: TeamOptions{
+				Id:               "123",
+				Name:             "test",
+				CurrentFileCount: &currentFileCount,
+				FileCountLimit:   100,
+			},
 			expectedOutput: &Team{
-				id:   "123",
-				name: "test",
+				id:               "123",
+				name:             "test",
+				currentFileCount: 1,
+				fileCountLimit:   100,
 			},
 			errorExpected: false,
 			errorString:   "",

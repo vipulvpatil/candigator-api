@@ -13,9 +13,12 @@ import (
 )
 
 func Test_updateFileUploadToProcessing(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	fileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
 		Id:               "fp_id1",
@@ -175,9 +178,12 @@ func Test_updateFileUploadToProcessing(t *testing.T) {
 }
 
 func Test_processFileUploadUsingAi(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	fileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
 		Id:               "fp_id1",

@@ -6,13 +6,17 @@ import (
 )
 
 type Team struct {
-	id   string
-	name string
+	id               string
+	name             string
+	currentFileCount int
+	fileCountLimit   int
 }
 
 type TeamOptions struct {
-	Id   string
-	Name string
+	Id               string
+	Name             string
+	CurrentFileCount *int
+	FileCountLimit   int
 }
 
 func NewTeam(opts TeamOptions) (*Team, error) {
@@ -24,9 +28,19 @@ func NewTeam(opts TeamOptions) (*Team, error) {
 		return nil, errors.New("cannot create team with an empty name")
 	}
 
+	if opts.CurrentFileCount == nil {
+		return nil, errors.New("cannot create team without explicit current file count")
+	}
+
+	if opts.FileCountLimit == 0 {
+		return nil, errors.New("cannot create team with 0 file count limit")
+	}
+
 	return &Team{
-		id:   opts.Id,
-		name: opts.Name,
+		id:               opts.Id,
+		name:             opts.Name,
+		currentFileCount: *opts.CurrentFileCount,
+		fileCountLimit:   opts.FileCountLimit,
 	}, nil
 }
 

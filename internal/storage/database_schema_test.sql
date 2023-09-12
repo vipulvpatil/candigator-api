@@ -58,6 +58,7 @@ CREATE TABLE "teams" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "file_count_limit" INTEGER NOT NULL DEFAULT 100,
 
     CONSTRAINT "teams_pkey" PRIMARY KEY ("id")
 );

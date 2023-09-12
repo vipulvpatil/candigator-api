@@ -10,9 +10,12 @@ import (
 )
 
 func Test_GetFileUpload(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "Team1",
+		Id:               "team_id1",
+		Name:             "Team1",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	fileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
 		Id:               "fp_id1",
@@ -102,9 +105,12 @@ func Test_GetFileUpload(t *testing.T) {
 }
 
 func Test_GetFileUploadUsingTx(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "Team1",
+		Id:               "team_id1",
+		Name:             "Team1",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	fileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
 		Id:               "fp_id1",
@@ -197,9 +203,12 @@ func Test_GetFileUploadUsingTx(t *testing.T) {
 }
 
 func Test_GetFileUploadsForTeam(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "Team1",
+		Id:               "team_id1",
+		Name:             "Team1",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	fileUpload1, _ := model.NewFileUpload(model.FileUploadOptions{
 		Id:               "fp_id1",
@@ -305,9 +314,12 @@ func Test_GetFileUploadsForTeam(t *testing.T) {
 }
 
 func Test_GetUnprocessedFileUploadsCountForTeam(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "Team1",
+		Id:               "team_id1",
+		Name:             "Team1",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	tests := []struct {
 		name            string
@@ -522,9 +534,12 @@ func Test_GetAllProcessingNotStartedFileUploadIds(t *testing.T) {
 }
 
 func Test_CreateFileUploadForTeam(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "Team1",
+		Id:               "team_id1",
+		Name:             "Team1",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	fileUpload, _ := model.NewFileUpload(model.FileUploadOptions{
 		Id:               "fp_id1",
@@ -1182,13 +1197,18 @@ func Test_UpdateFileUploadWithProcessingStatusUsingTx(t *testing.T) {
 }
 
 func Test_DeleteFileUploadForTeam(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "Team1",
+		Id:               "team_id1",
+		Name:             "Team1",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	team2, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id2",
-		Name: "Team2",
+		Id:               "team_id2",
+		Name:             "Team2",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	tests := []struct {
 		name  string

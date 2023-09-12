@@ -14,9 +14,12 @@ import (
 )
 
 func Test_GetCandidates(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	userWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
@@ -212,9 +215,12 @@ func Test_GetCandidates(t *testing.T) {
 }
 
 func Test_GetCandidate(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	userWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
@@ -381,9 +387,12 @@ func Test_GetCandidate(t *testing.T) {
 }
 
 func Test_UpdateCandidate(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	userWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",

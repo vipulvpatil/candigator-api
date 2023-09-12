@@ -36,9 +36,13 @@ func (s *Storage) UserByEmail(email string) (*model.User, error) {
 	}
 
 	if teamId.Valid && teamName.Valid {
+		currentFileCount := 1
 		team, err := model.NewTeam(model.TeamOptions{
 			Id:   teamId.String,
 			Name: teamName.String,
+			// TODO: Verify this
+			CurrentFileCount: &currentFileCount,
+			FileCountLimit:   100,
 		})
 		if err != nil {
 			return nil, utilities.WrapBadError(err, fmt.Sprintf("UserByEmail %s: invalid team options", email))

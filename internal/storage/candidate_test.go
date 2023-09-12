@@ -11,9 +11,12 @@ import (
 )
 
 func Test_CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "Team1",
+		Id:               "team_id1",
+		Name:             "Team1",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	tests := []struct {
 		name  string
@@ -184,9 +187,12 @@ func Test_CreateCandidateWithAiGeneratedPersonaForTeamUsingTx(t *testing.T) {
 }
 
 func Test_GetCandidatesForTeam(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "Team1",
+		Id:               "team_id1",
+		Name:             "Team1",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	persona1 := model.Persona{
 		Name:       "ai persona 1",
@@ -354,9 +360,12 @@ func Test_GetCandidatesForTeam(t *testing.T) {
 }
 
 func Test_GetCandidateForTeam(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "Team1",
+		Id:               "team_id1",
+		Name:             "Team1",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	persona1 := model.Persona{
 		Name:       "ai persona 2",
@@ -511,9 +520,12 @@ func Test_GetCandidateForTeam(t *testing.T) {
 
 func Test_UpdateCandidateWithManuallyCreatedPersonaForTeam(t *testing.T) {
 	aiGeneratedPersona := model.Persona{Name: "generated_name"}
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "Team1",
+		Id:               "team_id1",
+		Name:             "Team1",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	tests := []struct {
 		name  string

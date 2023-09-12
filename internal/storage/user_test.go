@@ -8,13 +8,16 @@ import (
 )
 
 func Test_UserByEmail(t *testing.T) {
+	currentFileCount := 1
 	user, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
 		Email: "test@example.com",
 	})
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	userWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",

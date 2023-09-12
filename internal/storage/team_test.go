@@ -10,6 +10,7 @@ import (
 )
 
 func Test_HydrateTeam(t *testing.T) {
+	currentFileCount := 1
 	inputUserWithoutTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
 		Email: "test@example.com",
@@ -17,6 +18,9 @@ func Test_HydrateTeam(t *testing.T) {
 	team, _ := model.NewTeam(model.TeamOptions{
 		Id:   "team_id1",
 		Name: "test@example.com",
+		// TODO: Verify this
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	inputUserWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",

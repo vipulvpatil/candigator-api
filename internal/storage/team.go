@@ -48,9 +48,13 @@ func (s *Storage) HydrateTeam(user *model.User) (*model.User, error) {
 		return nil, utilities.WrapBadError(err, fmt.Sprintf("HydrateTeam %s", user.GetId()))
 	}
 	if teamId.Valid && teamName.Valid {
+		currentFileCount := 1
 		teamOpts = model.TeamOptions{
 			Id:   teamId.String,
 			Name: teamName.String,
+			// TODO: Verify this
+			CurrentFileCount: &currentFileCount,
+			FileCountLimit:   100,
 		}
 	} else {
 		id := s.IdGenerator.Generate()
@@ -82,9 +86,13 @@ func (s *Storage) HydrateTeam(user *model.User) (*model.User, error) {
 			return nil, utilities.NewBadError(fmt.Sprintf("Very few or too many rows rows were affected when team was connected to user. This is highly unexpected. rowsAffected: %d", rowsAffected))
 		}
 
+		currentFileCount := 1
 		teamOpts = model.TeamOptions{
 			Id:   id,
 			Name: userOpts.Email,
+			// TODO: Verify this
+			CurrentFileCount: &currentFileCount,
+			FileCountLimit:   100,
 		}
 	}
 

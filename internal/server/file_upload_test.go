@@ -15,9 +15,12 @@ import (
 )
 
 func Test_UploadFiles(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	userWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
@@ -358,13 +361,18 @@ func Test_UploadFiles(t *testing.T) {
 }
 
 func Test_CompleteFileUploads(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	otherTeam, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id2",
-		Name: "test2@example.com",
+		Id:               "team_id2",
+		Name:             "test2@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	userWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
@@ -769,9 +777,12 @@ func Test_CompleteFileUploads(t *testing.T) {
 }
 
 func Test_GetFileUpload(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	userWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
@@ -779,8 +790,10 @@ func Test_GetFileUpload(t *testing.T) {
 		Team:  team,
 	})
 	team2, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id2",
-		Name: "test2@example.com",
+		Id:               "team_id2",
+		Name:             "test2@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	fileUpload1, _ := model.NewFileUpload(model.FileUploadOptions{
 		Id:               "fp_id1",
@@ -936,9 +949,12 @@ func Test_GetFileUpload(t *testing.T) {
 	}
 }
 func Test_GetFileUploads(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	userWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
@@ -1107,9 +1123,12 @@ func Test_GetFileUploads(t *testing.T) {
 }
 
 func Test_GetUnprocessedFileUploadsCount(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	userWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
@@ -1250,9 +1269,12 @@ func Test_GetUnprocessedFileUploadsCount(t *testing.T) {
 }
 
 func Test_DeleteFileUpload(t *testing.T) {
+	currentFileCount := 1
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   100,
 	})
 	userWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
