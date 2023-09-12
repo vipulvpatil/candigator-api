@@ -37,19 +37,30 @@ func getFileUploadUsingCustomDbHandler(customDb customDbHandler, id string, excl
 	}
 
 	var name, status, presignedUrl, teamId, teamName, processingStatus string
+	var teamFileCountLimit, teamCurrentFileCount int64
+	queryWithoutLock := `
+		SELECT
+		f.name, f.status, f.presigned_url, f.processing_status, t.id, t.name, t.file_count_limit, t.current_file_count
+		FROM public."file_uploads" AS f
+		JOIN (
+			SELECT
+			teams.id,
+			teams.name,
+			teams.file_count_limit,
+			count(file_uploads.id) AS current_file_count
+			FROM public."teams"
+			LEFT JOIN
+			public."file_uploads"
+			ON teams.id = file_uploads.team_id
+			GROUP BY teams.id
+		) t
+		ON f.team_id = t.id
+		WHERE f.id = $1
+		ORDER BY f.created_at ASC
+		LIMIT 1
+	`
 
-	queryWithoutLock := `SELECT
-	f.name, f.status, f.presigned_url, f.processing_status, teams.id, teams.name
-	FROM public."file_uploads" AS f
-	JOIN public."teams" ON f.team_id = teams.id
-	WHERE f.id = $1 ORDER BY f.created_at ASC LIMIT 1`
-
-	queryWithLock := `SELECT
-	f.name, f.status, f.presigned_url, f.processing_status, teams.id, teams.name
-	FROM public."file_uploads" AS f
-	JOIN public."teams" ON f.team_id = teams.id
-	WHERE f.id = $1 ORDER BY f.created_at ASC LIMIT 1
-	FOR UPDATE`
+	queryWithLock := fmt.Sprintf("%s FOR UPDATE OF f", queryWithoutLock)
 
 	var query string
 
@@ -62,7 +73,11 @@ func getFileUploadUsingCustomDbHandler(customDb customDbHandler, id string, excl
 	row := customDb.QueryRow(
 		query, id,
 	)
-	err := row.Scan(&name, &status, &presignedUrl, &processingStatus, &teamId, &teamName)
+	err := row.Scan(
+		&name, &status, &presignedUrl,
+		&processingStatus, &teamId, &teamName,
+		&teamFileCountLimit, &teamCurrentFileCount,
+	)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.Errorf("no file upload for id %s", id)
@@ -70,13 +85,12 @@ func getFileUploadUsingCustomDbHandler(customDb customDbHandler, id string, excl
 		return nil, errors.Errorf("getting file upload for id %s: %v", id, err)
 	}
 
-	currentFileCount := 1
+	currentFileCount := int(teamCurrentFileCount)
 	team, err := model.NewTeam(model.TeamOptions{
-		Id:   teamId,
-		Name: teamName,
-		// TODO: NOW: Load the next two from DB
+		Id:               teamId,
+		Name:             teamName,
 		CurrentFileCount: &currentFileCount,
-		FileCountLimit:   100,
+		FileCountLimit:   int(teamFileCountLimit),
 	})
 
 	if err != nil {

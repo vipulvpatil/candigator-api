@@ -10,7 +10,7 @@ import (
 )
 
 func Test_GetFileUpload(t *testing.T) {
-	currentFileCount := 1
+	currentFileCount := 2
 	team, _ := model.NewTeam(model.TeamOptions{
 		Id:               "team_id1",
 		Name:             "Team1",
@@ -71,6 +71,14 @@ func Test_GetFileUpload(t *testing.T) {
 							)
 							VALUES (
 								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id2', 'file2.pdf', 'https://presigned_url2', 'INITIATED', 'NOT STARTED', 'team_id1'
 							)`,
 				},
 			},
@@ -105,7 +113,7 @@ func Test_GetFileUpload(t *testing.T) {
 }
 
 func Test_GetFileUploadUsingTx(t *testing.T) {
-	currentFileCount := 1
+	currentFileCount := 2
 	team, _ := model.NewTeam(model.TeamOptions{
 		Id:               "team_id1",
 		Name:             "Team1",
@@ -166,6 +174,14 @@ func Test_GetFileUploadUsingTx(t *testing.T) {
 							)
 							VALUES (
 								'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
+							)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+								"id", "name", "presigned_url", "status", "processing_status", "team_id"
+							)
+							VALUES (
+								'fp_id2', 'file2.pdf', 'https://presigned_url2', 'INITIATED', 'NOT STARTED', 'team_id1'
 							)`,
 				},
 			},
