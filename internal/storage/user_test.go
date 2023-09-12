@@ -85,6 +85,14 @@ func Test_UserByEmail(t *testing.T) {
 					)`,
 				},
 				{
+					Query: `INSERT INTO public."file_uploads" (
+						"id", "name", "presigned_url", "status", "processing_status", "team_id"
+					)
+					VALUES (
+						'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
+					)`,
+				},
+				{
 					Query: `INSERT INTO public."users" (
 						"id", "email", "team_id"
 					)

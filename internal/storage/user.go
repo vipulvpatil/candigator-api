@@ -21,13 +21,28 @@ func (s *Storage) UserByEmail(email string) (*model.User, error) {
 
 	userOptions := model.UserOptions{}
 	var teamId, teamName sql.NullString
+	var teamFileCountLimit, teamCurrentFileCount sql.NullInt64
 	row := s.db.QueryRow(`
-		SELECT users.id, users.email, teams.id, teams.name
+		SELECT users.id, users.email, t.id, t.name, t.file_count_limit, t.current_file_count
 		FROM public."users"
-		LEFT JOIN public."teams" ON teams.id = users.team_id
+		LEFT JOIN (
+			SELECT
+				teams.id,
+				teams.name,
+				teams.file_count_limit,
+				teams.created_at,
+				count(file_uploads.id) AS current_file_count
+			FROM public."teams"
+			LEFT JOIN
+			public."file_uploads"
+			ON teams.id = file_uploads.team_id
+			GROUP BY teams.id
+		) t
+		ON t.id = users.team_id
 		WHERE users.email = $1
+		ORDER BY t.created_at ASC, t.id
 	`, email)
-	err := row.Scan(&userOptions.Id, &userOptions.Email, &teamId, &teamName)
+	err := row.Scan(&userOptions.Id, &userOptions.Email, &teamId, &teamName, &teamFileCountLimit, &teamCurrentFileCount)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.Errorf("UserByEmail %s: no such user", email)
@@ -35,12 +50,14 @@ func (s *Storage) UserByEmail(email string) (*model.User, error) {
 		return nil, errors.Errorf("UserByEmail %s: %v", email, err)
 	}
 
-	if teamId.Valid && teamName.Valid {
-		currentFileCount := 1
+	if teamId.Valid &&
+		teamName.Valid &&
+		teamCurrentFileCount.Valid &&
+		teamFileCountLimit.Valid {
+		currentFileCount := int(teamCurrentFileCount.Int64)
 		team, err := model.NewTeam(model.TeamOptions{
-			Id:   teamId.String,
-			Name: teamName.String,
-			// TODO: NOW: Verify this
+			Id:               teamId.String,
+			Name:             teamName.String,
 			CurrentFileCount: &currentFileCount,
 			FileCountLimit:   100,
 		})

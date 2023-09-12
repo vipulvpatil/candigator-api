@@ -31,8 +31,7 @@ func (s *Storage) HydrateTeam(user *model.User) (*model.User, error) {
 	userOpts := model.UserOptions{}
 	var teamOpts model.TeamOptions
 	var teamId, teamName sql.NullString
-	var teamFileCountLimit sql.NullInt64
-	var teamCurrentFileCount sql.NullInt64
+	var teamFileCountLimit, teamCurrentFileCount sql.NullInt64
 	row := tx.QueryRow(`
 		SELECT users.id, users.email, t.id, t.name, t.file_count_limit, t.current_file_count
 		FROM public."users"
