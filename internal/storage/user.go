@@ -40,7 +40,7 @@ func (s *Storage) UserByEmail(email string) (*model.User, error) {
 		team, err := model.NewTeam(model.TeamOptions{
 			Id:   teamId.String,
 			Name: teamName.String,
-			// TODO: Verify this
+			// TODO: NOW: Verify this
 			CurrentFileCount: &currentFileCount,
 			FileCountLimit:   100,
 		})

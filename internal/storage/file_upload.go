@@ -74,7 +74,7 @@ func getFileUploadUsingCustomDbHandler(customDb customDbHandler, id string, excl
 	team, err := model.NewTeam(model.TeamOptions{
 		Id:   teamId,
 		Name: teamName,
-		// TODO: Load the next two from DB
+		// TODO: NOW: Load the next two from DB
 		CurrentFileCount: &currentFileCount,
 		FileCountLimit:   100,
 	})

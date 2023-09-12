@@ -10,15 +10,15 @@ import (
 )
 
 func Test_HydrateTeam(t *testing.T) {
+	zeroFileCount := 0
 	currentFileCount := 1
 	inputUserWithoutTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
 		Email: "test@example.com",
 	})
 	team, _ := model.NewTeam(model.TeamOptions{
-		Id:   "team_id1",
-		Name: "test@example.com",
-		// TODO: Verify this
+		Id:               "team_id1",
+		Name:             "test@example.com",
 		CurrentFileCount: &currentFileCount,
 		FileCountLimit:   100,
 	})
@@ -26,6 +26,17 @@ func Test_HydrateTeam(t *testing.T) {
 		Id:    "user_id1",
 		Email: "test@example.com",
 		Team:  team,
+	})
+	teamWithZeroFiles, _ := model.NewTeam(model.TeamOptions{
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &zeroFileCount,
+		FileCountLimit:   100,
+	})
+	inputUserWithZeroFilesTeam, _ := model.NewUser(model.UserOptions{
+		Id:    "user_id1",
+		Email: "test@example.com",
+		Team:  teamWithZeroFiles,
 	})
 	tests := []struct {
 		name            string
@@ -58,7 +69,7 @@ func Test_HydrateTeam(t *testing.T) {
 			errorString:     "",
 		},
 		{
-			name:   "hydrates and returns user if there is a associated team in database.",
+			name:   "hydrates and returns user if there is an associated team in database.",
 			input:  inputUserWithoutTeam,
 			output: inputUserWithTeam,
 			setupSqlStmts: []TestSqlStmts{
@@ -68,6 +79,14 @@ func Test_HydrateTeam(t *testing.T) {
 					)
 					VALUES (
 						'team_id1', 'test@example.com'
+					)`,
+				},
+				{
+					Query: `INSERT INTO public."file_uploads" (
+						"id", "name", "presigned_url", "status", "processing_status", "team_id"
+					)
+					VALUES (
+						'fp_id1', 'file1.pdf', 'https://presigned_url1', 'INITIATED', 'NOT STARTED', 'team_id1'
 					)`,
 				},
 				{
@@ -110,7 +129,7 @@ func Test_HydrateTeam(t *testing.T) {
 		{
 			name:   "hydrates and returns user by creating a new team in database.",
 			input:  inputUserWithoutTeam,
-			output: inputUserWithTeam,
+			output: inputUserWithZeroFilesTeam,
 			setupSqlStmts: []TestSqlStmts{
 				{
 					Query: `INSERT INTO public."users" (
@@ -194,6 +213,9 @@ func Test_HydrateTeam(t *testing.T) {
 			defer runSqlOnDb(t, s.db, tt.cleanupSqlStmts)
 			user, err := s.HydrateTeam(tt.input)
 			assert.Equal(t, tt.output, user)
+			if tt.output != nil {
+				assert.Equal(t, tt.output.Team(), user.Team())
+			}
 			if !tt.errorExpected {
 				assert.NoError(t, err)
 			} else {

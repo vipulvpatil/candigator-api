@@ -31,30 +31,47 @@ func (s *Storage) HydrateTeam(user *model.User) (*model.User, error) {
 	userOpts := model.UserOptions{}
 	var teamOpts model.TeamOptions
 	var teamId, teamName sql.NullString
+	var teamFileCountLimit sql.NullInt64
+	var teamCurrentFileCount sql.NullInt64
 	row := tx.QueryRow(`
-		SELECT users.id, users.email, teams.id, teams.name
+		SELECT users.id, users.email, t.id, t.name, t.file_count_limit, t.current_file_count
 		FROM public."users"
-		LEFT JOIN public."teams" ON teams.id = users.team_id
+		LEFT JOIN (
+			SELECT
+				teams.id,
+				teams.name,
+				teams.file_count_limit,
+				teams.created_at,
+				count(file_uploads.id) AS current_file_count
+			FROM public."teams"
+			LEFT JOIN
+			public."file_uploads"
+			ON teams.id = file_uploads.team_id
+			GROUP BY teams.id
+		) t
+		ON t.id = users.team_id
 		WHERE users.id = $1
-		ORDER BY teams.created_at ASC, teams.id
+		ORDER BY t.created_at ASC, t.id
 		FOR UPDATE OF users
 		LIMIT 1
 	`, user.GetId())
-	err = row.Scan(&userOpts.Id, &userOpts.Email, &teamId, &teamName)
+	err = row.Scan(&userOpts.Id, &userOpts.Email, &teamId, &teamName, &teamFileCountLimit, &teamCurrentFileCount)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.Errorf("HydrateTeam %s: no such user", user.GetId())
 		}
 		return nil, utilities.WrapBadError(err, fmt.Sprintf("HydrateTeam %s", user.GetId()))
 	}
-	if teamId.Valid && teamName.Valid {
-		currentFileCount := 1
+	if teamId.Valid &&
+		teamName.Valid &&
+		teamCurrentFileCount.Valid &&
+		teamFileCountLimit.Valid {
+		currentFileCount := int(teamCurrentFileCount.Int64)
 		teamOpts = model.TeamOptions{
-			Id:   teamId.String,
-			Name: teamName.String,
-			// TODO: Verify this
+			Id:               teamId.String,
+			Name:             teamName.String,
 			CurrentFileCount: &currentFileCount,
-			FileCountLimit:   100,
+			FileCountLimit:   int(teamFileCountLimit.Int64),
 		}
 	} else {
 		id := s.IdGenerator.Generate()
@@ -86,12 +103,11 @@ func (s *Storage) HydrateTeam(user *model.User) (*model.User, error) {
 			return nil, utilities.NewBadError(fmt.Sprintf("Very few or too many rows rows were affected when team was connected to user. This is highly unexpected. rowsAffected: %d", rowsAffected))
 		}
 
-		currentFileCount := 1
+		newFileCount := 0
 		teamOpts = model.TeamOptions{
-			Id:   id,
-			Name: userOpts.Email,
-			// TODO: Verify this
-			CurrentFileCount: &currentFileCount,
+			Id:               id,
+			Name:             userOpts.Email,
+			CurrentFileCount: &newFileCount,
 			FileCountLimit:   100,
 		}
 	}
