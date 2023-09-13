@@ -23,11 +23,18 @@ func (s *CandidateTrackerGoService) UploadFiles(ctx context.Context, req *pb.Upl
 	team := userWithTeam.Team()
 	responseData := []*pb.FileUpload{}
 
+	currentFileCount := team.CurrentFileCount()
+	fileCountLimit := team.FileCountLimit()
+
 	files := req.GetFiles()
 	for _, file := range files {
-		//TODO: NOW: Error here on upload if upload limit reached.
 		fileName := file.Name
-		responseData = append(responseData, s.newFileUploadForTeam(fileName, team))
+		if currentFileCount < fileCountLimit {
+			responseData = append(responseData, s.newFileUploadForTeam(fileName, team))
+		} else {
+			responseData = append(responseData, fileUploadResponseWithCountLimitReachedError(fileName))
+		}
+		currentFileCount++
 	}
 
 	return &pb.UploadFilesResponse{
@@ -235,4 +242,11 @@ func (s *CandidateTrackerGoService) DeleteFileUpload(ctx context.Context, req *p
 func fileUploadResponseWithError(fileUploadResponse *pb.FileUpload, err error) *pb.FileUpload {
 	fileUploadResponse.Error = err.Error()
 	return fileUploadResponse
+}
+
+func fileUploadResponseWithCountLimitReachedError(fileName string) *pb.FileUpload {
+	return &pb.FileUpload{
+		Name:  fileName,
+		Error: errors.New("File upload limit reached").Error(),
+	}
 }
