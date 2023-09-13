@@ -23,10 +23,21 @@ func Test_UploadFiles(t *testing.T) {
 		CurrentFileCount: &currentFileCount,
 		FileCountLimit:   100,
 	})
+	teamWithLowFileCountLimit, _ := model.NewTeam(model.TeamOptions{
+		Id:               "team_id1",
+		Name:             "test@example.com",
+		CurrentFileCount: &currentFileCount,
+		FileCountLimit:   3,
+	})
 	userWithTeam, _ := model.NewUser(model.UserOptions{
 		Id:    "user_id1",
 		Email: "test@example.com",
 		Team:  team,
+	})
+	userWithLowFileCountLimitTeam, _ := model.NewUser(model.UserOptions{
+		Id:    "user_id1",
+		Email: "test@example.com",
+		Team:  teamWithLowFileCountLimit,
 	})
 	tests := []struct {
 		name                   string
@@ -299,6 +310,91 @@ func Test_UploadFiles(t *testing.T) {
 				},
 			},
 			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithTeam},
+			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
+				CreateFileUploadForTeamInteral: func(name string, team *model.Team) (*model.FileUpload, error) {
+					if name == "file1.pdf" {
+						return model.NewFileUpload(model.FileUploadOptions{
+							Id:               "fp_id1",
+							Name:             name,
+							Status:           "INITIATED",
+							ProcessingStatus: "NOT STARTED",
+							Team:             team,
+						})
+					} else if name == "file2.pdf" {
+						return model.NewFileUpload(model.FileUploadOptions{
+							Id:               "fp_id2",
+							Name:             name,
+							Status:           "INITIATED",
+							ProcessingStatus: "NOT STARTED",
+							Team:             team,
+						})
+					} else {
+						return nil, errors.New("unable to create fileUpload")
+					}
+				},
+				UpdateFileUploadWithPresignedUrlInternal: func(id, presignedUrl string) error {
+					if id == "fp_id2" {
+						return errors.New("unable to upload fileUpload")
+					}
+					return nil
+				},
+			},
+			fileStorerMock: &filestorage.FileStorerMock{PresignedUrl: "http://presigned_url1"},
+			errorExpected:  false,
+			errorString:    "",
+		},
+		{
+			name: "returns response with some errors if file count limit reached",
+			ctx: metadata.NewIncomingContext(
+				context.Background(), metadata.New(
+					map[string]string{
+						requestingUserIdCtxKey:    "user_id1",
+						requestingUserEmailCtxKey: "user@example.com",
+					},
+				),
+			),
+			input: &pb.UploadFilesRequest{
+				Files: []*pb.UploadFile{
+					{
+						Name: "file1.pdf",
+					},
+					{
+						Name: "file2.pdf",
+					},
+					{
+						Name: "file3.pdf",
+					},
+				},
+			},
+			output: &pb.UploadFilesResponse{
+				FileUploads: []*pb.FileUpload{
+					{
+						Id:               "fp_id1",
+						Name:             "file1.pdf",
+						PresignedUrl:     "http://presigned_url1",
+						Status:           "INITIATED",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "",
+					},
+					{
+						Id:               "fp_id2",
+						Name:             "file2.pdf",
+						PresignedUrl:     "http://presigned_url1",
+						Status:           "INITIATED",
+						ProcessingStatus: "NOT STARTED",
+						Error:            "unable to upload fileUpload",
+					},
+					{
+						Id:               "",
+						Name:             "file3.pdf",
+						PresignedUrl:     "",
+						Status:           "",
+						ProcessingStatus: "",
+						Error:            "File upload limit reached",
+					},
+				},
+			},
+			teamHydratorMock: &storage.TeamHydratorMockSuccess{User: userWithLowFileCountLimitTeam},
 			fileUploadAccessorMock: &storage.FileUploadAccessorConfigurableMock{
 				CreateFileUploadForTeamInteral: func(name string, team *model.Team) (*model.FileUpload, error) {
 					if name == "file1.pdf" {
