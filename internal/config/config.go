@@ -8,21 +8,22 @@ import (
 )
 
 type Config struct {
-	EnableTls        bool
-	RedisUrl         string
-	TestDbUrl        string
-	DbUrl            string
-	CaCertBase64     string
-	ServerCertBase64 string
-	ServerKeyBase64  string
-	OpenAiApiKey     string
-	S3Endpoint       string
-	S3Bucket         string
-	S3Key            string
-	S3Secret         string
-	SentryDsn        string
-	Environment      string
-	LoggerMode       string
+	EnableTls         bool
+	RedisUrl          string
+	TestDbUrl         string
+	DbUrl             string
+	CaCertBase64      string
+	ServerCertBase64  string
+	ServerKeyBase64   string
+	OpenAiApiKey      string
+	S3Endpoint        string
+	S3Bucket          string
+	S3Key             string
+	S3Secret          string
+	SentryDsn         string
+	Environment       string
+	LoggerMode        string
+	AllowFileDeletion bool
 }
 
 func envVarLoaderBool(envVarName string, required bool, errorCollector *[]error) bool {
@@ -68,6 +69,7 @@ func NewConfigFromEnvVars() (*Config, []error) {
 	c.SentryDsn = envVarLoaderString("SENTRY_DSN", false, &errs)
 	c.Environment = envVarLoaderString("ENVIRONMENT", true, &errs)
 	c.LoggerMode = envVarLoaderString("LOGGER_MODE", true, &errs)
+	c.AllowFileDeletion = envVarLoaderBool("ALLOW_FILE_DELETION", false, &errs)
 
 	return &c, errs
 }

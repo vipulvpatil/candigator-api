@@ -224,6 +224,10 @@ func (s *CandidateTrackerGoService) DeleteFileUpload(ctx context.Context, req *p
 		return nil, err
 	}
 
+	if !s.config.AllowFileDeletion {
+		return nil, errors.New("File deletion is currently disabled")
+	}
+
 	userWithTeam, err := s.storage.HydrateTeam(user)
 	if err != nil {
 		return nil, err

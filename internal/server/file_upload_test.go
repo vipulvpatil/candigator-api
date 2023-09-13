@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/vipulvpatil/candidate-tracker-go/internal/config"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/model"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/services/filestorage"
 	"github.com/vipulvpatil/candidate-tracker-go/internal/storage"
@@ -1370,6 +1371,7 @@ func Test_DeleteFileUpload(t *testing.T) {
 					storage.WithFileUploadAccessorMock(tt.fileUploadAccessorMock),
 				),
 				Logger: &utilities.NullLogger{},
+				Config: &config.Config{AllowFileDeletion: true},
 			})
 
 			response, err := server.DeleteFileUpload(
