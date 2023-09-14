@@ -28,8 +28,10 @@ type Config struct {
 
 func envVarLoaderBool(envVarName string, required bool, errorCollector *[]error) bool {
 	value, ok := os.LookupEnv(envVarName)
-	if !ok && required {
-		*errorCollector = append(*errorCollector, errors.Errorf("%s is a required Env var", envVarName))
+	if !ok {
+		if required {
+			*errorCollector = append(*errorCollector, errors.Errorf("%s is a required Env var", envVarName))
+		}
 		return false
 	}
 	boolValue, err := strconv.ParseBool(value)
