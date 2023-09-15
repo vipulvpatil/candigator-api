@@ -19,6 +19,8 @@ func InitDb(cfg *config.Config, logger utilities.Logger) (*sql.DB, error) {
 		return nil, err
 	}
 
+	db.SetMaxOpenConns(15)
+
 	err = db.Ping()
 	if err != nil {
 		return nil, err
